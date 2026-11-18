@@ -48,8 +48,8 @@ export default async function StepPage({ params, searchParams }: Props) {
   // Welcome screen: no session needed yet.
   if (step.kind === 'intro') {
     return (
-      <div className="pt-6">
-        <img src="/images/studio-bird-dog.webp" alt="" className="aspect-[5/4] w-full object-cover" />
+      <div className="pt-4">
+        <img src="/images/studio-bird-dog.webp" alt="" className="aspect-[5/4] w-full rounded-3xl object-cover" />
         <div className="mt-8">
           <StepShell title={step.title} subtitle={step.subtitle}>
             {sp.error === 'anon' && <div className="mb-4"><Notice tone="error" title="We could not start your plan">Please try again in a moment. If it keeps happening, contact the BAYSE team.</Notice></div>}
