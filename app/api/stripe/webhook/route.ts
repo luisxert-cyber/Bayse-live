@@ -91,6 +91,18 @@ export async function POST(req: NextRequest) {
         if (isUuid(userId) && customerId) {
           await admin.from('stripe_customers').upsert({ user_id: userId, stripe_customer_id: customerId }, { onConflict: 'user_id' });
         }
+        // One-off 1-to-1 payment: only a paid Checkout marks the session paid. If the session was
+        // cancelled or declined while the member was paying, the money is flagged for refund.
+        const privateId = session.metadata?.private_session_id;
+        if (session.mode === 'payment' && isUuid(privateId) && session.payment_status === 'paid') {
+          const pi = typeof session.payment_intent === 'string' ? session.payment_intent : session.payment_intent?.id ?? null;
+          const { data: ps } = await admin.from('private_sessions').select('id, status, payment, member_id').eq('id', privateId).maybeSingle();
+          if (ps && ps.member_id === userId && ps.payment === 'unpaid') {
+            const live = ['requested', 'confirmed'].includes(ps.status);
+            await admin.from('private_sessions').update({ payment: live ? 'paid' : 'refund_due', stripe_payment_intent: pi, stripe_checkout_id: session.id }).eq('id', ps.id).eq('payment', 'unpaid');
+          }
+          break;
+        }
         const subId = typeof session.subscription === 'string' ? session.subscription : session.subscription?.id;
         if (subId) {
           const sub = await stripe.subscriptions.retrieve(subId);
@@ -105,6 +117,13 @@ export async function POST(req: NextRequest) {
       case 'customer.subscription.resumed':
         await upsertSubscription(admin, event.data.object as unknown as StripeSubscriptionLike);
         break;
+      case 'charge.refunded': {
+        // A refund made in Stripe for a 1-to-1 marks it refunded (once; repeats change nothing).
+        const charge = event.data.object as Stripe.Charge;
+        const pi = typeof charge.payment_intent === 'string' ? charge.payment_intent : charge.payment_intent?.id;
+        if (pi && charge.refunded) await admin.from('private_sessions').update({ payment: 'refunded' }).eq('stripe_payment_intent', pi).in('payment', ['paid', 'refund_due']);
+        break;
+      }
       case 'invoice.payment_failed':
         // Status moves to past_due through customer.subscription.updated. A reminder email is added with the email provider (Phase 3).
         break;

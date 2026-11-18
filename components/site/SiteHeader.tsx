@@ -7,6 +7,7 @@ const MENU = [
   ['/live-classes', 'Live classes'],
   ['/classes', 'On-demand classes'],
   ['/programmes', 'Programmes'],
+  ['/instructors', 'Instructors and 1-to-1s'],
   ['/clubs', 'Community and Clubs'],
   ['/pricing', 'Membership'],
   ['/faq', 'Questions'],

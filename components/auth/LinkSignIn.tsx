@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import { buttonClass } from '@/components/ui/Button';
 
 function safe(next: string | null) {
-  return next && next.startsWith('/') && !next.startsWith('//') && !next.includes('\\') ? next : '/today';
+  return next && next.startsWith('/') && !next.startsWith('//') && !next.includes('\\') ? next : '/auth/home';
 }
 
 // Finishes an email link (password reset or sign-in link) in whatever browser opened it.

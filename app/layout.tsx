@@ -25,7 +25,7 @@ export const viewport: Viewport = {
 
 // Email links can land on any page (Supabase falls back to the site's home page). If the address carries
 // sign-in tokens, hand them to /auth/link before anything else runs, so a password reset reaches the reset page.
-const AUTH_LANDING = `(function(){try{var h=location.hash;if(!h||location.pathname==='/auth/link'||!/access_token=|error_code=/.test(h))return;var n=/type=recovery/.test(h)?'/auth/reset':'/today';location.replace('/auth/link?next='+encodeURIComponent(n)+h);}catch(e){}})();`;
+const AUTH_LANDING = `(function(){try{var h=location.hash;if(!h||location.pathname==='/auth/link'||!/access_token=|error_code=/.test(h))return;var n=/type=recovery/.test(h)?'/auth/reset':'/auth/home';location.replace('/auth/link?next='+encodeURIComponent(n)+h);}catch(e){}})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

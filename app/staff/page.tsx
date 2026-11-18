@@ -9,7 +9,10 @@ export const dynamic = 'force-dynamic';
 export default async function Staff({ searchParams }: { searchParams: Promise<{ denied?: string }> }) {
   const sp = await searchParams;
   const user = await getUser().catch(() => null);
-  if (user && !user.is_anonymous && isStaff(await getRoles())) redirect('/admin');
+  if (user && !user.is_anonymous) {
+    const roles = await getRoles();
+    if (isStaff(roles)) redirect(roles.some((r) => r.role === 'admin' || r.role === 'super_admin') ? '/admin' : roles.some((r) => r.role === 'instructor') ? '/teach' : '/admin');
+  }
   return (
     <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center px-4 py-10">
       <Wordmark className="h-7" />

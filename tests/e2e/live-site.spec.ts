@@ -5,7 +5,7 @@ import { test, expect, type Page } from '@playwright/test';
 // 2. Every interactive control on the home page responds (menu, phone tour, FAQs).
 // 3. The whole sign-up journey works, from "Build my plan" to Today and Personalise.
 
-const PUBLIC = ['/', '/live-classes', '/classes', '/programmes', '/clubs', '/faq', '/try', '/pricing', '/sign-in', '/start/welcome', '/privacy', '/terms', '/community-guidelines', '/staff'];
+const PUBLIC = ['/', '/live-classes', '/classes', '/programmes', '/clubs', '/faq', '/try', '/pricing', '/instructors', '/sign-in', '/start/welcome', '/privacy', '/terms', '/community-guidelines', '/staff'];
 
 async function linksOn(page: Page) {
   return page.$$eval('a[href]', (as) => as.map((a) => (a as HTMLAnchorElement).getAttribute('href') || ''));
@@ -100,7 +100,7 @@ test('home: phone tour and questions respond', async ({ page }) => {
 });
 
 test('signed-out visitors are sent to sign in from member areas', async ({ page }) => {
-  for (const path of ['/today', '/you', '/you/personalise', '/admin']) {
+  for (const path of ['/today', '/you', '/you/personalise', '/you/sessions', '/admin', '/teach', '/teach/profile']) {
     await page.goto(path);
     await expect(page, path).toHaveURL(/\/sign-in/);
   }
