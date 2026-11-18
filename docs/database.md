@@ -43,4 +43,18 @@ Migrations: `supabase/migrations/` (plain SQL, applied in order). Seed: `supabas
 
 ## Tests
 
-`supabase/tests/rls_test.sql`: 56 checks signing in as a member, two studio managers, an admin, a super admin and an anonymous visitor. Last run: 56/56 passed (check 57, email sync, was added afterwards and has not run yet) on 18 November 2026 against Postgres 17 (Supabase, London) in an isolated schema.
+`supabase/tests/rls_test.sql`: 56 checks signing in as a member, two studio managers, an admin, a super admin and an anonymous visitor. Last run: 56/56 passed; email sync check passed in a later run on 18 November 2026 against Postgres 17 (Supabase, London) in an isolated schema.
+
+## Phase 5 data layer (migration 0500)
+
+Groups (`global`, `studio`, `programme`, `circle` capped at 10 to 20, `topic`), `group_members`, `posts`, `comments`, `reactions`, `activities` (padel, walk, social), `activity_rsvps`, `activity_messages`, `notifications`, `reports`, `account_restrictions`, `blocks`, `discovery_prefs`.
+
+- Taking part needs: a real (not anonymous) account, the `community` entitlement, adult confirmation, a display name, and no active restriction (`can_participate()`).
+- Places are only changed by `join_activity()` and `leave_activity()`, which lock the activity row, so capacity can never be exceeded. Leaving promotes the first person waiting and notifies them.
+- Hosts get a place automatically, cannot shrink capacity below the people going, and cancel rather than leave. Cancelling notifies everyone on it.
+- New activities notify members at the same studio who chose that activity type.
+- `queue_activity_reminders()` (run every 15 minutes by a scheduler) sends one reminder per person going within 24 hours, and marks finished activities completed.
+- Studio communities need a verified link to that studio. Posts are visible to group members only. Blocking hides each person's content and activities from the other.
+- Reports always start open; only moderators see and resolve them; the reporter is told the outcome. Only moderators can hide content.
+
+Tests: `supabase/tests/community_test.sql`, 48 checks, all passing on 18 November 2026.

@@ -10,7 +10,7 @@ Updated 18 November 2026. Labels: **Complete and tested** · **Built not tested*
 | --- | --- | --- |
 | Database schema (identity, roles, studios, billing, studio links, onboarding, consent, programmes, flags, audit) | Complete and tested | Applied cleanly to Postgres 17 on Supabase in an isolated schema |
 | Row-level security and role permissions | Complete and tested | 56/56 checks in `supabase/tests/rls_test.sql` |
-| Profile email follows the account email (migration 0400) | Built not tested | Test added (check 57); runs in CI and on the next remote run |
+| Profile email follows the account email (migration 0400) | Complete and tested | Passed on 18 November 2026 |
 | Entitlements from subscriptions and studio links (incl. 7-day past-due grace, cancellation) | Complete and tested | Covered by RLS tests |
 | Consent-gated special-category data, withdrawal deletes data | Complete and tested | Covered by RLS tests |
 | Data export (`export_my_data`) | Complete and tested (database) · Built not tested (download route) | |
@@ -35,6 +35,7 @@ Updated 18 November 2026. Labels: **Complete and tested** · **Built not tested*
 | 2 On-demand (Mux) | Not started · placeholder screen says "Coming soon" |
 | 3 Live and coaching | Not started in this repo · designs exist in the clickable prototype (Mocked) |
 | 4 Nutrition and wellness hub | Not started · preferences captured in onboarding |
-| 5 Community and Clubs | Not started in this repo · prototype screens exist (Mocked) |
+| 5 Community and Clubs: data layer (groups, studio communities, Circles with size cap, posts, comments, reactions, Padel/Walk/Social activities, automatic places and waiting lists, activity chat, notifications, reminders, blocking, discovery opt-in, reports, moderation, account restrictions) | Complete and tested · 48 checks in `supabase/tests/community_test.sql`, all passing |
+| 5 Community and Clubs: screens | Not started · prototype screens exist (Mocked) |
 | 6 Studio links and recognition | Studio link verification built; the rest not started |
 | 7 Launch readiness | Not started |

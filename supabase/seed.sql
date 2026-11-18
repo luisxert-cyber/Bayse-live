@@ -83,3 +83,16 @@ insert into public.feature_flags (key, enabled, description) values
   ('nutrition', false, 'Nutrition hub (Phase 4).'),
   ('live_classes', false, 'Live timetable and booking (Phase 3).')
 on conflict (key) do nothing;
+
+-- Community groups (Phase 5). Studio groups are created for every open or opening studio.
+insert into public.groups (kind, slug, name, description) values
+  ('global', 'bayse-global', 'BAYSE Global', 'Everyone: online and studio members.'),
+  ('topic', 'new-to-bayse', 'New to BAYSE', 'Say hello, ask anything. A welcoming place for new members.'),
+  ('topic', 'nutrition-healthy-habits', 'Nutrition & Healthy Habits', 'Recipe ideas, meal inspiration and supportive healthy-living conversations.')
+on conflict (slug) do nothing;
+insert into public.groups (kind, slug, name, studio_id, description)
+select 'studio', s.slug, s.name, s.id, 'Members of ' || s.name || '.' from public.studios s where s.status <> 'closed'
+on conflict (slug) do nothing;
+insert into public.groups (kind, slug, name, programme_id, description)
+select 'programme', 'programme-' || replace(p.key, '_', '-'), p.name, p.id, 'Members following ' || p.name || '.' from public.programmes p where p.published
+on conflict (slug) do nothing;
