@@ -65,6 +65,12 @@ test('home: menu, class library, player and favourites respond', async ({ page }
   await expect(page.getByRole('dialog').getByRole('button', { name: 'Start workout' })).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(page).toHaveURL(/\/$/);
+  // "Free trial" opens sign-up in a window on the same page
+  await page.getByRole('link', { name: 'Free trial', exact: true }).click();
+  await expect(page.locator('[data-trial-window] iframe')).toBeVisible();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.frameLocator('[data-trial-window] iframe').getByRole('button', { name: 'Build my plan' })).toBeVisible({ timeout: 15000 });
+  await page.keyboard.press('Escape');
   for (const name of ['Start your 7-day free trial', 'Start free trial', 'See membership']) {
     const href = await page.getByRole('link', { name }).first().getAttribute('href');
     expect(href, name).toBeTruthy();

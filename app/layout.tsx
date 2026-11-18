@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
+import { TrialWindow, FrameBridge } from '@/components/site/TrialWindow';
 
 // One family, like the studio brand: Inter for headings (bold, uppercase) and text.
 const inter = Inter({ subsets: ['latin'], variable: '--font-body', display: 'swap' });
@@ -25,7 +26,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en-GB" className={inter.variable}>
-      <body>{children}</body>
+      <body>{children}<TrialWindow /><FrameBridge /></body>
     </html>
   );
 }

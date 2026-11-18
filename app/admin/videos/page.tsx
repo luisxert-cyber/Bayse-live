@@ -1,6 +1,7 @@
 import { ClipManager } from '@/components/admin/ClipManager';
+import { VoiceManager } from '@/components/admin/VoiceManager';
 
-export const metadata = { title: 'Move videos' };
+export const metadata = { title: 'Move videos and voice' };
 
 export default function VideosPage() {
   return (
@@ -16,6 +17,7 @@ export default function VideosPage() {
         <li>No music or voice needed: the player gives the cues. Get written consent from anyone filmed, and the instructor&rsquo;s consent before using her likeness in AI-made clips.</li>
       </ul>
       <ClipManager />
+      <VoiceManager />
     </div>
   );
 }

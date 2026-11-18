@@ -111,3 +111,6 @@
 .ink-panel { border: 1px solid rgb(var(--stone)); }
 .band h1, .band h2, .band h3, .ink-panel h1, .ink-panel h2, .ink-panel h3 { color: rgb(var(--ink)); }
 
+
+/* Sign-up running inside the free-trial window: no site header or back-to-site link. */
+html[data-framed] header, html[data-framed] [data-back-to-site] { display: none !important; }

@@ -4,6 +4,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { MoveMedia } from './MoveMedia';
+import { loadVoice } from '@/lib/workouts/voice';
 import { EXERCISES, workoutMinutes, type Workout } from '@/lib/workouts/catalog';
 import { buttonClass } from '@/components/ui';
 
@@ -15,23 +16,39 @@ function beep(ctx: AudioContext | null, high = false) {
   o.frequency.value = high ? 880 : 520; g.gain.value = 0.08;
   o.connect(g).connect(ctx.destination); o.start(); o.stop(ctx.currentTime + (high ? 0.35 : 0.12));
 }
-// Prefer a natural British woman's voice; fall back to any English female-sounding voice, then any English voice.
-const FEMALE = /(female|woman|serena|kate|stephanie|martha|sonia|libby|hazel|susan|fiona|moira|tessa|karen|samantha|victoria|allison|ava|zira|amy|emma|olivia)/i;
-const MALE = /(male|daniel|arthur|oliver|george|ryan|thomas|alex|fred|rishi|aaron|guy|david|mark|james)/i;
+// Prefer the most natural-sounding voice the device has: neural/"Natural" (Edge, Windows), Premium/Enhanced
+// (iPhone, Mac, when downloaded), Google's online voices (Chrome), then any British woman's voice.
+const FEMALE = /(female|woman|serena|kate|stephanie|martha|sonia|libby|maisie|hazel|susan|fiona|moira|tessa|karen|samantha|victoria|allison|ava|zira|amy|emma|olivia|jenny|aria|ava)/i;
+const MALE = /(\bmale\b|daniel|arthur|oliver|george|ryan|thomas|alex|fred|rishi|aaron|guy|david|mark|james|liam)/i;
+const QUALITY = (n: string) => (/natural|neural/i.test(n) ? 6 : /premium/i.test(n) ? 5 : /enhanced/i.test(n) ? 4 : /google/i.test(n) ? 3 : /siri/i.test(n) ? 3 : 0);
 let chosen: SpeechSynthesisVoice | null | undefined;
 function pickVoice(): SpeechSynthesisVoice | null {
   if (chosen !== undefined && chosen !== null) return chosen;
   const vs = window.speechSynthesis.getVoices();
   if (!vs.length) return null;
-  const en = vs.filter((v) => /^en/i.test(v.lang));
-  const gb = en.filter((v) => /en[-_]GB/i.test(v.lang));
-  chosen = gb.find((v) => FEMALE.test(v.name) && !/\bmale\b/i.test(v.name.replace(/female/i, '')))
-    ?? en.find((v) => FEMALE.test(v.name))
-    ?? gb.find((v) => !MALE.test(v.name))
-    ?? en.find((v) => !MALE.test(v.name))
-    ?? en[0] ?? null;
+  const score = (v: SpeechSynthesisVoice) =>
+    (/^en/i.test(v.lang) ? 100 : -1000) + (/en[-_]GB/i.test(v.lang) ? 20 : /en[-_](IE|AU)/i.test(v.lang) ? 8 : 0)
+    + QUALITY(v.name) * 10 + (FEMALE.test(v.name) ? 15 : 0) - (MALE.test(v.name.replace(/female/i, '')) ? 60 : 0) + (v.localService ? 0 : 2);
+  chosen = [...vs].sort((x, y) => score(y) - score(x))[0] ?? null;
   return chosen;
 }
+let rec: HTMLAudioElement | null = null;
+/** Play a recorded cue if there is one; returns false so the caller can fall back to the built-in voice. */
+function playRecorded(urls: Map<string, string>, keys: string[], on: boolean): boolean {
+  if (!on) return false;
+  const list = keys.map((k) => urls.get(k)).filter(Boolean) as string[];
+  if (!list.length) return false;
+  try {
+    window.speechSynthesis?.cancel();
+    rec?.pause();
+    let n = 0;
+    const next = () => { if (n >= list.length) return; rec = new Audio(list[n++]); rec.onended = next; void rec.play().catch(() => {}); };
+    next();
+    return true;
+  } catch { return false; }
+}
+function stopRecorded() { try { rec?.pause(); } catch { /* ignore */ } }
+
 function say(text: string, on: boolean) {
   if (!on || typeof window === 'undefined' || !('speechSynthesis' in window)) return;
   try {
@@ -39,7 +56,7 @@ function say(text: string, on: boolean) {
     const u = new SpeechSynthesisUtterance(text);
     const v = pickVoice();
     if (v) { u.voice = v; u.lang = v.lang; } else u.lang = 'en-GB';
-    u.rate = 0.98; u.pitch = 1.08;
+    u.rate = 0.95; u.pitch = 1.0;
     window.speechSynthesis.speak(u);
   } catch { /* voice is optional */ }
 }
@@ -57,6 +74,8 @@ export function WorkoutPlayer({ workout, onComplete, exitHref, onExit }: { worko
   const [left, setLeft] = useState(steps[0].seconds);
   const [done, setDone] = useState(false);
   const [voice, setVoice] = useState(true);
+  const [recorded, setRecorded] = useState<Map<string, string>>(new Map());
+  useEffect(() => { void loadVoice().then(setRecorded); }, []);
   const [sound, setSound] = useState(true);
   const audio = useRef<AudioContext | null>(null);
   const saved = useRef(false);
@@ -67,12 +86,13 @@ export function WorkoutPlayer({ workout, onComplete, exitHref, onExit }: { worko
   const totalLeft = steps.slice(i + 1).reduce((n, s) => n + s.seconds, 0) + left;
 
   const go = useCallback((to: number) => {
-    if (to >= steps.length) { setDone(true); say('Workout complete. Well done.', voice); return; }
+    if (to >= steps.length) { setDone(true); if (!playRecorded(recorded, ['_done'], voice)) say('Workout complete. Well done.', voice); return; }
     const s = steps[Math.max(0, to)];
     setI(Math.max(0, to)); setLeft(s.seconds);
     const e = EXERCISES[s.ex];
-    say(s.kind === 'rest' ? `Rest. Next, ${e.name}.` : `${e.name}. ${e.cue}`, voice);
-  }, [steps, voice]);
+    const played = s.kind === 'rest' ? playRecorded(recorded, ['_rest'], voice) : playRecorded(recorded, [e.move], voice);
+    if (!played) say(s.kind === 'rest' ? `Rest. Next, ${e.name}.` : `${e.name}. ${e.cue}`, voice);
+  }, [steps, voice, recorded]);
 
   useEffect(() => {
     if (!started || paused || done) return;
@@ -99,7 +119,7 @@ export function WorkoutPlayer({ workout, onComplete, exitHref, onExit }: { worko
   }, [started, done]);
 
   // Stop talking if the player is closed mid-class.
-  useEffect(() => () => { try { window.speechSynthesis?.cancel(); } catch { /* optional */ } }, []);
+  useEffect(() => () => { stopRecorded(); try { window.speechSynthesis?.cancel(); } catch { /* optional */ } }, []);
 
   // Voices load asynchronously in some browsers.
   useEffect(() => {
@@ -112,7 +132,9 @@ export function WorkoutPlayer({ workout, onComplete, exitHref, onExit }: { worko
 
   const begin = () => {
     try { audio.current = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)(); } catch { audio.current = null; }
-    setStarted(true); say(`${workout.name}. First up, ${EXERCISES[steps[0].ex].name}. ${EXERCISES[steps[0].ex].cue}`, voice);
+    setStarted(true);
+    const first = EXERCISES[steps[0].ex];
+    if (!playRecorded(recorded, ['_start', first.move].filter((k) => recorded.has(k)), voice)) say(`${workout.name}. First up, ${first.name}. ${first.cue}`, voice);
   };
 
   const pct = step.seconds ? 1 - left / step.seconds : 0;
@@ -165,7 +187,7 @@ export function WorkoutPlayer({ workout, onComplete, exitHref, onExit }: { worko
       <div className="mt-5 flex flex-wrap items-center gap-2">
         {!started
           ? <button type="button" onClick={begin} className={`${buttonClass("primary")} flex-1 whitespace-nowrap`}>Start workout</button>
-          : <button type="button" onClick={() => { setPaused((p) => !p); if (!paused) window.speechSynthesis?.cancel(); }} className={`${buttonClass('primary')} flex-1`}>{paused ? 'Resume' : 'Pause'}</button>}
+          : <button type="button" onClick={() => { setPaused((p) => !p); if (!paused) { window.speechSynthesis?.cancel(); stopRecorded(); } }} className={`${buttonClass('primary')} flex-1`}>{paused ? 'Resume' : 'Pause'}</button>}
         <button type="button" onClick={() => go(i - 1)} disabled={!started || i === 0} className={buttonClass('secondary')} aria-label="Previous">‹ Back</button>
         <button type="button" onClick={() => go(i + 1)} disabled={!started} className={buttonClass('secondary')} aria-label="Skip">Skip ›</button>
       </div>
