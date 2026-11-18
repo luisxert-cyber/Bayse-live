@@ -18,7 +18,7 @@ export function SiteHeader({ signedIn = false }: { signedIn?: boolean }) {
     : [['/#live', 'Live', ICONS.live], ['/#on-demand', 'On demand', ICONS.play], ['/sign-in', 'Login', ICONS.login], ['/start/welcome', 'Start free', ICONS.join]] as const;
   return (
     <header className="sticky top-0 z-20 bg-black" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
-      <div className="relative mx-auto flex h-[76px] max-w-5xl items-center justify-center border-b border-white px-4">
+      <div className="relative mx-auto flex h-[72px] max-w-5xl items-center justify-center px-4">
         <Link href="/" aria-label="BAYSE home"><Wordmark className="h-11" /></Link>
         <details className="group absolute right-4 top-1/2 -translate-y-1/2">
           <summary className="flex h-11 w-11 cursor-pointer list-none flex-col items-center justify-center gap-[7px]" aria-label="Menu">
@@ -31,12 +31,12 @@ export function SiteHeader({ signedIn = false }: { signedIn?: boolean }) {
           </nav>
         </details>
       </div>
-      <nav aria-label="Quick links" className="border-b border-white">
-        <ul className="mx-auto flex max-w-xl justify-center">
+      <nav aria-label="Quick links" className="border-b border-white/15 pb-2">
+        <ul className="mx-auto flex max-w-lg justify-center">
           {bar.map(([href, label, icon]) => (
-            <li key={href} className="flex-1 border-r border-white first:border-l">
-              <Link href={href} className="flex min-h-[80px] flex-col items-center justify-center gap-1.5 text-[13px] hover:bg-white hover:text-black">
-                <span className="h-8 w-8">{icon}</span>{label}
+            <li key={href} className="relative flex-1 [&+li]:before:absolute [&+li]:before:left-0 [&+li]:before:top-1/2 [&+li]:before:h-7 [&+li]:before:w-px [&+li]:before:-translate-y-1/2 [&+li]:before:bg-white/25 [&+li]:before:content-['']">
+              <Link href={href} className="flex min-h-[60px] flex-col items-center justify-center gap-1 text-[12px] text-white/85 transition-colors hover:text-white">
+                <span className="h-6 w-6">{icon}</span>{label}
               </Link>
             </li>
           ))}
