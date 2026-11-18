@@ -60,7 +60,7 @@ export function SignInForms({ next }: { next: string }) {
       <Field id="email" name="email" type="email" label="Email" autoComplete="username" required />
       <Field id="password" name="password" type="password" label="Password" autoComplete="current-password" required />
       <label className="flex min-h-[44px] items-center gap-3 text-sm"><input type="checkbox" name="remember" defaultChecked className="h-5 w-5 accent-white" />Remember me on this device</label>
-      <button disabled={pwPending} className={buttonClass('primary', true)}>{pwPending ? 'Signing in…' : 'Sign in'}</button>
+      <button disabled={pwPending} className={buttonClass('solid', true)}>{pwPending ? 'Signing in…' : 'Sign in'}</button>
       <div className="flex justify-between text-sm">
         <button type="button" onClick={() => setMode('link')} className="py-2 text-muted hover:text-ink">Email me a link</button>
         <button type="button" onClick={() => setMode('reset')} className="py-2 text-muted hover:text-ink">Forgot password?</button>
