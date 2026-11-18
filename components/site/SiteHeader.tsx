@@ -20,10 +20,14 @@ export function SiteHeader({ signedIn = false }: { signedIn?: boolean }) {
       <div className="relative mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:h-20 sm:px-6">
         <Link href="/" aria-label="BAYSE home" className="shrink-0"><Wordmark className="h-7 sm:h-8" /></Link>
         <div className="flex items-center gap-2 pr-12 sm:gap-3">
-          {!signedIn && <Link href="/sign-in" className="hidden px-2 text-sm font-medium text-muted hover:text-ink sm:inline">Sign in</Link>}
-          <Link href={signedIn ? '/today' : '/start/welcome'} className="inline-flex min-h-[38px] items-center bg-white px-3.5 text-[12px] font-bold uppercase tracking-[0.02em] text-black hover:opacity-90 sm:px-5 sm:text-[13px]">
-            {signedIn ? 'My BAYSE' : <><span className="sm:hidden">Free trial</span><span className="hidden sm:inline">Start 7-day free trial</span></>}
-          </Link>
+          {signedIn ? (
+            <Link href="/today" className="inline-flex min-h-[38px] items-center bg-white px-4 text-[12px] font-bold uppercase tracking-[0.02em] text-black hover:opacity-90 sm:text-[13px]">My BAYSE</Link>
+          ) : (
+            <>
+              <Link href="/sign-in" className="inline-flex min-h-[38px] items-center border border-white px-3.5 text-[12px] font-bold uppercase tracking-[0.02em] hover:bg-white hover:text-black sm:px-5 sm:text-[13px]">Log in</Link>
+              <Link href="/start/welcome" className="inline-flex min-h-[38px] items-center bg-white px-3.5 text-[12px] font-bold uppercase tracking-[0.02em] text-black hover:opacity-90 sm:px-5 sm:text-[13px]">Free trial</Link>
+            </>
+          )}
         </div>
         <SiteMenu items={MENU} signedIn={signedIn} />
       </div>
