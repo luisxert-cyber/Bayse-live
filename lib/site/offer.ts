@@ -1,13 +1,26 @@
 // What BAYSE online offers, in one place, so the website, pricing page and FAQs say the same thing.
 // Update here when the offer changes.
 
-export const LIVE_SCHEDULE = [
-  { day: 'Monday', time: '7pm' },
-  { day: 'Wednesday', time: '7pm' },
-  { day: 'Friday', time: '7pm' },
-  { day: 'Saturday', time: '9am' },
-  { day: 'Sunday', time: '9am' },
+// Launch timetable: 17 live classes a week, all 45 minutes, UK time.
+// Review attendance after 4 to 6 weeks before adding more slots.
+export const LIVE_CLASS_MINUTES = 45;
+
+const WAKE = 'Wake-up Flow';
+const MAT = 'Mat Pilates';
+const LUNCH = 'Lunchtime Core & Glutes';
+const SCULPT = 'Signature Sculpt';
+
+export const LIVE_TIMETABLE: { day: string; short: string; classes: { time: string; name: string }[] }[] = [
+  { day: 'Monday', short: 'Mon', classes: [{ time: '7am', name: WAKE }, { time: '9am', name: MAT }, { time: '7pm', name: SCULPT }] },
+  { day: 'Tuesday', short: 'Tue', classes: [{ time: '7am', name: WAKE }, { time: '12pm', name: LUNCH }, { time: '7pm', name: SCULPT }] },
+  { day: 'Wednesday', short: 'Wed', classes: [{ time: '7am', name: WAKE }, { time: '9am', name: MAT }, { time: '7pm', name: SCULPT }] },
+  { day: 'Thursday', short: 'Thu', classes: [{ time: '7am', name: WAKE }, { time: '12pm', name: LUNCH }, { time: '7pm', name: SCULPT }] },
+  { day: 'Friday', short: 'Fri', classes: [{ time: '7am', name: WAKE }, { time: '9am', name: MAT }, { time: '7pm', name: 'Stretch & Restore' }] },
+  { day: 'Saturday', short: 'Sat', classes: [{ time: '9am', name: 'Full Body Sculpt' }] },
+  { day: 'Sunday', short: 'Sun', classes: [{ time: '9am', name: 'Slow Flow & Mobility' }] },
 ];
+
+export const LIVE_CLASSES_PER_WEEK = LIVE_TIMETABLE.reduce((n, d) => n + d.classes.length, 0);
 
 export const ON_DEMAND = [
   { name: 'Mat Pilates', note: 'The BAYSE method, on the mat' },

@@ -10,7 +10,7 @@ export const revalidate = 300;
 
 const INCLUDES: Record<string, string[]> = {
   essential: ['Personal programme', 'On-demand classes', 'Recipes and meal planning', 'Progress tracking', 'Community and Clubs'],
-  club: ['Everything in Essential', 'Five live classes a week, with two instructors', 'Group coaching', 'Monthly club challenges'],
+  club: ['Everything in Essential', '17 live 45-minute classes a week, with two instructors', 'Group coaching', 'Monthly club challenges'],
   coaching: ['Everything in Club', 'Your own coach, with set check-ins', 'Extra nutrition coaching support'],
 };
 

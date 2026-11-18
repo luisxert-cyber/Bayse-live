@@ -3,7 +3,7 @@ import { SiteHeader } from '@/components/site/SiteHeader';
 import { SiteFooter } from '@/components/site/SiteFooter';
 import { buttonClass } from '@/components/ui';
 import { getUser } from '@/lib/auth/session';
-import { LIVE_SCHEDULE, ON_DEMAND, PROGRAMMES, CLUBS, FAQS } from '@/lib/site/offer';
+import { LIVE_TIMETABLE, LIVE_CLASSES_PER_WEEK, LIVE_CLASS_MINUTES, ON_DEMAND, PROGRAMMES, CLUBS, FAQS } from '@/lib/site/offer';
 import { Icon, IconBadge, TodayPhone, LiveClassGraphic, CoachGraphic, NutritionGraphic, WellnessGraphic, ActivityGraphic, ProgrammeGraphic } from '@/components/site/Graphics';
 
 const Eyebrow = ({ children, light }: { children: React.ReactNode; light?: boolean }) => (
@@ -38,7 +38,7 @@ export default async function Home() {
             <div>
               <h1 className="text-[40px] sm:text-[56px]">Your programme. Your coach. Your people.</h1>
               <p className="subhead mt-4 text-2xl sm:text-3xl">Live and on-demand Pilates</p>
-              <p className="mt-6 max-w-md text-lg">From the instructors behind BAYSE studios: live classes five times a week, an on-demand library, a plan built around you and a real coach.</p>
+              <p className="mt-6 max-w-md text-lg">From the instructors behind BAYSE studios: {LIVE_CLASSES_PER_WEEK} live classes a week, an on-demand library, a plan built around you and a real coach.</p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link href="/start/welcome" className={buttonClass('primary')}>Build my plan</Link>
                 <Link href="#membership" className={buttonClass('secondary')}>See membership</Link>
@@ -53,7 +53,7 @@ export default async function Home() {
         <section className="border-y border-white">
           <div className="mx-auto grid max-w-5xl grid-cols-2 gap-x-4 gap-y-6 px-4 py-10 sm:grid-cols-5 sm:px-6">
             {[
-              ['5', 'live classes a week'],
+              [String(LIVE_CLASSES_PER_WEEK), 'live classes a week'],
               ['2', 'instructors in every live class'],
               ['10–60', 'minute on-demand sessions'],
               ['4–12', 'week personal programmes'],
@@ -65,30 +65,41 @@ export default async function Home() {
         </section>
 
         {/* Live */}
-        <section id="live" className="mx-auto grid max-w-5xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-2">
+        <section id="live">
+          <div className="mx-auto grid max-w-5xl items-center gap-10 px-4 py-16 sm:px-6 md:grid-cols-2">
           <div>
             <Eyebrow>Live classes</Eyebrow>
             <h2 className="mt-3 text-xl font-semibold sm:text-2xl">Real instructors, live, with someone watching your form</h2>
             <p className="mt-3 text-muted">Every live class has two BAYSE instructors. One teaches and motivates. The other watches the class, checks your technique, answers questions and makes sure everyone is safe.</p>
             <ul className="mt-5 space-y-2.5 text-sm">
-              {['Join from your phone, tablet or laptop, inside BAYSE', 'Camera on for pointers, or off if you prefer', 'Mat-based: no reformer needed', 'Beginner and progression options in every class', 'Book ahead and get a reminder before class'].map((t) => (
+              {[`${LIVE_CLASSES_PER_WEEK} classes a week, every one ${LIVE_CLASS_MINUTES} minutes`, 'Early, mid-morning, lunchtime and evening slots', 'Join from your phone, tablet or laptop, inside BAYSE', 'Camera on for pointers, or off if you prefer', 'Mat-based: no reformer needed', 'Beginner and progression options in every class', 'Book ahead and get a reminder before class'].map((t) => (
                 <li key={t} className="flex gap-3"><Tick />{t}</li>
               ))}
             </ul>
           </div>
-          <div className="space-y-4">
             <LiveClassGraphic photo="/images/studio-mat-core.webp" />
-            <div>
-              <p className="eyebrow mb-2">Weekly timetable (UK time)</p>
-              <div className="grid grid-cols-5 gap-2">
-                {LIVE_SCHEDULE.map((s) => (
-                  <div key={s.day} className="rounded-2xl border border-stone bg-surface px-2 py-3 text-center">
-                    <p className="text-xs text-muted">{s.day.slice(0, 3)}</p>
-                    <p className="mt-0.5 text-base font-bold">{s.time}</p>
-                  </div>
-                ))}
+          </div>
+        <div className="mx-auto max-w-5xl px-4 pb-16 sm:px-6">
+          <div className="flex items-baseline justify-between gap-4">
+            <p className="eyebrow">Weekly timetable · UK time</p>
+            <p className="text-sm text-muted">{LIVE_CLASSES_PER_WEEK} classes · all {LIVE_CLASS_MINUTES} min</p>
+          </div>
+          <div className="mt-4 grid gap-px border-y border-white/20 bg-white/20 sm:grid-cols-7">
+            {LIVE_TIMETABLE.map((d) => (
+              <div key={d.day} className="flex gap-4 bg-black py-4 sm:block sm:px-3">
+                <p className="w-12 shrink-0 text-sm font-bold uppercase sm:w-auto">{d.short}</p>
+                <ul className="flex-1 space-y-3 sm:mt-3">
+                  {d.classes.map((c) => (
+                    <li key={c.time} className="flex items-baseline gap-3 sm:block">
+                      <span className="w-[60px] shrink-0 text-lg font-bold sm:w-auto sm:text-xl">{c.time}</span>
+                      <span className="text-sm text-muted sm:mt-0.5 sm:block">{c.name}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </div>
+            ))}
+          </div>
+          <p className="mt-3 text-xs text-muted">Classes may change from time to time; the timetable in the app is always up to date.</p>
           </div>
         </section>
 
@@ -198,7 +209,7 @@ export default async function Home() {
             <div className="mt-8 grid gap-4 md:grid-cols-3">
               {[
                 { name: 'BAYSE Essential', price: '£19.99', items: ['Your personal programme', 'On-demand library', 'Recipes and meal plans', 'Progress tracking', 'Community and Clubs'] },
-                { name: 'BAYSE Club', price: '£39.99', items: ['Everything in Essential', 'Five live classes a week', 'Group coaching', 'Monthly club challenges'], featured: true },
+                { name: 'BAYSE Club', price: '£39.99', items: ['Everything in Essential', `${LIVE_CLASSES_PER_WEEK} live classes a week`, 'Group coaching', 'Monthly club challenges'], featured: true },
                 { name: 'BAYSE Coaching', price: '£79.99', items: ['Everything in Club', 'Your own coach and check-ins', 'Extra nutrition support'] },
               ].map((p) => (
                 <div key={p.name} className={`p-6 ${p.featured ? 'panel' : 'border border-stone'}`}>
