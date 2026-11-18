@@ -1,6 +1,9 @@
 'use server';
 
+import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
+import { TEST_MODE_BYPASS, TEST_MODE_DAYS } from '@/lib/billing/test-mode';
 import { getStripe } from '@/lib/billing/stripe';
 import { isUuid } from '@/lib/billing/stripe-map';
 import { trialDaysFor } from '@/lib/billing/trial-math';
@@ -67,4 +70,40 @@ export async function createMembershipCheckout(priceId: string): Promise<Checkou
     console.error('[join] could not start checkout:', e instanceof Error ? e.message : e);
     return { error: 'failed' };
   }
+}
+
+/**
+ * TEMPORARY test-mode button on /join: skips payment and gives the signed-in account every
+ * entitlement for TEST_MODE_DAYS days, as a manual grant (the same kind BAYSE gives by hand).
+ * No Stripe customer, card or subscription is created. Does nothing once TEST_MODE_BYPASS is false.
+ */
+export async function enterTestMode(): Promise<void> {
+  if (!TEST_MODE_BYPASS) redirect('/join');
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user || !hasAccount(user)) redirect('/sign-in?next=/join');
+
+  const admin = createAdminClient();
+  const { data: keys, error: keysError } = await admin.from('entitlement_keys').select('key');
+  let failed = Boolean(keysError) || !keys?.length;
+  if (!failed) {
+    const endsAt = new Date(Date.now() + TEST_MODE_DAYS * 24 * 60 * 60 * 1000).toISOString();
+    // Access BAYSE has already given this account by hand is left alone; earlier test access is renewed.
+    const { data: existing, error: readError } = await admin.from('entitlements').select('id, entitlement_key, ends_at').eq('user_id', user.id).eq('source', 'manual').is('source_id', null);
+    const have = new Map((existing ?? []).map((e) => [e.entitlement_key as string, e]));
+    const missing = (keys ?? []).map((k) => k.key as string).filter((k) => !have.has(k));
+    const renew = (existing ?? []).filter((e) => e.ends_at).map((e) => e.id as string);
+    const { error: insertError } = missing.length
+      ? await admin.from('entitlements').insert(missing.map((k) => ({ user_id: user.id, entitlement_key: k, source: 'manual', ends_at: endsAt })))
+      : { error: null };
+    const { error: renewError } = renew.length
+      ? await admin.from('entitlements').update({ ends_at: endsAt }).in('id', renew)
+      : { error: null };
+    const error = readError ?? insertError ?? renewError;
+    if (error) {
+      console.error('[join] test mode could not give access:', error.message);
+      failed = true;
+    }
+  }
+  redirect(failed ? '/join?test=failed' : '/today');
 }

@@ -11,6 +11,8 @@ import { TIERS } from '@/lib/site/offer';
 import { Card, Notice, buttonClass } from '@/components/ui';
 import { EmbeddedCheckout } from '@/components/billing/EmbeddedCheckout';
 import { formatPence, type Plan, type Price } from '@/lib/types';
+import { TEST_MODE_BYPASS, TEST_MODE_DAYS } from '@/lib/billing/test-mode';
+import { enterTestMode } from './actions';
 
 export const metadata = { title: 'Choose your membership' };
 export const dynamic = 'force-dynamic';
@@ -112,6 +114,14 @@ export default async function Join({ searchParams }: { searchParams: Promise<Rec
               );
             })}
             <p className="text-xs text-muted">Pay in the app with Apple Pay, Google Pay or a card. Have a BAYSE code? Choose a membership, then tap <strong>Add promotion code</strong> on the payment step. Cancel any time from your account.</p>
+            {TEST_MODE_BYPASS && (
+              // TEMPORARY: skip payment while the platform is being tested. Switch off in lib/billing/test-mode.ts.
+              <form action={enterTestMode} className="space-y-2 border-t border-stone pt-5">
+                {sp.test === 'failed' && <Notice tone="warning" title="Test mode did not start">Access could not be given. Please try again.</Notice>}
+                <button type="submit" className={buttonClass('secondary', true)}>Test mode · skip payment</button>
+                <p className="text-xs text-muted">For testing only. Opens everything for {TEST_MODE_DAYS} days with no card and no payment.</p>
+              </form>
+            )}
           </>
         )}
       </main>
