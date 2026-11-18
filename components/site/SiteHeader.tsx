@@ -7,7 +7,9 @@ export function SiteHeader({ signedIn = false }: { signedIn?: boolean }) {
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 sm:px-6">
         <Link href="/" aria-label="BAYSE home"><Wordmark className="h-6" /></Link>
         <nav className="flex items-center gap-1 text-sm">
-          <Link href="/pricing" className="hidden rounded-pill px-3 py-2 text-muted hover:text-ink sm:inline-block">Membership</Link>
+          {[['/#live', 'Live'], ['/#on-demand', 'On demand'], ['/#community', 'Community'], ['/pricing', 'Membership']].map(([href, label]) => (
+            <Link key={href} href={href} className="hidden rounded-pill px-3 py-2 text-muted hover:text-ink md:inline-block">{label}</Link>
+          ))}
           {signedIn ? (
             <Link href="/today" className={buttonClass('primary')}>Open BAYSE</Link>
           ) : (
