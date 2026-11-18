@@ -3,6 +3,8 @@ import { requireUser } from '@/lib/auth/session';
 import { createClient } from '@/lib/supabase/server';
 import { loadDaily } from '@/lib/daily/data';
 import { computeProgress } from '@/lib/daily/progress';
+import { computeGame, POINTS } from '@/lib/daily/game';
+import { Rings } from '@/components/member/Rings';
 import { Notice } from '@/components/ui';
 import { claimReward } from './actions';
 
@@ -17,7 +19,9 @@ export default async function Progress({ searchParams }: { searchParams: Promise
   const daily = await loadDaily(user.id);
   const p = computeProgress(daily.completions);
   const supabase = await createClient();
-  const { data } = await supabase.rpc('my_rewards');
+  const [{ data }, { data: joined }] = await Promise.all([supabase.rpc('my_rewards'), supabase.rpc('my_live_attendance')]);
+  const live = ((joined ?? []) as { minutes: number; joined_at: string }[]).map((l) => ({ minutes: l.minutes, at: l.joined_at }));
+  const g = computeGame(daily.completions, live, daily.weeklyGoal);
   const rewards = (data ?? []) as Reward[];
   // Codes are only ever returned by the server, and only for rewards this member has claimed.
   const codes = new Map<string, { code: string | null; how: string | null }>();
@@ -30,13 +34,41 @@ export default async function Progress({ searchParams }: { searchParams: Promise
   const earned = p.milestones.filter((m) => m.earned), next = p.milestones.filter((m) => !m.earned).slice(0, 3);
   return (
     <main className="page space-y-5">
-      <Link href="/you" className="text-sm text-muted hover:text-ink">← You</Link>
       <div>
         <h1 className="text-[30px] leading-none">Progress</h1>
-        <p className="mt-2 text-muted">Consistency and milestones, not the scales.</p>
+        <p className="mt-2 text-muted">Close your rings, collect points and stars. Consistency, not the scales.</p>
       </div>
       {sp.e && <Notice tone="error">{sp.e}</Notice>}
       {sp.claimed && <Notice tone="success" title="Reward claimed">Well earned. Your code and how to use it are below.</Notice>}
+
+      <section className="border border-white p-4">
+        <div className="flex items-center justify-between"><p className="eyebrow">This week’s rings</p><p className="text-xs text-muted">{g.closed} of 3 closed</p></div>
+        <div className="mt-3 flex items-center gap-5">
+          <Rings rings={g.rings} />
+          <ul className="min-w-0 flex-1 space-y-2 text-sm">
+            {g.rings.map((r, i) => (
+              <li key={r.key} className="flex items-center gap-2">
+                <span aria-hidden className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: ['#ffffff', '#b9b9b9', '#7d7d7d'][i] }} />
+                <span className="min-w-0"><span className="font-bold">{r.label}</span> <span className="text-muted">{r.value} of {r.goal} {r.unit}{r.value >= r.goal ? ' ✓' : ''}</span></span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <p className="mt-3 text-xs text-muted">{g.closed === 3 ? 'All three rings closed. Brilliant week.' : 'Finish sessions to fill Move and Minutes. Join a live class to close Live.'}</p>
+      </section>
+
+      <section className="border border-stone p-4">
+        <div className="flex items-end justify-between gap-3">
+          <div><p className="eyebrow">Level {g.levelNumber}</p><p className="text-2xl font-bold leading-tight">{g.level}</p></div>
+          <div className="text-right"><p className="text-[32px] font-bold leading-none">{g.points}</p><p className="text-xs text-muted">points · +{g.weekPoints} this week</p></div>
+        </div>
+        {g.nextLevel && <>
+          <div className="mt-3 h-1.5 bg-stone"><div className="h-full bg-white" style={{ width: `${Math.max(2, Math.min(100, g.nextLevel.progress * 100))}%` }} /></div>
+          <p className="mt-2 text-xs text-muted">{g.nextLevel.pointsToGo} points to {g.nextLevel.name}</p>
+        </>}
+        <p className="mt-3 text-lg" aria-label={`${g.stars} stars`}>{g.stars > 0 ? '★'.repeat(Math.min(g.stars, 12)) : '☆'}{g.stars > 12 ? ` +${g.stars - 12}` : ''} <span className="text-xs text-muted">{g.stars} {g.stars === 1 ? 'star' : 'stars'} · one for every week you hit your goal</span></p>
+        <p className="mt-2 text-xs text-muted">{POINTS.session} points for every session, {POINTS.live} for every live class you join, and {POINTS.goalWeek} bonus when you hit your weekly goal.</p>
+      </section>
 
       <div className="grid grid-cols-3 gap-px border border-stone bg-stone text-center">
         {[[p.classes, 'classes'], [`${p.hours}h`, 'trained'], [p.streak, 'week streak']].map(([n, l]) => (
