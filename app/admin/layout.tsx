@@ -21,7 +21,7 @@ const NAV: { href: string; label: string; area: StaffArea }[] = [
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const { roles, user } = await requireStaff();
   const nav = NAV.filter((n) => canUse(roles, n.area));
-  const roleLabel = roles.some((r) => r.role === 'super_admin') ? 'Owner' : roles.some((r) => r.role === 'admin') ? 'Admin' : roles.some((r) => r.role === 'instructor') ? 'Instructor' : 'Moderator';
+  const roleLabel = roles.some((r) => r.role === 'super_admin') ? 'Owner' : roles.some((r) => r.role === 'admin') ? 'Admin' : roles.some((r) => r.role === 'virtual_assistant') ? 'Virtual assistant' : roles.some((r) => r.role === 'instructor') ? 'Instructor' : 'Moderator';
   return (
     <div className="min-h-dvh md:grid md:grid-cols-[220px_1fr]">
       <aside className="border-b border-stone bg-surface md:min-h-dvh md:border-b-0 md:border-r">

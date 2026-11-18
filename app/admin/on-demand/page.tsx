@@ -13,7 +13,7 @@ export const dynamic = 'force-dynamic';
 const btn = 'inline-flex min-h-[36px] items-center border border-white px-3 text-xs font-bold uppercase hover:bg-white hover:text-black';
 
 export default async function OnDemand({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
-  const { isAdmin } = await requireStaff('content');
+  const { canPublish: isAdmin } = await requireStaff('content');
   const sp = await searchParams;
   const supabase = await createClient();
   const [{ data: classes }, { data: instructors }] = await Promise.all([

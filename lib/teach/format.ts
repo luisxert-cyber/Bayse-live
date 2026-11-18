@@ -35,6 +35,7 @@ export const ROLE_LABEL: Record<string, string> = {
   instructor: 'Instructor',
   moderator: 'Moderator',
   studio_manager: 'Studio manager',
+  virtual_assistant: 'Virtual assistant',
   admin: 'Admin',
   super_admin: 'Owner',
 };
