@@ -9,6 +9,7 @@ import { STEPS, nextStepId, validateAnswer, PERSONALISE_PATH } from '@/lib/onboa
 import { getStripe } from '@/lib/billing/stripe';
 import { publicEnv } from '@/lib/env';
 import { isUuid } from '@/lib/billing/stripe-map';
+import { hasAccount } from '@/lib/auth/account';
 
 const CONSENT_VERSION = 'v1-2026-11';
 
@@ -157,7 +158,7 @@ export async function acceptProgramme(form: FormData) {
     await supabase.from('programme_recommendations').update({ accepted_at: new Date().toISOString() }).eq('id', recId).eq('user_id', user.id);
   }
   await markStep(supabase, user.id, 'account');
-  redirect(user.is_anonymous ? '/start/account' : '/start/membership');
+  redirect(hasAccount(user) ? '/start/membership' : '/start/account');
 }
 
 const AccountSchema = z.object({
@@ -171,14 +172,20 @@ export async function createAccount(_prev: StepState, form: FormData): Promise<S
   if (!parsed.success) return { error: parsed.error.issues[0].message };
   if (form.get('terms') !== 'on') return { error: 'Please agree to the terms and privacy notice.' };
   const { supabase, user } = await requireSession();
-  if (!user.is_anonymous) redirect('/start/membership');
+  if (hasAccount(user)) redirect('/start/membership');
   const base = await siteUrl();
-  const { error } = await supabase.auth.updateUser(
-    { email: parsed.data.email, password: parsed.data.password },
-    { emailRedirectTo: `${base}/auth/callback?next=/start/membership` },
-  );
+  const opts = { emailRedirectTo: `${base}/auth/callback?next=/start/membership` };
+  let { error } = await supabase.auth.updateUser({ email: parsed.data.email, password: parsed.data.password }, opts);
+  // Some Supabase settings refuse a password until the email is confirmed. Save the email now;
+  // the confirmation link signs them in, and they can set a password from "Forgot password".
+  if (error && !/already/i.test(error.message)) {
+    console.warn('[account] email+password update failed, retrying with email only:', error.message);
+    ({ error } = await supabase.auth.updateUser({ email: parsed.data.email }, opts));
+  }
   if (error) {
+    console.warn('[account] create failed:', error.message);
     if (/already/i.test(error.message)) return { error: 'That email already has a BAYSE account. Sign in instead, and your new answers will be kept on this device until you do.' };
+    if (/rate limit/i.test(error.message)) return { error: 'Too many sign-ups in a short time. Please wait a minute and try again.' };
     return { error: 'We could not create your account. Please check your details and try again.' };
   }
   if (form.get('marketing') === 'on') {
@@ -191,7 +198,7 @@ export async function createAccount(_prev: StepState, form: FormData): Promise<S
 /** Starts Stripe Checkout (test mode until launch) for the chosen price. */
 export async function startCheckout(form: FormData) {
   const { supabase, user } = await requireSession();
-  if (user.is_anonymous) redirect('/start/account');
+  if (!hasAccount(user)) redirect('/start/account');
   const priceId = String(form.get('price_id') ?? '');
   if (!isUuid(priceId)) redirect('/start/membership?error=price');
 
@@ -232,6 +239,11 @@ export async function startCheckout(form: FormData) {
 export async function finishOnboarding() {
   const { supabase, user } = await requireSession();
   await supabase.from('onboarding_answers').upsert({ user_id: user.id, current_step: 'done', completed_at: new Date().toISOString() }, { onConflict: 'user_id' });
-  await createAdminClient().from('profiles').update({ onboarding_completed_at: new Date().toISOString() }).eq('id', user.id);
+  try {
+    await createAdminClient().from('profiles').update({ onboarding_completed_at: new Date().toISOString() }).eq('id', user.id);
+  } catch (e) {
+    // Missing service key on this deploy: the answers are saved, only the "finished" stamp waits.
+    console.error('[onboarding] could not stamp completion:', e instanceof Error ? e.message : e);
+  }
   redirect('/today?welcome=1');
 }

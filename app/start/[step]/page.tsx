@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { STEPS, FLOW, stepIndex, prevStepId, PERSONALISE_PATH } from '@/lib/onboarding/steps';
 import { createClient } from '@/lib/supabase/server';
+import { hasAccount } from '@/lib/auth/account';
 import { loadOnboarding } from '@/lib/data/onboarding';
 import { buildRecommendation } from '@/lib/data/recommendation';
 import { Progress, Notice, Card, buttonClass } from '@/components/ui';
@@ -65,7 +66,7 @@ export default async function StepPage({ params, searchParams }: Props) {
   }
 
   if (!user) redirect('/start/welcome?expired=1');
-  if (step.later && user.is_anonymous) redirect('/start/goals');
+  if (step.later && !hasAccount(user)) redirect('/start/goals');
   const data = await loadOnboarding(user.id);
 
   const header = step.later ? (
@@ -133,12 +134,12 @@ export default async function StepPage({ params, searchParams }: Props) {
     }
 
     case 'account':
-      if (!user.is_anonymous) redirect('/start/membership');
+      if (hasAccount(user)) redirect('/start/membership');
       body = <AccountForm action={createAccount} />;
       break;
 
     case 'membership': {
-      if (user.is_anonymous) redirect('/start/account');
+      if (!hasAccount(user)) redirect('/start/account');
       const [{ data: plans }, { data: prices }, { data: ents }] = await Promise.all([
         supabase.from('plans').select('id, key, name, description, sort, is_hypothesis').order('sort'),
         supabase.from('prices').select('id, plan_id, stripe_price_id, billing_interval, amount_pence, currency, trial_days').eq('billing_interval', 'month'),

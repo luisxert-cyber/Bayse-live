@@ -1,0 +1,31 @@
+name: Live site test
+# Presses every button on the deployed site. Runs after each push (once Netlify has had time to
+# publish) and on demand. Read the report under the run's "Summary".
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium webkit
+      - name: Wait for Netlify to publish this commit
+        if: github.event_name == 'push'
+        run: sleep 150
+      - name: Test the live site
+        env:
+          E2E_BASE_URL: https://bayse-live.netlify.app
+        run: npx playwright test tests/e2e/live-site.spec.ts --reporter=list,html
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 7
