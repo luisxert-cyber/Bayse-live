@@ -11,10 +11,10 @@ export async function loadMember(userId: string) {
     supabase.from('user_roles').select('role, studio_id'),
   ]);
   return {
-    profile: profile as null | { first_name: string | null; display_name: string | null; home_studio_id: string | null; onboarding_completed_at: string | null; studios: { name: string } | null },
+    profile: profile as unknown as null | { first_name: string | null; display_name: string | null; home_studio_id: string | null; onboarding_completed_at: string | null; studios: { name: string } | null },
     entitlements: new Set((ents ?? []).map((e) => e.entitlement_key as string)),
-    subscription: ((subs ?? [])[0] ?? null) as null | { status: string; trial_end: string | null; current_period_end: string | null; cancel_at_period_end: boolean; plans: { name: string } | null },
-    links: (links ?? []) as Array<{ status: string; tier: string; studios: { name: string } | null }>,
+    subscription: ((subs ?? [])[0] ?? null) as unknown as null | { status: string; trial_end: string | null; current_period_end: string | null; cancel_at_period_end: boolean; plans: { name: string } | null },
+    links: (links ?? []) as unknown as Array<{ status: string; tier: string; studios: { name: string } | null }>,
     roles: (roles ?? []) as Array<{ role: string; studio_id: string | null }>,
   };
 }
