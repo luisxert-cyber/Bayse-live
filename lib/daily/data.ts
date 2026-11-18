@@ -10,7 +10,7 @@ export async function loadDaily(userId: string) {
     supabase.from('workout_completions').select('workout_key, minutes, completed_at').eq('user_id', userId).order('completed_at', { ascending: false }).limit(1000),
     supabase.from('onboarding_answers').select('goals, session_length, sessions_per_week').eq('user_id', userId).maybeSingle(),
     supabase.from('programme_recommendations').select('sessions_per_week').eq('user_id', userId).order('created_at', { ascending: false }).limit(1).maybeSingle(),
-    supabase.from('live_classes').select('weekday, starts_at, name, minutes').eq('active', true),
+    supabase.from('live_classes').select('weekday, starts_at, name, minutes').eq('active', true).is('one_off_date', null),
     supabase.rpc('has_entitlement', { k: 'live_classes' }),
   ]);
   const completions: Completion[] = (rows ?? []).map((r) => ({ key: r.workout_key as string, minutes: r.minutes as number, at: r.completed_at as string }));

@@ -26,7 +26,7 @@ export default async function Instructor({ params, searchParams }: { params: Pro
   const user = await getUser().catch(() => null);
   const signedIn = hasAccount(user);
   const [{ data: classes }, { data: slots }, { data: settings }, credits] = await Promise.all([
-    supabase.from('live_class_instructors').select('lead, live_classes(name, weekday, starts_at, active)').eq('instructor_id', t.id),
+    supabase.from('live_class_instructors').select('lead, live_classes(name, weekday, starts_at, active, one_off_date)').eq('instructor_id', t.id),
     t.offers_private ? supabase.rpc('instructor_open_slots', { p_instructor: t.id, p_days: 21 }) : Promise.resolve({ data: [] }),
     supabase.from('booking_settings').select('price_pence, member_price_pence, session_minutes, cancel_cutoff_hours').single(),
     signedIn ? supabase.from('coaching_credits').select('id').is('session_id', null).gt('expires_at', new Date().toISOString()) : Promise.resolve({ data: [] }),
@@ -55,7 +55,7 @@ export default async function Instructor({ params, searchParams }: { params: Pro
           {classes && classes.length > 0 && (
             <div className="mt-6">
               <p className="text-sm font-bold uppercase tracking-[0.08em]">Live classes</p>
-              <ul className="mt-2 text-sm text-muted">{classes.map((c, i) => { const lc = c.live_classes as unknown as { name: string; weekday: number; starts_at: string; active: boolean } | null; return lc?.active ? <li key={i}>{WEEKDAYS[lc.weekday - 1]} {lc.starts_at.slice(0, 5)} · {lc.name}</li> : null; })}</ul>
+              <ul className="mt-2 text-sm text-muted">{classes.map((c, i) => { const lc = c.live_classes as unknown as { name: string; weekday: number; starts_at: string; active: boolean; one_off_date: string | null } | null; return lc?.active && !lc.one_off_date ? <li key={i}>{WEEKDAYS[lc.weekday - 1]} {lc.starts_at.slice(0, 5)} · {lc.name}</li> : null; })}</ul>
               <Link href="/live-classes" className="mt-1 inline-block text-xs underline">Full timetable</Link>
             </div>
           )}

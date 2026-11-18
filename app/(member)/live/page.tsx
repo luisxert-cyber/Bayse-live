@@ -8,7 +8,7 @@ import { bookClass, cancelBooking, joinClass } from './actions';
 export const metadata = { title: 'Live' };
 export const dynamic = 'force-dynamic';
 
-type Slot = { class_id: string; class_date: string; starts_at: string; name: string; minutes: number; starts_ts: string; booked: number; mine: boolean; state: 'upcoming' | 'open' | 'finished' };
+type Slot = { class_id: string; class_date: string; starts_at: string; name: string; minutes: number; starts_ts: string; booked: number; mine: boolean; state: 'upcoming' | 'open' | 'finished' | 'cancelled' };
 
 const pretty = (t: string) => { const h = Number(t.slice(0, 2)); const m = t.slice(3, 5); return `${h % 12 || 12}${m === '00' ? '' : `:${m}`}${h < 12 ? 'am' : 'pm'}`; };
 const dayLabel = (iso: string, i: number) => (i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : new Date(`${iso}T12:00:00Z`).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short', timeZone: 'UTC' }));
@@ -22,6 +22,7 @@ function Hidden({ s }: { s: Slot }) {
 /** The one button a class needs right now: book, join (from 15 minutes before) or nothing once it has finished. */
 function Action({ s, canJoin, big = false }: { s: Slot; canJoin: boolean; big?: boolean }) {
   const size = big ? '' : '!min-h-[38px] !px-4 text-sm';
+  if (s.state === 'cancelled') return <span className="text-xs font-bold uppercase text-clay">Cancelled</span>;
   if (s.state === 'finished') return <span className="text-xs text-muted">Finished</span>;
   if (!canJoin) return <span className="text-xs text-muted">Inner Circle</span>;
   if (s.state === 'open') return <form action={joinClass}><Hidden s={s} /><button className={`${buttonClass('solid')} ${size}`}>Join now</button></form>;
@@ -42,14 +43,14 @@ export default async function Live({ searchParams }: { searchParams: Promise<{ e
   const slots = (data ?? []) as Slot[];
   const canJoin = entitled === true || (roles ?? []).some((r) => ['admin', 'super_admin', 'virtual_assistant'].includes(r.role as string));
   const days = [...new Set(slots.map((s) => s.class_date))];
-  const next = slots.find((s) => s.state !== 'finished' && (s.state === 'open' || s.class_date === days[0]));
+  const next = slots.find((s) => s.state !== 'finished' && s.state !== 'cancelled' && (s.state === 'open' || s.class_date === days[0]));
   const mine = slots.filter((s) => s.mine && s.state !== 'finished');
 
   return (
     <main className="page space-y-5">
       <div>
         <h1 className="text-[30px] leading-none">Live</h1>
-        <p className="mt-2 text-muted">17 classes a week, all 45 minutes, UK time. Book your place, then join from 15 minutes before the start.</p>
+        <p className="mt-2 text-muted">Live classes on Zoom, UK time. Book your place, then join from 15 minutes before the start.</p>
       </div>
 
       {sp.e && <Notice tone="error">{sp.e}</Notice>}
@@ -80,6 +81,7 @@ export default async function Live({ searchParams }: { searchParams: Promise<{ e
                 <span className="min-w-0 flex-1"><span className="block font-semibold">{shortDay(s.class_date)} · {pretty(s.starts_at)}</span><span className="text-sm text-muted">{s.name} · {going(s.booked, true)}</span></span>
                 {s.state === 'open'
                   ? <form action={joinClass}><Hidden s={s} /><button className={`${buttonClass('solid')} !min-h-[38px] !px-4 text-sm`}>Join now</button></form>
+                  : s.state === 'cancelled' ? <span className="text-xs font-bold uppercase text-clay">Class cancelled</span>
                   : <form action={cancelBooking}><Hidden s={s} /><button className="px-2 py-2 text-sm text-muted underline">Cancel</button></form>}
               </li>
             ))}
@@ -92,12 +94,12 @@ export default async function Live({ searchParams }: { searchParams: Promise<{ e
           <h2 className="mb-2 text-sm font-bold uppercase tracking-[0.1em]">{dayLabel(d, i)}</h2>
           <div className="space-y-2">
             {slots.filter((s) => s.class_date === d).map((s) => (
-              <Card key={s.class_id} className={`flex items-center gap-4 !p-4 ${s.state === 'finished' ? 'opacity-50' : ''}`}>
+              <Card key={s.class_id} className={`flex items-center gap-4 !p-4 ${s.state === 'finished' || s.state === 'cancelled' ? 'opacity-50' : ''}`}>
                 <span className="w-14 shrink-0 font-display text-lg font-extrabold">{pretty(s.starts_at)}</span>
                 <span className="min-w-0 flex-1">
                   <span className="block font-semibold">{s.name}</span>
                   <span className="block text-sm text-muted">{s.minutes} min · mat</span>
-                  {s.state !== 'finished' && <span className="mt-0.5 block text-xs text-muted">{going(s.booked, s.mine)}</span>}
+                  {s.state !== 'finished' && s.state !== 'cancelled' && <span className="mt-0.5 block text-xs text-muted">{going(s.booked, s.mine)}</span>}
                 </span>
                 <Action s={s} canJoin={canJoin} />
               </Card>
