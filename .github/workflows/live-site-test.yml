@@ -15,7 +15,7 @@ jobs:
         with:
           node-version: 22
       - run: npm install --no-audit --no-fund
-      - run: npx playwright install --with-deps chromium webkit
+      - run: npx playwright install --with-deps chromium
       - name: Wait for Netlify to publish this commit
         if: github.event_name == 'push'
         run: sleep 150
