@@ -34,7 +34,7 @@ Migrations: `supabase/migrations/` (plain SQL, applied in order). Seed: `supabas
 
 ## Automatic behaviour
 
-- New auth user → profile row.
+- New auth user → profile row. Account email changes → profile email (migration 0400).
 - Subscription or studio link change → entitlements rebuilt for that member.
 - `past_due` keeps access for 7 days after the period end, then stops.
 - Plan or tier mapping change → everyone affected is rebuilt.
@@ -43,4 +43,4 @@ Migrations: `supabase/migrations/` (plain SQL, applied in order). Seed: `supabas
 
 ## Tests
 
-`supabase/tests/rls_test.sql`: 56 checks signing in as a member, two studio managers, an admin, a super admin and an anonymous visitor. Last run: 56/56 passed on 18 November 2026 against Postgres 17 (Supabase, London) in an isolated schema.
+`supabase/tests/rls_test.sql`: 56 checks signing in as a member, two studio managers, an admin, a super admin and an anonymous visitor. Last run: 56/56 passed (check 57, email sync, was added afterwards and has not run yet) on 18 November 2026 against Postgres 17 (Supabase, London) in an isolated schema.

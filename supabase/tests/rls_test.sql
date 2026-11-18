@@ -23,6 +23,10 @@ insert into auth.users (id, instance_id, aud, role, email, raw_user_meta_data, c
 
 select public._t_ok('signup trigger creates profiles', (select count(*) = 7 from public.profiles where email like 'rls-%@bayse.invalid'));
 select public._t_ok('signup trigger copies first name', (select first_name = 'Amy' from public.profiles where id = '11111111-1111-4111-8111-111111111111'));
+-- Anonymous onboarding user later gets an email from Supabase Auth: the profile follows.
+update auth.users set email = 'rls-c2@bayse.invalid' where id = '33333333-3333-4333-8333-333333333333';
+select public._t_ok('email change syncs to profile', (select email = 'rls-c2@bayse.invalid' from public.profiles where id = '33333333-3333-4333-8333-333333333333'));
+update auth.users set email = 'rls-c@bayse.invalid' where id = '33333333-3333-4333-8333-333333333333';
 
 update public.profiles set home_studio_id = (select id from public.studios where slug = 'altrincham')
  where id in ('11111111-1111-4111-8111-111111111111', '22222222-2222-4222-8222-222222222222');

@@ -10,6 +10,7 @@ Updated 18 November 2026. Labels: **Complete and tested** · **Built not tested*
 | --- | --- | --- |
 | Database schema (identity, roles, studios, billing, studio links, onboarding, consent, programmes, flags, audit) | Complete and tested | Applied cleanly to Postgres 17 on Supabase in an isolated schema |
 | Row-level security and role permissions | Complete and tested | 56/56 checks in `supabase/tests/rls_test.sql` |
+| Profile email follows the account email (migration 0400) | Built not tested | Test added (check 57); runs in CI and on the next remote run |
 | Entitlements from subscriptions and studio links (incl. 7-day past-due grace, cancellation) | Complete and tested | Covered by RLS tests |
 | Consent-gated special-category data, withdrawal deletes data | Complete and tested | Covered by RLS tests |
 | Data export (`export_my_data`) | Complete and tested (database) · Built not tested (download route) | |
