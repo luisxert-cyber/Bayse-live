@@ -3,7 +3,7 @@ import { Wordmark } from '@/components/ui';
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-stone">
+    <footer className="border-t border-white">
       <div className="mx-auto grid max-w-5xl gap-8 px-4 py-10 text-sm text-muted sm:grid-cols-3 sm:px-6">
         <div>
           <Wordmark className="h-5" />

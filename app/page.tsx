@@ -19,26 +19,38 @@ export default async function Home() {
     <>
       <SiteHeader signedIn={Boolean(user)} />
       <main>
-        {/* Hero */}
-        <section className="mx-auto grid max-w-5xl items-center gap-10 px-4 pb-14 pt-10 sm:px-6 md:grid-cols-[1.1fr_1fr] md:pt-16">
-          <div>
-            <Eyebrow>BAYSE online · live and on demand</Eyebrow>
-            <h1 className="mt-4 text-[44px] font-semibold leading-[1.02] sm:text-[56px]">Your programme.<br />Your coach.<br />Your people.</h1>
-            <p className="mt-5 max-w-md text-lg text-muted">Live Pilates classes five times a week, an on-demand library, a plan built around you and a real coach, all from the instructors behind BAYSE studios.</p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/start/welcome" className={buttonClass('primary')}>Start your 7-day free trial</Link>
-              <Link href="#membership" className={buttonClass('secondary')}>See membership</Link>
-            </div>
-            <p className="mt-4 text-sm text-muted">Build your plan in three minutes. Cancel any time.</p>
+        {/* Hero: banner photo with boxed call to action, as on the studio site */}
+        <section className="relative">
+          <img src="/images/studio-mat-core.webp" alt="" className="h-[300px] w-full object-cover opacity-70 sm:h-[380px]" style={{ objectPosition: '60% 35%' }} />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-black/50" />
+          <div className="absolute inset-x-0 top-8 mx-auto max-w-5xl px-4 sm:px-6">
+            <Link href="/start/welcome" className="inline-block border-[3px] border-white bg-black/20 px-5 py-3 text-lg font-bold uppercase tracking-[0.01em] backdrop-blur-[1px] hover:bg-white hover:text-black sm:text-2xl">Start your 7-day free trial</Link>
           </div>
-          <div className="relative mx-auto w-full max-w-md pb-10 md:pb-0">
-            <img src="/images/studio-mat-core.webp" alt="A BAYSE instructor teaching a mat Pilates core exercise" className="aspect-[4/5] w-[78%] rounded-[28px] object-cover grayscale" />
-            <div className="absolute -bottom-2 right-0 origin-bottom-right scale-[0.82] sm:scale-90 md:-bottom-8"><TodayPhone /></div>
+        </section>
+
+        <section className="mx-auto grid max-w-5xl grid-cols-2 gap-4 px-4 py-10 sm:gap-6 sm:px-6">
+          <img src="/images/studio-movement.webp" alt="A BAYSE member moving through a mat Pilates sequence in the studio" className="aspect-square w-full object-cover" />
+          <img src="/images/studio-mat-core.webp" alt="A BAYSE instructor teaching a mat Pilates core exercise" className="aspect-square w-full object-cover" />
+        </section>
+
+        <section className="mx-auto max-w-5xl px-4 pb-14 sm:px-6">
+          <div className="panel grid items-center gap-10 p-6 sm:p-10 md:grid-cols-[1.2fr_1fr]">
+            <div>
+              <h1 className="text-[40px] sm:text-[56px]">Your programme. Your coach. Your people.</h1>
+              <p className="subhead mt-4 text-2xl sm:text-3xl">Live and on-demand Pilates</p>
+              <p className="mt-6 max-w-md text-lg">From the instructors behind BAYSE studios: live classes five times a week, an on-demand library, a plan built around you and a real coach.</p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link href="/start/welcome" className={buttonClass('primary')}>Build my plan</Link>
+                <Link href="#membership" className={buttonClass('secondary')}>See membership</Link>
+              </div>
+              <p className="mt-4 text-sm text-muted">Three minutes to build your plan. Cancel any time.</p>
+            </div>
+            <div className="flex justify-center"><TodayPhone /></div>
           </div>
         </section>
 
         {/* What you get */}
-        <section className="border-y border-stone bg-surface">
+        <section className="border-y border-white">
           <div className="mx-auto grid max-w-5xl grid-cols-2 gap-x-4 gap-y-6 px-4 py-10 sm:grid-cols-5 sm:px-6">
             {[
               ['5', 'live classes a week'],
@@ -47,7 +59,7 @@ export default async function Home() {
               ['4–12', 'week personal programmes'],
               ['7', 'day free trial'],
             ].map(([n, l]) => (
-              <div key={l}><p className="silver-text text-[34px] font-extrabold leading-none">{n}</p><p className="mt-1.5 text-sm text-muted">{l}</p></div>
+              <div key={l}><p className="text-[36px] font-bold leading-none">{n}</p><p className="mt-1.5 text-sm text-muted">{l}</p></div>
             ))}
           </div>
         </section>
@@ -121,7 +133,7 @@ export default async function Home() {
         </section>
 
         {/* Coaching, nutrition, wellness */}
-        <section className="border-y border-stone bg-surface">
+        <section className="border-y border-white">
           <div className="mx-auto grid max-w-5xl gap-8 px-4 py-16 sm:px-6 md:grid-cols-3">
             <div>
               <CoachGraphic />
@@ -170,7 +182,7 @@ export default async function Home() {
 
         {/* Studio members */}
         <section className="mx-auto max-w-5xl px-4 pb-16 sm:px-6">
-          <div className="rounded-[28px] border border-stone bg-surface px-6 py-12 sm:px-12">
+          <div className="panel px-6 py-12 sm:px-12">
             <Eyebrow>Already a BAYSE studio member?</Eyebrow>
             <h2 className="mt-3 max-w-lg text-xl font-semibold sm:text-2xl">£99 and £148 members get BAYSE online included</h2>
             <p className="mt-3 max-w-lg text-muted">Keep your routine going at home or away. Choose your studio when you sign up; once your studio confirms your membership, everything switches on. No second payment.</p>
@@ -179,7 +191,7 @@ export default async function Home() {
         </section>
 
         {/* Membership */}
-        <section id="membership" className="border-t border-stone bg-surface">
+        <section id="membership" className="border-t border-white">
           <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6">
             <Eyebrow>Membership</Eyebrow>
             <h2 className="mt-3 text-xl font-semibold sm:text-2xl">Start with 7 days free</h2>
@@ -189,8 +201,8 @@ export default async function Home() {
                 { name: 'BAYSE Club', price: '£39.99', items: ['Everything in Essential', 'Five live classes a week', 'Group coaching', 'Monthly club challenges'], featured: true },
                 { name: 'BAYSE Coaching', price: '£79.99', items: ['Everything in Club', 'Your own coach and check-ins', 'Extra nutrition support'] },
               ].map((p) => (
-                <div key={p.name} className={`rounded-card p-6 ${p.featured ? 'silver-border' : 'border border-stone bg-bg'}`}>
-                  {p.featured && <p className="silver-text mb-2 text-xs font-bold uppercase tracking-[0.14em]">Most popular</p>}
+                <div key={p.name} className={`p-6 ${p.featured ? 'panel' : 'border border-stone'}`}>
+                  {p.featured && <p className="subhead mb-2 text-sm">Most popular</p>}
                   <p className="text-lg font-semibold">{p.name}</p>
                   <p className="mt-2"><span className="text-[32px] font-extrabold leading-none">{p.price}</span> <span className="text-sm text-muted">/ month</span></p>
                   <ul className="mt-5 space-y-2 text-sm">{p.items.map((i) => <li key={i} className="flex gap-3"><Tick />{i}</li>)}</ul>

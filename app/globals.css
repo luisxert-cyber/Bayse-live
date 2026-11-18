@@ -6,11 +6,11 @@
    Brand default is the black BAYSE look (matches baysereformerpilates.com and the logo).
    A light ivory theme is kept for anyone who sets data-theme="light". */
 :root {
-  --bg: 10 10 10;           /* #0A0A0A */
-  --surface: 21 21 21;      /* #151515 */
-  --stone: 42 42 42;        /* #2A2A2A lines */
-  --ink: 245 245 244;       /* #F5F5F4 text */
-  --muted: 184 184 184;     /* #B8B8B8 grey, readable on black */
+  --bg: 0 0 0;              /* pure black, as baysereformerpilates.com */
+  --surface: 0 0 0;         /* panels are outlined, not filled */
+  --stone: 77 77 77;        /* #4D4D4D thin dividing lines */
+  --ink: 255 255 255;       /* white text */
+  --muted: 200 200 200;     /* #C8C8C8 grey, readable on black */
   --accent: 255 255 255;    /* white */
   --accent-ink: 10 10 10;
   --sage: 230 230 230;      /* brand is black, white and grey only */
@@ -40,14 +40,16 @@
     min-height: 100dvh;
   }
   h1, h2, h3 { color: rgb(var(--ink)); }
-  h1, h2 { font-family: var(--font-brand), Montserrat, system-ui, sans-serif; font-weight: 800; text-transform: uppercase; letter-spacing: -0.02em; line-height: 1.02; text-wrap: balance; }
-  h3 { font-family: var(--font-brand), Montserrat, system-ui, sans-serif; font-weight: 700; letter-spacing: -0.01em; text-wrap: balance; }
+  h1, h2 { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: -0.01em; line-height: 1.05; text-wrap: balance; }
+  h3 { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; letter-spacing: -0.01em; text-wrap: balance; }
   :focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 2px; }
   ::selection { background: rgb(var(--accent) / 0.25); }
 }
 
 @layer components {
   .font-serif { font-weight: 700; letter-spacing: -0.01em; }
+  .subhead { font-style: italic; font-weight: 600; text-transform: uppercase; letter-spacing: -0.01em; }
+  .panel { border: 3px solid rgb(var(--ink)); }
   .eyebrow { @apply text-xs font-medium uppercase text-muted; letter-spacing: 0.14em; }
   .page { @apply mx-auto w-full max-w-xl px-4 pb-28 pt-6 sm:px-6; }
   .page-wide { @apply mx-auto w-full max-w-5xl px-4 pb-16 pt-6 sm:px-6; }

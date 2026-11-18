@@ -82,9 +82,9 @@ export function TodayPhone() {
 /** A live class: instructor video, spotter feedback, participants. */
 export function LiveClassGraphic({ photo }: { photo: string }) {
   return (
-    <div className="silver-border overflow-hidden rounded-[24px] p-0 shadow-card">
-      <div className="relative aspect-[16/10] overflow-hidden rounded-t-[23px]">
-        <img src={photo} alt="" className="h-full w-full object-cover grayscale" />
+    <div className="silver-border overflow-hidden p-0 shadow-card">
+      <div className="relative aspect-[16/10] overflow-hidden ">
+        <img src={photo} alt="" className="h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
         <span className="absolute left-3 top-3 flex items-center gap-1.5 rounded-full bg-black/70 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />LIVE · 38 joined</span>
         <span className="absolute right-3 top-3 rounded-full bg-black/70 px-2.5 py-1 text-[11px] text-white/80 backdrop-blur">Mat Pilates · 22:41</span>
@@ -108,7 +108,7 @@ export function LiveClassGraphic({ photo }: { photo: string }) {
 /** Coaching: a short conversation. */
 export function CoachGraphic() {
   return (
-    <div className="space-y-2 rounded-[22px] border border-stone bg-[#111] p-4 text-[12.5px]">
+    <div className="space-y-2 border border-stone bg-[#111] p-4 text-[12.5px]">
       <div className="flex items-center gap-2 pb-1"><span className="silver-fill grid h-7 w-7 place-items-center rounded-full text-[10px] font-bold">E</span><div><p className="font-semibold leading-none">Emma</p><p className="text-[11px] text-muted">Your BAYSE coach · replies within a day</p></div></div>
       <p className="max-w-[85%] rounded-2xl rounded-tl-md bg-white/[0.08] px-3 py-2">How did week 1 feel? Anything sore?</p>
       <p className="ml-auto max-w-[80%] rounded-2xl rounded-tr-md bg-white px-3 py-2 text-black">Good! Lower back a bit tight after bridges.</p>
@@ -120,7 +120,7 @@ export function CoachGraphic() {
 /** Nutrition: a recipe and its shopping list. */
 export function NutritionGraphic() {
   return (
-    <div className="rounded-[22px] border border-stone bg-[#111] p-4 text-[12.5px]">
+    <div className="border border-stone bg-[#111] p-4 text-[12.5px]">
       <div className="flex items-center justify-between"><p className="font-semibold">Lemon chicken traybake</p><span className="rounded-full border border-white/20 px-2 py-0.5 text-[10px] text-muted">25 min</span></div>
       <p className="text-[11px] text-muted">High protein · serves 2 · added to Tuesday</p>
       <div className="mt-3 border-t border-white/10 pt-3">
@@ -139,7 +139,7 @@ export function NutritionGraphic() {
 /** Wellness: a private daily check-in. */
 export function WellnessGraphic() {
   return (
-    <div className="rounded-[22px] border border-stone bg-[#111] p-4 text-[12.5px]">
+    <div className="border border-stone bg-[#111] p-4 text-[12.5px]">
       <div className="flex items-center justify-between"><p className="font-semibold">Today&rsquo;s check-in</p><span className="flex items-center gap-1 text-[10px] text-muted"><span className="h-3 w-3">{Icon.shield}</span>Private</span></div>
       {[['Energy', 4], ['Sleep', 3], ['Mood', 4]].map(([label, v]) => (
         <div key={String(label)} className="mt-3">
@@ -155,7 +155,7 @@ export function WellnessGraphic() {
 /** Clubs: a member-made padel game. */
 export function ActivityGraphic() {
   return (
-    <div className="silver-border rounded-[22px] p-5 shadow-card">
+    <div className="silver-border p-5 shadow-card">
       <div className="flex items-start justify-between gap-3">
         <div><p className="text-[10px] uppercase tracking-[0.16em] text-muted">Padel Club · set up by Amy</p><p className="mt-1 text-lg font-bold">Saturday padel</p><p className="text-sm text-muted">10:00 · Altrincham · Doubles · Beginner friendly</p></div>
         <IconBadge size="sm">{Icon.padel}</IconBadge>
@@ -170,7 +170,7 @@ export function ActivityGraphic() {
 /** Programme: weeks with progress. */
 export function ProgrammeGraphic() {
   return (
-    <div className="rounded-[22px] border border-stone bg-[#111] p-5">
+    <div className="border border-stone bg-[#111] p-5">
       <div className="flex items-center justify-between"><div><p className="text-[10px] uppercase tracking-[0.16em] text-muted">Your programme</p><p className="mt-1 text-lg font-bold">Strong &amp; Sculpt</p></div><p className="silver-text text-3xl font-extrabold">8 wks</p></div>
       <div className="mt-4 space-y-2.5">
         {[['Week 1', 'Foundations of strength', 100], ['Week 2', 'Add light weights', 66], ['Week 3', 'Build the burn', 0], ['Week 4', 'Recovery week', 0]].map(([w, t, v]) => (

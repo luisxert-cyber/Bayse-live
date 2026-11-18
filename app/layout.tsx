@@ -1,9 +1,6 @@
 import type { Metadata, Viewport } from 'next';
-import { Montserrat } from 'next/font/google';
 import './globals.css';
 
-// Montserrat matches the BAYSE logo and studio website. One family, several weights.
-const sans = Montserrat({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--font-brand', display: 'swap' });
 
 export const metadata: Metadata = {
   title: { default: 'BAYSE: your programme, your coach, your people', template: '%s · BAYSE' },
@@ -17,13 +14,13 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: 'cover',
   themeColor: [
-    { color: '#0A0A0A' },
+    { color: '#000000' },
   ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-GB" className={sans.variable}>
+    <html lang="en-GB">
       <body>{children}</body>
     </html>
   );
