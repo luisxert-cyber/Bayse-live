@@ -1,3 +1,4 @@
+import { hasAccount } from '@/lib/auth/account';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { SiteHeader } from '@/components/site/SiteHeader';
@@ -34,7 +35,7 @@ export default async function Try() {
   if (user && (await hasOnDemand())) redirect('/train/build');
   return (
     <>
-      <SiteHeader signedIn={Boolean(user)} />
+      <SiteHeader signedIn={hasAccount(user)} />
       <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
         <div className="grid items-center gap-8 md:grid-cols-[1fr_0.9fr]">
           <div>
@@ -43,9 +44,9 @@ export default async function Try() {
             <p className="mt-4 max-w-[48ch] text-lg text-muted">Tell BAYSE what you want to work on and how long you have. It builds a class for you in seconds, then guides you through it move by move.</p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link href="/start/welcome" className={buttonClass('primary')}>Start your 7-day free trial</Link>
-              {!user && <Link href="/sign-in?next=/train/build" className={buttonClass('secondary')}>I have an account</Link>}
+              {!hasAccount(user) && <Link href="/sign-in?next=/train/build" className={buttonClass('secondary')}>I have an account</Link>}
             </div>
-            {user && <p className="mt-3 text-sm text-muted">Your account doesn&rsquo;t have a membership yet. Start your free trial or add a BAYSE code to unlock the builder.</p>}
+            {hasAccount(user) && <p className="mt-3 text-sm text-muted">Your account doesn&rsquo;t have a membership yet. Start your free trial or add a BAYSE code to unlock the builder.</p>}
           </div>
           <HeroInstructor />
         </div>

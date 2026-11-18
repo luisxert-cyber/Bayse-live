@@ -5,7 +5,7 @@ import { test, expect, type Page } from '@playwright/test';
 // 2. Every interactive control on the home page responds (menu, phone tour, FAQs).
 // 3. The whole sign-up journey works, from "Build my plan" to Today and Personalise.
 
-const PUBLIC = ['/', '/try', '/pricing', '/sign-in', '/start/welcome', '/privacy', '/terms', '/community-guidelines'];
+const PUBLIC = ['/', '/live', '/classes', '/programmes', '/clubs', '/faq', '/try', '/pricing', '/sign-in', '/start/welcome', '/privacy', '/terms', '/community-guidelines'];
 
 async function linksOn(page: Page) {
   return page.$$eval('a[href]', (as) => as.map((a) => (a as HTMLAnchorElement).getAttribute('href') || ''));
@@ -41,13 +41,14 @@ test('home: menu, class library, player and favourites respond', async ({ page }
   await page.goto('/');
   // Menu
   await page.getByRole('button', { name: 'Menu', exact: true }).click();
-  await page.locator('[data-menu] a[href="/#membership"]').click();
+  await page.locator('[data-menu] a[href="/pricing"]').click();
+  await expect(page).toHaveURL(/\/pricing/);
   await expect(page.locator('[data-menu]')).toHaveCount(0); // closes after choosing
-  await expect(page).toHaveURL(/#membership/);
+  await page.goto('/');
   // Class preview: three classes, then the free trial
   const cards = page.locator('[data-class-card]');
   await expect(cards).toHaveCount(3);
-  await expect(page.getByRole('link', { name: 'Start my 7-day free trial' })).toHaveAttribute('href', '/start/welcome');
+  await expect(page.getByRole('link', { name: 'Start my 7-day free trial' }).first()).toHaveAttribute('href', '/start/welcome');
   // The free class plays on the page; a members' class offers the free trial instead
   await cards.filter({ hasText: 'Free class' }).first().click();
   const dialog = page.getByRole('dialog');
