@@ -7,7 +7,7 @@ const styles: Record<Variant, string> = {
   primary: 'border-[3px] border-ink bg-transparent text-ink hover:bg-ink hover:text-bg',
   secondary: 'border-[3px] border-ink bg-ink text-bg hover:bg-transparent hover:text-ink',
   quiet: 'bg-transparent text-ink hover:bg-stone/50',
-  danger: 'bg-clay text-white hover:bg-clay/90',
+  danger: 'border-[3px] border-ink bg-transparent text-ink hover:bg-ink hover:text-bg',
 };
 
 export function buttonClass(variant: Variant = 'primary', full = false) {
