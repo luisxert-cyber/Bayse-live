@@ -4,7 +4,7 @@
 // the rest play for signed-in members, and visitors are offered the free trial instead.
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { FigureStill } from '@/components/workout/Figure';
+import { MoveThumb } from '@/components/workout/MoveThumb';
 import { WorkoutPlayer } from '@/components/workout/WorkoutPlayer';
 import { EXERCISES, WORKOUTS, workoutMinutes, type Style, type Workout } from '@/lib/workouts/catalog';
 import { READY, READY_STYLE, STYLES } from '@/lib/workouts/builder';
@@ -214,7 +214,7 @@ export function ClassLibrary({ signedIn, onRecord }: { signedIn: boolean; onReco
                 onComplete={() => finished(open)} />
             ) : (
               <div className="rounded-3xl border border-stone bg-surface p-4 sm:p-5">
-                <div className="overflow-hidden rounded-2xl bg-bg"><FigureStill move={thumbMove(open.w)} t={0.7} className="block w-full" /></div>
+                <div className="overflow-hidden rounded-2xl bg-bg"><MoveThumb move={thumbMove(open.w)} t={0.7} className="block w-full" /></div>
                 <ol className="mt-4 grid gap-1 text-sm">
                   {open.w.blocks.slice(0, 6).map((b, i) => (
                     <li key={i} className="flex justify-between gap-2 border-t border-stone py-1.5"><span>{i + 1}. {EXERCISES[b.ex]?.name}</span><em className="not-italic text-muted">{b.seconds}s</em></li>

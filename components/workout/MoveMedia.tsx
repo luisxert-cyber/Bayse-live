@@ -4,6 +4,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Figure } from './Figure';
+import { previewClip } from '@/lib/workouts/preview-clips';
 
 export const CLIP_BUCKET = 'move-clips';
 let cache: Promise<Map<string, string>> | null = null;
@@ -29,31 +30,37 @@ export function loadClips(): Promise<Map<string, string>> {
 }
 export const resetClips = () => { cache = null; };
 
-export function useClip(move: string) {
+/** The clip to show for a move: an uploaded (filmed) clip first, else a temporary preview demo. */
+export function useClip(move: string): { url: string; preview: boolean } | null {
+  const fallback = previewClip(move);
   const [url, setUrl] = useState<string | null>(null);
   useEffect(() => {
     let live = true;
+    setUrl(null);
     void loadClips().then((m) => { if (live) setUrl(m.get(move) ?? null); });
     return () => { live = false; };
   }, [move]);
-  return url;
+  if (url) return { url, preview: false };
+  return fallback ? { url: fallback, preview: true } : null;
 }
 
 export function MoveMedia({ move, playing = true, className = '' }: { move: string; playing?: boolean; className?: string }) {
-  const url = useClip(move);
-  const [failed, setFailed] = useState(false);
+  const clip = useClip(move);
+  const [failed, setFailed] = useState<string | null>(null);
   const ref = useRef<HTMLVideoElement>(null);
-  useEffect(() => { setFailed(false); }, [url]);
   useEffect(() => {
     const v = ref.current;
     if (!v) return;
     if (playing) v.play().catch(() => {}); else v.pause();
-  }, [playing, url]);
-  if (url && !failed) {
+  }, [playing, clip?.url]);
+  if (clip && failed !== clip.url) {
     return (
-      <video ref={ref} key={url} src={url} className={`aspect-[16/10] w-full object-cover ${className}`}
-        loop muted playsInline autoPlay={playing} preload="auto" onError={() => setFailed(true)}
-        aria-label="The BAYSE instructor demonstrating the exercise" />
+      <div className="relative">
+        <video ref={ref} key={clip.url} src={clip.url} className={`aspect-[16/10] w-full bg-black object-cover ${className}`}
+          loop muted playsInline autoPlay={playing} preload="auto" onError={() => setFailed(clip.url)}
+          aria-label="The BAYSE instructor demonstrating the exercise" />
+        {clip.preview && <span className="pointer-events-none absolute bottom-2 right-2 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-semibold text-white">Preview demo</span>}
+      </div>
     );
   }
   return <Figure move={move} playing={playing} className={className} />;

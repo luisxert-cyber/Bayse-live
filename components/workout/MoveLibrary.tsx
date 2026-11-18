@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { EXERCISES, type Area, type Style } from '@/lib/workouts/catalog';
 import { AREA_LABELS, STYLES, EQUIPMENT_LABELS, type Equipment } from '@/lib/workouts/builder';
-import { FigureStill } from './Figure';
+import { MoveThumb } from './MoveThumb';
 import { MoveMedia } from './MoveMedia';
 
 const LEVEL = ['', 'Beginner', 'Intermediate', 'Advanced'];
@@ -48,7 +48,7 @@ export function MoveLibrary() {
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
         {shown.map((e) => (
           <button key={e.key} type="button" onClick={() => { setOpen(e.key); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="rounded-2xl border border-stone bg-surface p-2 text-left hover:border-ink">
-            <div className="rounded-xl bg-bg"><FigureStill move={e.move} t={0.75} className="block w-full" /></div>
+            <div className="rounded-xl bg-bg"><MoveThumb move={e.move} t={0.75} className="block w-full" /></div>
             <p className="mt-1.5 text-sm font-semibold leading-tight">{e.name}</p>
             <p className="text-xs text-muted">{LEVEL[e.level]}</p>
           </button>

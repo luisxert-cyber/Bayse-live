@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { requireUser } from '@/lib/auth/session';
 import { WORKOUTS, EXERCISES, workoutMinutes, type Style, type Workout } from '@/lib/workouts/catalog';
 import { READY, READY_STYLE, STYLES } from '@/lib/workouts/builder';
-import { FigureStill } from '@/components/workout/Figure';
+import { MoveThumb } from '@/components/workout/MoveThumb';
 
 export const metadata = { title: 'Train' };
 
@@ -10,7 +10,7 @@ function Row({ w }: { w: Workout }) {
   const ex = EXERCISES[w.blocks[Math.min(2, w.blocks.length - 1)].ex];
   return (
     <Link href={`/train/${w.key}`} className="flex items-center gap-4 rounded-card border border-stone bg-surface p-3 hover:border-ink">
-      <div className="w-24 shrink-0 overflow-hidden rounded-xl bg-bg"><FigureStill move={ex.move} t={0.7} className="block w-full" /></div>
+      <div className="w-24 shrink-0 overflow-hidden rounded-xl bg-bg"><MoveThumb move={ex.move} t={0.7} className="block w-full" /></div>
       <div className="min-w-0">
         <p className="font-display text-lg font-extrabold uppercase leading-tight">{w.name}</p>
         <p className="text-sm text-muted">{workoutMinutes(w)} min · {w.level}</p>

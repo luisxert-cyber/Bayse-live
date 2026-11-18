@@ -6,17 +6,17 @@ import { MoveMedia } from '@/components/workout/MoveMedia';
 const SHOW = [
   { move: 'birddog', name: 'Bird dog' },
   { move: 'bridge', name: 'Glute bridge' },
-  { move: 'hundred', name: 'The hundred' },
-  { move: 'plank', name: 'Plank' },
   { move: 'squat', name: 'Squat' },
-  { move: 'swimming', name: 'Swimming' },
+  { move: 'catcow', name: 'Cat-cow' },
+  { move: 'deadbug', name: 'Dead bug' },
+  { move: 'spine-twist', name: 'Spine twist' },
 ];
 
 export function HeroInstructor() {
   const [i, setI] = useState(0);
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const id = setInterval(() => setI((n) => (n + 1) % SHOW.length), 5200);
+    const id = setInterval(() => setI((n) => (n + 1) % SHOW.length), 7100);
     return () => clearInterval(id);
   }, []);
   const s = SHOW[i];

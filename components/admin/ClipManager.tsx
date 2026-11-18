@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import { EXERCISES } from '@/lib/workouts/catalog';
 import { FigureStill } from '@/components/workout/Figure';
 import { CLIP_BUCKET, loadClips, resetClips } from '@/components/workout/MoveMedia';
+import { previewClip } from '@/lib/workouts/preview-clips';
 
 type Row = { move: string; name: string; cue: string };
 
@@ -86,7 +87,7 @@ export function ClipManager() {
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold">{r.name}</p>
                 <p className="truncate font-mono text-xs text-muted">{r.move}.mp4</p>
-                <p className="text-xs">{url ? 'Video live' : 'Drawing'}</p>
+                <p className="text-xs">{url ? 'Filmed video live' : previewClip(r.move) ? 'Preview demo (replace with filmed clip)' : 'Drawing'}</p>
               </div>
               <div className="flex shrink-0 flex-col items-end gap-1">
                 <label className="cursor-pointer rounded-full bg-ink px-3 py-1.5 text-xs font-bold text-bg">

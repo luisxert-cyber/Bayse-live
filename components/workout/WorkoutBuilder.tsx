@@ -4,7 +4,7 @@
 import { useMemo, useState } from 'react';
 import { buildWorkout, AREA_LABELS, LEVEL_LABELS, TIME_OPTIONS, STYLES, EQUIPMENT_LABELS, type BuildChoices, type Level, type Equipment } from '@/lib/workouts/builder';
 import { EXERCISES, workoutMinutes, type Area, type Style } from '@/lib/workouts/catalog';
-import { FigureStill } from './Figure';
+import { MoveThumb } from './MoveThumb';
 import { WorkoutPlayer } from './WorkoutPlayer';
 import { buttonClass } from '@/components/ui';
 
@@ -96,7 +96,7 @@ export function WorkoutBuilder({ initial, onComplete, exitHref }: { initial: Bui
             const e = EXERCISES[b.ex];
             return (
               <li key={i} className="flex items-center gap-3 rounded-2xl bg-bg p-2">
-                <div className="w-20 shrink-0"><FigureStill move={e.move} t={0.7} className="block w-full" /></div>
+                <div className="w-20 shrink-0"><MoveThumb move={e.move} t={0.7} className="block w-full" /></div>
                 <div className="min-w-0">
                   <p className="text-sm font-semibold">{i + 1}. {e.name}</p>
                   <p className="text-xs text-muted">{b.seconds} sec{i === 0 ? ' · warm-up' : i === workout.blocks.length - 1 && e.role === 'cooldown' ? ' · cool-down' : ''}</p>
