@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Wordmark } from '@/components/ui';
+import { SiteMenu } from './SiteMenu';
 
 // Studio-brand header: centred BAYSE logo, an icon row (Live, On demand, Login, Start free) and a menu.
 const MENU = [
@@ -44,17 +45,7 @@ export function SiteHeader({ signedIn = false }: { signedIn?: boolean }) {
             </Link>
           ))}
         </nav>
-        <details className="group absolute right-4 top-4 sm:right-6">
-          <summary aria-label="Menu" className="grid h-10 w-10 cursor-pointer list-none place-items-center">
-            <span className="block h-[2px] w-6 bg-ink shadow-[0_7px_0_rgb(255_255_255),0_-7px_0_rgb(255_255_255)]" />
-          </summary>
-          <div className="absolute right-0 top-12 w-64 border border-stone bg-bg p-2">
-            {MENU.map(([href, label]) => (
-              <Link key={href} href={href} className="block px-3 py-2.5 font-medium hover:bg-surface">{label}</Link>
-            ))}
-            <Link href={signedIn ? '/today' : '/sign-in'} className="block border-t border-stone px-3 py-2.5 font-medium hover:bg-surface">{signedIn ? 'My BAYSE' : 'Sign in'}</Link>
-          </div>
-        </details>
+        <SiteMenu items={MENU} signedIn={signedIn} />
       </div>
     </header>
   );
