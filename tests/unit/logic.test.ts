@@ -87,7 +87,7 @@ test('recommendation is deterministic', () => {
 });
 
 test('sign-up asks goals, experience and availability; the rest waits until after joining', () => {
-  assert.equal(STEPS.length, 18);
+  assert.equal(STEPS.length, 19);
   assert.deepEqual(FLOW.map((s) => s.id), ['welcome', 'name', 'goals', 'experience', 'sessions', 'programme', 'health', 'account', 'membership', 'payment', 'done']);
   assert.deepEqual(LATER_STEPS.map((s) => s.id).sort(), ['coaching', 'community', 'dietary', 'equipment', 'length', 'nutrition', 'training', 'wellness']);
   assert.equal(nextStepId('welcome'), 'name');
