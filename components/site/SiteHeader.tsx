@@ -10,6 +10,7 @@ const MENU = [
   ['/free-trial', '7-day free trial'],
   ['/live-classes', 'Live classes'],
   ['/classes', 'On-demand classes'],
+  ['/reformer', 'Reformer at home'],
   ['/programmes', 'Programmes'],
   ['/instructors', 'Instructors and 1-to-1s'],
   ['/clubs', 'Community and Clubs'],

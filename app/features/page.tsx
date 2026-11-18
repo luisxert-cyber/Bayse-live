@@ -13,6 +13,7 @@ const GROUPS: { id: string; title: string; plan: string; items: [string, string]
     ['BAYSE Daily', 'Open the app and see your next best move, picked for your plan, your week and how you are doing.'],
     ['On-demand and filmed classes', 'Follow-along timer classes plus full filmed classes with BAYSE instructors, from 10 to 45 minutes.'],
     ['Workout builder', 'Choose a style, what to work on, your time and kit. It builds a class in seconds, with video demos, rest timers and voice cues.'],
+    ['Reformer at home', 'Have a bed at home? Studio reformer classes with spring settings for every section.'],
     ['Move library', 'Every move with a demo and coaching cues, so you know you are doing it right.'],
   ] },
   { id: 'live', title: 'Live and 1-to-1', plan: 'Inner Circle and Black', items: [

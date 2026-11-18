@@ -74,7 +74,7 @@ export const CLUBS = [
 ];
 
 export const FAQS = [
-  { q: 'What do I need at home?', a: 'A mat and a little floor space. Some sessions use light weights or a resistance band, and every one shows you what to use instead if you do not have them. No reformer needed.' },
+  { q: 'What do I need at home?', a: 'A mat and a little floor space. Some sessions use light weights or a resistance band, and every one shows you what to use instead if you do not have them. No reformer needed, but if you have one at home there are reformer classes too.' },
   { q: 'I am a complete beginner. Is it for me?', a: 'Yes. Tell us that when you build your plan and we will start you on Pilates Foundations, with beginner options in every live class.' },
   { q: 'Do I have to turn my camera on in live classes?', a: 'No, it is up to you. With your camera on, our second instructor can watch your form and give you pointers.' },
   { q: 'I have a BAYSE code. How do I use it?', a: 'Choose a plan, then tap "Add promotion code" on the payment page and enter your code. A free-membership code means you are not charged.' },

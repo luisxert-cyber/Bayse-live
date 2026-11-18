@@ -25,7 +25,7 @@ function Row({ w }: { w: Workout }) {
 export default async function Train() {
   await requireUser('/train');
   const supabase = await createClient();
-  const { data: videos } = await supabase.from('video_classes').select('slug, title, minutes, level, style, cover_path, free, instructors(display_name)').eq('status', 'published').order('sort').order('published_at', { ascending: false });
+  const { data: videos } = await supabase.from('video_classes').select('slug, title, minutes, level, style, cover_path, free, instructors(display_name)').eq('status', 'published').neq('style', 'reformer').order('sort').order('published_at', { ascending: false });
   const count = Object.keys(AVAILABLE).length;
   return (
     <main className="page space-y-6">
@@ -36,6 +36,10 @@ export default async function Train() {
       <div className="grid gap-3 sm:grid-cols-2">
         <Link href="/train/build" className="flex items-center justify-between gap-4 rounded-card bg-ink p-5 text-bg">
           <span><span className="block font-display text-xl font-extrabold uppercase">Build my workout</span><span className="text-sm opacity-80">Your style, areas, time and kit.</span></span>
+          <span aria-hidden className="text-2xl">›</span>
+        </Link>
+        <Link href="/train/reformer" className="flex items-center justify-between gap-4 rounded-card border border-ink p-5 sm:col-span-2">
+          <span><span className="block font-display text-xl font-extrabold uppercase">Have a bed at home?</span><span className="text-sm text-muted">Reformer classes from the studio, with spring settings.</span></span>
           <span aria-hidden className="text-2xl">›</span>
         </Link>
         <Link href="/train/moves" className="flex items-center justify-between gap-4 rounded-card border border-ink p-5">
