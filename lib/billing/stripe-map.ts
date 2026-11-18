@@ -62,6 +62,7 @@ export const HANDLED_EVENTS = new Set([
   'customer.subscription.paused',
   'customer.subscription.resumed',
   'invoice.payment_failed',
+  'invoice.paid',
   'charge.refunded',
 ]);
 

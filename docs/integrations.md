@@ -2,10 +2,13 @@
 
 ## Stripe (built, test mode)
 
-- Checkout: `startCheckout` server action. Subscription mode, the price's trial days, `allow_promotion_codes` (studio-member 100%-off codes still work), `client_reference_id` and `metadata.bayse_user_id` set to the BAYSE user id.
-- Webhook: `POST /api/stripe/webhook`. Verifies the signature, stores each event id once (`stripe_events`), and upserts `subscriptions`. Handles `checkout.session.completed`, `customer.subscription.created|updated|deleted|paused|resumed` and `invoice.payment_failed`. Failures return 500 so Stripe retries; the error is saved on the event row.
+- Free trial: 7 days, card required, nothing taken. It is a Stripe trial on the membership the member chooses: the card is saved as the commitment and the first payment is taken on day 8 unless they cancel. One trial per account; anyone coming back after a previous membership pays from day one.
+- Joining, in the app: after creating an account the member lands on `/join` (pick a membership), then Stripe embedded Checkout on the same screen: card, Apple Pay, Google Pay and promotion codes (the studio-member 100%-off codes). `createMembershipCheckout` creates the session. `/join/done` confirms the session with Stripe and switches access on.
+- Apple Pay and Google Pay need the site's domain added in Stripe → Settings → Payment method domains (live mode covers sandboxes too). Nothing to host; Stripe does the Apple verification.
+- Webhook: `POST /api/stripe/webhook`. Verifies the signature, stores each event id once (`stripe_events`), and upserts `subscriptions`. Handles `checkout.session.completed`, `customer.subscription.created|updated|deleted|paused|resumed`, `invoice.paid`, `invoice.payment_failed` and `charge.refunded`. Failures return 500 so Stripe retries; the error is saved on the event row.
+- BAYSE Black: each paid invoice (`invoice.paid`) adds one private-session credit, once per invoice.
 - Customer Portal: `openBillingPortal` for card changes, invoices and cancellation. Cancellation is never blocked.
-- To connect: create TEST prices in Stripe for each plan, paste their ids in Admin → Plans and prices, set `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` in Netlify, and point a Stripe webhook at `https://<site>/api/stripe/webhook` with the events above.
+- To connect: paste each plan's Stripe price id in Admin → Plans and prices; set `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` (and `SUPABASE_SERVICE_ROLE_KEY`) in Netlify; point a Stripe webhook at `https://<site>/api/stripe/webhook` with the events above. Keys, price ids and webhook must all come from the same Stripe account and mode.
 - Live mode is refused in code until the `live_billing` flag is switched on.
 
 ## Supabase Auth (built)

@@ -5,8 +5,8 @@ export async function loadMember(userId: string) {
   const supabase = await createClient();
   const [{ data: profile }, { data: ents }, { data: subs }, { data: links }, { data: roles }] = await Promise.all([
     supabase.from('profiles').select('first_name, display_name, home_studio_id, onboarding_completed_at, studios:home_studio_id(name)').eq('id', userId).maybeSingle(),
-    supabase.from('entitlements').select('entitlement_key, source, ends_at'),
-    supabase.from('subscriptions').select('status, trial_end, current_period_end, cancel_at_period_end, plans(name)').order('created_at', { ascending: false }),
+    supabase.from('entitlements').select('entitlement_key, source, ends_at').eq('user_id', userId),
+    supabase.from('subscriptions').select('status, trial_end, current_period_end, cancel_at_period_end, plans(name)').eq('user_id', userId).order('created_at', { ascending: false }),
     supabase.from('studio_memberships').select('status, tier, studios(name)'),
     supabase.from('user_roles').select('role, studio_id'),
   ]);

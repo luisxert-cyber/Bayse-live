@@ -177,10 +177,11 @@ test('full journey: build my plan → account → Today → Personalise', async 
   await page.locator('#password').fill('TestPassword-2026!');
   await page.locator('input[name="terms"]').check();
   await page.getByRole('button', { name: 'Create my account' }).click();
-  await expect(page, 'account creation should move on to membership').toHaveURL(/\/start\/membership/, { timeout: 15000 });
-  await expect(page.getByText('BAYSE Club').first()).toBeVisible();
+  await expect(page, 'account creation should move on to starting the trial').toHaveURL(/\/join/, { timeout: 15000 });
+  await expect(page.getByRole('heading', { name: 'Start your 7-day free trial' })).toBeVisible();
+  await expect(page.getByText('BAYSE Inner Circle').first()).toBeVisible();
 
-  await page.getByRole('button', { name: /decide later|continue/i }).last().click();
+  await page.goto('/today');
   await expect(page).toHaveURL(/\/today/, { timeout: 15000 });
   await expect(page.getByText(/Good (morning|afternoon|evening)/)).toBeVisible();
   await expect(page.getByText('Your weekly progress')).toBeVisible();
@@ -202,8 +203,7 @@ test('full journey: build my plan → account → Today → Personalise', async 
   // Membership and privacy pages open
   await page.goto('/you/membership');
   await expect(page.locator('h1')).toBeVisible();
-  await page.goto('/you/privacy');
-  await expect(page.locator('h1')).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Start free trial' }).first()).toBeVisible();
 });
 
 test('stripe webhook rejects unsigned requests', async ({ request }) => {

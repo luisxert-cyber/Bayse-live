@@ -3,7 +3,8 @@ import type Stripe from 'stripe';
 import { getStripe } from '@/lib/billing/stripe';
 import { stripeEnv } from '@/lib/env';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { HANDLED_EVENTS, isUuid, mapSubscription, type StripeSubscriptionLike } from '@/lib/billing/stripe-map';
+import { HANDLED_EVENTS, isUuid, type StripeSubscriptionLike } from '@/lib/billing/stripe-map';
+import { upsertSubscription, grantCreditForInvoice, invoiceSubscriptionId } from '@/lib/billing/sync';
 
 // Stripe -> BAYSE. Every event is verified with the webhook signing secret, recorded once
 // (idempotent on event id), then turned into subscription rows. Entitlements follow
@@ -11,43 +12,6 @@ import { HANDLED_EVENTS, isUuid, mapSubscription, type StripeSubscriptionLike } 
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-
-type Admin = ReturnType<typeof createAdminClient>;
-
-async function resolveUserId(admin: Admin, customerId: string, hint: string | null): Promise<string | null> {
-  if (isUuid(hint)) return hint;
-  const { data } = await admin.from('stripe_customers').select('user_id').eq('stripe_customer_id', customerId).maybeSingle();
-  return (data?.user_id as string | undefined) ?? null;
-}
-
-async function upsertSubscription(admin: Admin, sub: StripeSubscriptionLike) {
-  const row = mapSubscription(sub);
-  const userId = await resolveUserId(admin, row.stripe_customer_id, row.user_id_hint);
-  if (!userId) throw new Error(`No BAYSE user for customer ${row.stripe_customer_id}`);
-
-  await admin.from('stripe_customers').upsert({ user_id: userId, stripe_customer_id: row.stripe_customer_id }, { onConflict: 'user_id' });
-
-  let priceId: string | null = null;
-  let planId: string | null = null;
-  if (row.stripe_price_id) {
-    const { data: price } = await admin.from('prices').select('id, plan_id').eq('stripe_price_id', row.stripe_price_id).maybeSingle();
-    priceId = (price?.id as string | undefined) ?? null;
-    planId = (price?.plan_id as string | undefined) ?? null;
-    if (!price) console.warn(`[stripe] price ${row.stripe_price_id} is not mapped in public.prices; subscription saved without entitlements`);
-  }
-
-  const { error } = await admin.from('subscriptions').upsert({
-    user_id: userId,
-    stripe_subscription_id: row.stripe_subscription_id,
-    price_id: priceId,
-    plan_id: planId,
-    status: row.status,
-    trial_end: row.trial_end,
-    current_period_end: row.current_period_end,
-    cancel_at_period_end: row.cancel_at_period_end,
-  }, { onConflict: 'stripe_subscription_id' });
-  if (error) throw error;
-}
 
 export async function POST(req: NextRequest) {
   let stripe: Stripe;
@@ -122,6 +86,16 @@ export async function POST(req: NextRequest) {
         const charge = event.data.object as Stripe.Charge;
         const pi = typeof charge.payment_intent === 'string' ? charge.payment_intent : charge.payment_intent?.id;
         if (pi && charge.refunded) await admin.from('private_sessions').update({ payment: 'refunded' }).eq('stripe_payment_intent', pi).in('payment', ['paid', 'refund_due']);
+        break;
+      }
+      case 'invoice.paid': {
+        // BAYSE Black: one private-session credit for each paid billing month.
+        const invoice = event.data.object as unknown as Parameters<typeof grantCreditForInvoice>[1];
+        const subId = invoiceSubscriptionId(invoice);
+        if (subId) {
+          const sub = await stripe.subscriptions.retrieve(subId);
+          await grantCreditForInvoice(admin, invoice, sub as unknown as StripeSubscriptionLike);
+        }
         break;
       }
       case 'invoice.payment_failed':

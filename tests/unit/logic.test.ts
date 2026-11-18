@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { recommend, pickWeeks, pickSessions, hasEquipmentFor, type Programme, type Answers } from '../../lib/plan/recommend';
 import { STEPS, FLOW, LATER_STEPS, validateAnswer, nextStepId, prevStepId, stepIndex } from '../../lib/onboarding/steps';
 import { mapSubscription, normaliseStatus, isUuid } from '../../lib/billing/stripe-map';
+import { trialInfo, trialLeftLabel, trialDaysFor, firstPaymentAt } from '../../lib/billing/trial-math';
 
 // Mirrors supabase/seed.sql
 const PROGRAMMES: Programme[] = [
@@ -223,4 +224,26 @@ test('daily: live class first, recovery after training, gentle restart after a b
   assert.equal(nextBestAction({ ...base, completions: [{ key: 'core-10', minutes: 10, at: '2026-11-01T08:00:00Z' }], canLive: false }).kind, 'welcome-back');
   const c = nextBestAction({ ...base, completions: [], canLive: false });
   assert.ok(c.href.startsWith('/train/') && c.minutes > 0);
+});
+
+test('free trial: one per account, days left and first payment date', () => {
+  const now = Date.UTC(2026, 10, 18, 12, 0, 0);
+  const H = 60 * 60 * 1000;
+  const at = (hours: number) => new Date(now + hours * H).toISOString();
+
+  // First membership gets the price's trial; coming back after cancelling does not
+  assert.equal(trialDaysFor(false, 7), 7);
+  assert.equal(trialDaysFor(true, 7), 0);
+  assert.equal(trialDaysFor(false, 0), 0);
+  assert.equal(trialDaysFor(false, null), 0);
+  assert.equal(firstPaymentAt(7, now), now + 7 * 24 * H);
+  assert.equal(firstPaymentAt(0, now), null);
+
+  const fresh = trialInfo('trialing', at(7 * 24), now);
+  assert.deepEqual([fresh.active, fresh.daysLeft, trialLeftLabel(fresh)], [true, 7, '7 days left']);
+  const last = trialInfo('trialing', at(5), now);
+  assert.deepEqual([last.daysLeft, trialLeftLabel(last)], [1, 'Ends today']);
+  // Paying members and people without a membership are not "on trial"
+  assert.equal(trialInfo('active', at(-24), now).active, false);
+  assert.equal(trialInfo(null, null, now).active, false);
 });

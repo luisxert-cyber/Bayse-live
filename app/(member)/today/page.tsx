@@ -124,7 +124,7 @@ export default async function Today({ searchParams }: { searchParams: Promise<Re
             </p>
           </>
         ) : (
-          <p className="mt-2 text-sm text-muted">No membership yet. <Link href="/start/membership" className="text-ink underline">Choose one</Link></p>
+          <p className="mt-2 text-sm text-muted">No membership yet. <Link href="/join" className="text-ink underline">Choose one</Link></p>
         )}
       </Card>
 
