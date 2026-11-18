@@ -76,7 +76,7 @@ export default async function InstructorAdmin({ params, searchParams }: { params
         <ul className="text-sm text-muted">
           {(classes ?? []).map((c, n) => {
             const lc = c.live_classes as unknown as { name: string; weekday: number; starts_at: string } | null;
-            return lc ? <li key={n}>{WEEKDAYS[lc.weekday - 1]} {lc.starts_at.slice(0, 5)} · {lc.name}{c.lead ? ' (lead)' : ''}</li> : null;
+            return lc ? <li key={n}>{WEEKDAYS[lc.weekday - 1]} {lc.starts_at.slice(0, 5)} · {lc.name}</li> : null;
           })}
           {!classes?.length && <li>None yet. Assign classes in <Link href="/admin/classes" className="underline">Live classes</Link>.</li>}
         </ul>

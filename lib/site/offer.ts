@@ -76,7 +76,7 @@ export const CLUBS = [
 export const FAQS = [
   { q: 'What do I need at home?', a: 'A mat and a little floor space. Some sessions use light weights or a resistance band, and every one shows you what to use instead if you do not have them. No reformer needed, but if you have one at home there are reformer classes too.' },
   { q: 'I am a complete beginner. Is it for me?', a: 'Yes. Tell us that when you build your plan and we will start you on Pilates Foundations, with beginner options in every live class.' },
-  { q: 'Do I have to turn my camera on in live classes?', a: 'No, it is up to you. With your camera on, our second instructor can watch your form and give you pointers.' },
+  { q: 'Do I have to turn my camera on in live classes?', a: 'No, it is up to you. With your camera on, your instructor can watch your form and give you pointers.' },
   { q: 'I have a BAYSE code. How do I use it?', a: 'Choose a plan, then tap "Add promotion code" on the payment page and enter your code. A free-membership code means you are not charged.' },
   { q: 'Can I cancel?', a: 'Any time, from your account, in a couple of taps. If you cancel during your 7-day free trial you will not be charged.' },
   { q: 'I am pregnant, postnatal or have an injury.', a: 'Please check with your doctor or physio first. Tell your instructor before class and they will give you options. Remote classes cannot replace an in-person assessment.' },
@@ -95,7 +95,7 @@ export const TIERS = [
   {
     key: 'club', name: 'BAYSE Inner Circle', price: '£39.99', tagline: 'Train live, together', featured: true,
     bestFor: 'For you if you want real instructors, a timetable to show up for and people who notice when you do.',
-    items: ['Everything in Foundation', `${LIVE_CLASSES_PER_WEEK} live Zoom classes a week, two instructors in each`, 'Monthly challenges'],
+    items: ['Everything in Foundation', `${LIVE_CLASSES_PER_WEEK} live Zoom classes a week`, 'Monthly challenges'],
   },
   {
     key: 'coaching', name: 'BAYSE Black', price: '£79.99', tagline: 'One-to-one with your instructor',
