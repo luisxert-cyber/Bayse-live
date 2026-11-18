@@ -110,6 +110,9 @@ test('email links: an expired or empty link explains what to do', async ({ page 
   await page.goto('/auth/callback?next=/auth/reset');
   await expect(page).toHaveURL(/\/auth\/link/);
   await expect(page.getByRole('heading', { name: 'That link has expired' })).toBeVisible();
+  await page.goto('/#error=access_denied&error_code=otp_expired&type=recovery');
+  await expect(page).toHaveURL(/\/auth\/link/);
+  await expect(page.getByRole('heading', { name: 'That link has expired' })).toBeVisible();
   await page.goto('/auth/link?next=/auth/reset#access_token=bad&refresh_token=bad');
   await expect(page.getByRole('heading', { name: 'That link has expired' })).toBeVisible();
 });
