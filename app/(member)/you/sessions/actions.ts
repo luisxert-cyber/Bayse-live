@@ -11,7 +11,8 @@ export async function cancelMySession(f: FormData) {
   const supabase = await createClient();
   const { data, error } = await supabase.rpc('cancel_private_session', { p_id: z.string().uuid().parse(f.get('id')), p_reason: String(f.get('reason') ?? '').slice(0, 300) || null });
   revalidatePath('/you/sessions');
-  redirect(`/you/sessions?${error ? `error=${encodeURIComponent(error.message.slice(0, 120))}` : `cancelled=${data}`}`);
+  revalidatePath('/you');
+  redirect(`${f.get('back') === '/you' ? '/you' : '/you/sessions'}?${error ? `error=${encodeURIComponent(error.message.slice(0, 120))}` : `cancelled=${data}`}`);
 }
 
 export async function payForSession(f: FormData) {
