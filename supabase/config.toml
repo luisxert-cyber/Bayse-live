@@ -1,0 +1,18 @@
+# Local development settings for `supabase start`. Production settings are set in the Supabase dashboard.
+project_id = "bayse-live"
+
+[db]
+major_version = 17
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
+
+[auth]
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["http://localhost:3000/auth/callback"]
+enable_anonymous_sign_ins = true
+minimum_password_length = 10
+
+[auth.email]
+enable_confirmations = true

@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* BAYSE tokens: space-separated RGB so Tailwind can apply opacity. */
+:root {
+  --bg: 247 243 236;        /* ivory   #F7F3EC */
+  --surface: 255 253 249;   /* cream   #FFFDF9 */
+  --stone: 228 220 207;     /* stone   #E4DCCF */
+  --ink: 31 28 25;          /* charcoal #1F1C19 */
+  --muted: 110 102 92;      /* #6E665C */
+  --accent: 156 128 100;    /* taupe   #9C8064 */
+  --accent-ink: 255 253 249;
+  --sage: 111 138 106;
+  --ochre: 184 138 62;
+  --clay: 169 84 63;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: 22 20 18;
+    --surface: 33 30 27;
+    --stone: 52 48 43;
+    --ink: 242 236 227;
+    --muted: 168 159 147;
+    --accent: 196 168 138;
+    --accent-ink: 22 20 18;
+    --sage: 143 170 138;
+    --ochre: 214 172 98;
+    --clay: 206 120 98;
+    color-scheme: dark;
+  }
+}
+:root[data-theme='dark'] {
+  --bg: 22 20 18;
+  --surface: 33 30 27;
+  --stone: 52 48 43;
+  --ink: 242 236 227;
+  --muted: 168 159 147;
+  --accent: 196 168 138;
+  --accent-ink: 22 20 18;
+  --sage: 143 170 138;
+  --ochre: 214 172 98;
+  --clay: 206 120 98;
+  color-scheme: dark;
+}
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    @apply bg-bg text-ink font-sans antialiased;
+    min-height: 100dvh;
+  }
+  h1, h2, h3 { @apply font-serif; text-wrap: balance; letter-spacing: -0.01em; }
+  :focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 2px; }
+  ::selection { background: rgb(var(--accent) / 0.25); }
+}
+
+@layer components {
+  .eyebrow { @apply text-xs font-medium uppercase text-muted; letter-spacing: 0.14em; }
+  .page { @apply mx-auto w-full max-w-xl px-4 pb-28 pt-6 sm:px-6; }
+  .page-wide { @apply mx-auto w-full max-w-5xl px-4 pb-16 pt-6 sm:px-6; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* Logo swap: dark logo on light theme, light logo on dark theme. */
+.logo-for-dark { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .logo-for-light { display: none; }
+  :root:not([data-theme='light']) .logo-for-dark { display: block; }
+}
+:root[data-theme='dark'] .logo-for-light { display: none; }
+:root[data-theme='dark'] .logo-for-dark { display: block; }
