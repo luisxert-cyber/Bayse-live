@@ -15,13 +15,14 @@ export default async function Member({ params, searchParams }: { params: Promise
   const { isSuper } = await requireAdmin();
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
   const supabase = await createClient();
-  const [{ data: p }, { data: roles }, { data: links }, { data: subs }, { data: ents }, { data: studios }] = await Promise.all([
+  const [{ data: p }, { data: roles }, { data: links }, { data: subs }, { data: ents }, { data: studios }, { data: health }] = await Promise.all([
     supabase.from('profiles').select('id, email, first_name, display_name, created_at, onboarding_completed_at, studios:home_studio_id(name)').eq('id', id).maybeSingle(),
     supabase.from('user_roles').select('id, role, studio_id, studios(name)').eq('user_id', id),
     supabase.from('studio_memberships').select('status, tier, studios(name)').eq('user_id', id),
     supabase.from('subscriptions').select('status, current_period_end, plans(name)').eq('user_id', id),
     supabase.from('entitlements').select('entitlement_key, source').eq('user_id', id),
     supabase.from('studios').select('id, name').order('name'),
+    supabase.from('health_declarations').select('created_at, expires_at, any_yes, signed_name, agreement_version').eq('user_id', id).order('created_at', { ascending: false }).limit(1).maybeSingle(),
   ]);
   if (!p) notFound();
   const grantable = isSuper ? Object.keys(ROLE_LABEL) : ['instructor', 'moderator', 'studio_manager'];
@@ -37,6 +38,7 @@ export default async function Member({ params, searchParams }: { params: Promise
           <div><dt className="text-muted">Display name</dt><dd>{p.display_name ?? '—'}</dd></div>
           <div><dt className="text-muted">Home studio</dt><dd>{(p as any).studios?.name ?? '—'}</dd></div>{/* eslint-disable-line @typescript-eslint/no-explicit-any */}
           <div><dt className="text-muted">Joined</dt><dd>{new Date(p.created_at).toLocaleDateString('en-GB')}</dd></div>
+          <div className="sm:col-span-2"><dt className="text-muted">Health check and safety agreement</dt><dd>{health ? `Signed by “${health.signed_name}” on ${new Date(health.created_at).toLocaleDateString('en-GB')} (${health.agreement_version})${new Date(health.expires_at) < new Date() ? ' · expired' : ''}${health.any_yes ? ' · told us about a health condition and confirmed medical advice' : ' · no health conditions declared'}` : 'Not completed yet'}</dd></div>
         </dl>
         <p className="mt-4 text-xs text-muted">Wellness and allergy information is private to the member and is not shown here.</p>
       </Card>

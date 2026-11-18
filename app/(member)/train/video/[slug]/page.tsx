@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { requireUser } from '@/lib/auth/session';
+import { requireHealthCheck } from '@/lib/health/gate';
 import { hasOnDemand } from '@/lib/auth/access';
 import { createClient } from '@/lib/supabase/server';
 import { VIDEO_STYLES, coverUrl, embedFor } from '@/lib/video';
@@ -11,6 +12,7 @@ export const dynamic = 'force-dynamic';
 export default async function VideoClass({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   await requireUser(`/train/video/${slug}`);
+  await requireHealthCheck(`/train/video/${slug}`);
   const supabase = await createClient();
   const { data: v } = await supabase.from('video_classes').select('*, instructors(display_name, slug)').eq('slug', slug).maybeSingle();
   if (!v) notFound();

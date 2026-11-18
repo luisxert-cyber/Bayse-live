@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import { getUser } from '@/lib/auth/session';
 import { hasAccount } from '@/lib/auth/account';
+import { requireHealthCheck } from '@/lib/health/gate';
 import { sessionCheckoutUrl } from '@/lib/billing/sessions';
 
 // Book a 1-to-1. The database checks the slot is still free and uses a Personal Coaching credit if the member has one.
@@ -11,6 +12,7 @@ export async function bookSession(f: FormData) {
   const slug = z.string().regex(/^[a-z0-9-]+$/).parse(f.get('slug'));
   const user = await getUser().catch(() => null);
   if (!hasAccount(user)) redirect(`/sign-in?next=${encodeURIComponent(`/instructors/${slug}#book`)}`);
+  await requireHealthCheck(`/instructors/${slug}#book`);
   const instructorId = z.string().uuid().parse(f.get('instructor_id'));
   const startsAt = z.string().datetime({ offset: true }).safeParse(f.get('starts_at'));
   if (!startsAt.success) redirect(`/instructors/${slug}?error=slot#book`);

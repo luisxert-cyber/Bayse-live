@@ -157,7 +157,17 @@ test('full journey: build my plan → account → Today → Personalise', async 
   await expect(page).toHaveURL(/\/start\/programme/, { timeout: 15000 });
   await expect(page.getByText(/weeks/).first()).toBeVisible();
   await page.getByRole('button', { name: 'Start this programme' }).click();
-  await expect(page).toHaveURL(/\/start\/account/);
+  await expect(page).toHaveURL(/\/start\/health/);
+  // Health check: answering yes asks for medical clearance; then all no.
+  await page.locator('[data-health-form] [role="radiogroup"]').first().getByText('Yes').click();
+  await expect(page.getByText('Please get advice before you start')).toBeVisible();
+  for (const group of await page.locator('[data-health-form] [role="radiogroup"]').all()) await group.getByText('No').click();
+  await expect(page.getByText('Please get advice before you start')).toHaveCount(0);
+  await page.locator('input[name="consent"]').check();
+  await page.locator('input[name="agree"]').check();
+  await page.locator('input[name="signed_name"]').fill('Test Member');
+  await page.getByRole('button', { name: 'Agree and continue' }).click();
+  await expect(page).toHaveURL(/\/start\/account/, { timeout: 15000 });
 
   const email = `bayse.e2e+${Date.now()}@example.com`;
   await page.locator('#email').fill(email);

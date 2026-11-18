@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { requireUser } from '@/lib/auth/session';
+import { requireHealthCheck } from '@/lib/health/gate';
 import { hasOnDemand } from '@/lib/auth/access';
 import { createClient } from '@/lib/supabase/server';
 import { defaultsFromAnswers } from '@/lib/workouts/builder';
@@ -12,6 +13,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function Build() {
   const user = await requireUser('/train/build');
+  await requireHealthCheck('/train/build');
   // The builder comes with membership or the free trial; everyone else sees how it works.
   if (!(await hasOnDemand())) redirect('/try');
   const supabase = await createClient();

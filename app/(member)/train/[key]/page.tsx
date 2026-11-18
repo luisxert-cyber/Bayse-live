@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { hasOnDemand } from '@/lib/auth/access';
 import { requireUser } from '@/lib/auth/session';
+import { requireHealthCheck } from '@/lib/health/gate';
 import { workoutMinutes } from '@/lib/workouts/catalog';
 import { findAnyWorkout } from '@/lib/workouts/builder';
 import { WorkoutPlayer } from '@/components/workout/WorkoutPlayer';
@@ -12,6 +13,7 @@ export default async function WorkoutPage({ params }: { params: Promise<{ key: s
   const w = findAnyWorkout(key);
   if (!w) notFound();
   await requireUser(`/train/${key}`);
+  await requireHealthCheck(`/train/${key}`);
   // Only the free class plays without a membership or free trial.
   if (!w.free && !(await hasOnDemand())) redirect('/you/membership');
   return (

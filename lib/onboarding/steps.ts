@@ -4,7 +4,7 @@
 
 export type Option = { id: string; label: string; hint?: string };
 
-export type StepKind = 'intro' | 'name' | 'single' | 'multi' | 'number' | 'dietary' | 'wellness' | 'result' | 'account' | 'membership' | 'payment' | 'done';
+export type StepKind = 'intro' | 'name' | 'single' | 'multi' | 'number' | 'dietary' | 'wellness' | 'result' | 'health' | 'account' | 'membership' | 'payment' | 'done';
 
 export type Step = {
   id: string;
@@ -57,6 +57,7 @@ export const STEPS: Step[] = [
     { id: 'accessories', label: 'Pilates ball, ring or blocks' }, { id: 'reformer', label: 'A reformer' }, { id: 'none', label: 'Nothing yet' },
   ], min: 1 },
   { id: 'programme', kind: 'result', title: 'Your programme' },
+  { id: 'health', kind: 'health', title: 'Before you start', subtitle: 'A quick health check and our safety agreement. It takes about a minute.' },
   { id: 'account', kind: 'account', title: 'Save your plan', subtitle: 'Create your account so your answers and programme are kept safe.' },
   { id: 'membership', kind: 'membership', title: 'Choose your membership' },
   { id: 'payment', kind: 'payment', title: 'Payment' },

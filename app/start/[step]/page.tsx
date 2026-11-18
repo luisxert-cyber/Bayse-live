@@ -14,6 +14,8 @@ import { WellnessForm } from '@/components/onboarding/WellnessForm';
 import { AccountForm } from '@/components/onboarding/AccountForm';
 import { Prefill } from '@/components/onboarding/Prefill';
 import { ProgrammeResult } from '@/components/onboarding/ProgrammeResult';
+import { HealthForm } from '@/components/health/HealthForm';
+import { saveHealthOnboarding } from '@/lib/health/actions';
 import {
   startOnboarding, saveQuestion, saveName, saveDietary, saveWellness,
   acceptProgramme, createAccount, startCheckout, finishOnboarding,
@@ -125,6 +127,10 @@ export default async function StepPage({ params, searchParams }: Props) {
       );
       break;
     }
+
+    case 'health':
+      body = <HealthForm action={saveHealthOnboarding} />;
+      break;
 
     case 'account':
       if (hasAccount(user)) redirect('/start/membership');

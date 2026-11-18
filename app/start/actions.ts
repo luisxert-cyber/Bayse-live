@@ -12,6 +12,7 @@ import { isUuid } from '@/lib/billing/stripe-map';
 import { hasAccount } from '@/lib/auth/account';
 
 const CONSENT_VERSION = 'v1-2026-11';
+const TERMS_VERSION = 'terms-v1-2026-11';
 
 export type StepState = { error?: string } | undefined;
 
@@ -136,8 +137,9 @@ export async function acceptProgramme(form: FormData) {
   if (isUuid(recId)) {
     await supabase.from('programme_recommendations').update({ accepted_at: new Date().toISOString() }).eq('id', recId).eq('user_id', user.id);
   }
-  await markStep(supabase, user.id, 'account');
-  redirect(hasAccount(user) ? '/start/membership' : '/start/account');
+  await markStep(supabase, user.id, 'health');
+  const { data: done } = await supabase.rpc('has_health_declaration');
+  redirect(done ? (hasAccount(user) ? '/start/membership' : '/start/account') : '/start/health');
 }
 
 const AccountSchema = z.object({
@@ -166,6 +168,8 @@ export async function createAccount(_prev: StepState, form: FormData): Promise<S
     if (/rate limit/i.test(error.message)) return { error: 'Too many sign-ups in a short time. Please wait a minute and try again.' };
     return { error: 'We could not create your account. Please check your details and try again.' };
   }
+  // Keep a dated record of the terms version accepted at sign-up.
+  await supabase.from('consent_records').insert({ user_id: user.id, purpose: 'terms', version: TERMS_VERSION, granted: true });
   if (form.get('marketing') === 'on') {
     await supabase.from('consent_records').insert({ user_id: user.id, purpose: 'marketing_email', version: CONSENT_VERSION, granted: true });
   }

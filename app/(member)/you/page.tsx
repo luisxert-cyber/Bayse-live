@@ -9,6 +9,8 @@ export const dynamic = 'force-dynamic';
 
 const ROWS = [
   { href: '/you/sessions', label: 'My 1-to-1 sessions' },
+  { href: '/you/health', label: 'Health check and safety' },
+  { href: '/you/devices', label: 'My devices' },
   { href: '/you/progress', label: 'Progress and rewards' },
   { href: '/nourish', label: 'Nourish: recipes and shopping list' },
   { href: '/you/personalise', label: 'Personalise BAYSE' },

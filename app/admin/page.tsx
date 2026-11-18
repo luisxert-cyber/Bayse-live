@@ -3,6 +3,7 @@ import { requireStaff } from '@/lib/auth/session';
 import { createClient } from '@/lib/supabase/server';
 import { Notice } from '@/components/ui';
 import { money } from '@/lib/teach/format';
+import { saveMaxDevices } from './settings-actions';
 
 export const metadata = { title: 'Dashboard' };
 export const dynamic = 'force-dynamic';
@@ -27,13 +28,17 @@ const Grid = ({ children, cols = 4 }: { children: React.ReactNode; cols?: number
   <div className={`grid grid-cols-2 gap-px border border-stone bg-stone ${cols === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'}`}>{children}</div>
 );
 
-export default async function Dashboard() {
+export default async function Dashboard({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   await requireStaff('overview');
+  const sp = await searchParams;
   const supabase = await createClient();
-  const [{ data }, { data: period }] = await Promise.all([
+  const [{ data }, { data: period }, { data: sharing }, { data: site }] = await Promise.all([
     supabase.rpc('admin_metrics'),
     supabase.rpc('pay_period', { p_offset: 0 }).single(),
+    supabase.rpc('device_sharing_signals'),
+    supabase.from('site_settings').select('max_devices').single(),
   ]);
+  const shared = (sharing ?? []) as { user_id: string; email: string | null; name: string | null; devices: number; blocked_30d: number; last_blocked: string }[];
   const m = (data ?? {}) as M;
   const p = period as { period_start: string; period_end: string } | null;
   const { data: pay } = p ? await supabase.rpc('instructor_pay', { p_from: p.period_start, p_to: p.period_end }) : { data: [] };
@@ -46,6 +51,7 @@ export default async function Dashboard() {
     m.refunds_due ? [`${m.refunds_due} refund${m.refunds_due > 1 ? 's' : ''} to make in Stripe`, '/admin/sessions'] : null,
     m.instructors_pending ? [`${m.instructors_pending} instructor profile${m.instructors_pending > 1 ? 's' : ''} to approve`, '/admin/staff'] : null,
     m.open_reports ? [`${m.open_reports} community report${m.open_reports > 1 ? 's' : ''} to review`, '/admin/reports'] : null,
+    shared.length ? [`${shared.length} member${shared.length > 1 ? 's' : ''} may be sharing a login`, '/admin#sharing'] : null,
     m.past_due ? [`${m.past_due} member${m.past_due > 1 ? 's' : ''} with a failed payment`, '/admin/members'] : null,
   ].filter(Boolean) as [string, string][];
 
@@ -102,6 +108,22 @@ export default async function Dashboard() {
           </table>
         )}
       </Section>
+
+      <section id="sharing">
+        <p className="mb-2 text-sm font-bold uppercase tracking-[0.08em]">Account sharing</p>
+        {sp.devices && <div className="mb-2"><Notice tone="success">Device limit saved.</Notice></div>}
+        <div className="border border-stone p-4 text-sm">
+          <form action={saveMaxDevices} className="flex flex-wrap items-end gap-2">
+            <label className="grid gap-1">Devices per membership<input name="max_devices" type="number" min={1} max={10} defaultValue={site?.max_devices ?? 2} className="w-24 border border-stone bg-bg px-3 py-2" /></label>
+            <button className="inline-flex min-h-[40px] items-center border border-white px-4 text-xs font-bold uppercase">Save</button>
+          </form>
+          <p className="mt-2 text-xs text-muted">Members who try to use BAYSE on more devices are asked to remove one first. Staff accounts are not limited.</p>
+          <ul className="mt-3 divide-y divide-stone">
+            {shared.map((u) => <li key={u.user_id} className="flex flex-wrap justify-between gap-2 py-2"><Link href={`/admin/members/${u.user_id}`} className="underline">{u.name ?? u.email}</Link><span className="text-xs text-muted">Turned away {u.blocked_30d} time{u.blocked_30d > 1 ? 's' : ''} in 30 days · {u.devices} devices registered</span></li>)}
+            {!shared.length && <li className="py-2 text-xs text-muted">Nobody has hit the device limit in the last 30 days.</li>}
+          </ul>
+        </div>
+      </section>
 
       <Section title="Activity and team">
         <Grid>

@@ -32,6 +32,7 @@ export function FreeClassButton({ className, children }: { className: string; ch
               </div>
               <button type="button" onClick={() => setOpen(false)} aria-label="Close" className="grid h-10 w-10 shrink-0 place-items-center border border-stone text-xl">×</button>
             </div>
+            <p className="mb-2 text-xs text-muted">Only exercise if you are well enough to. Stop if anything hurts, and check with your doctor first if you are pregnant, injured or have a health condition. By playing you accept our <a href="/terms#health" className="underline">health and safety terms</a>.</p>
             <WorkoutPlayer workout={FREE} exitHref="/" onExit={() => setOpen(false)} onComplete={() => setDone(true)} />
             <div className="mt-3 border border-white p-4 text-center">
               <p className="font-bold">{done ? 'Loved it? There’s a whole library waiting.' : 'Like it? Get every class free for 7 days.'}</p>

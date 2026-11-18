@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { requireUser } from '@/lib/auth/session';
+import { requireHealthCheck } from '@/lib/health/gate';
 import { createClient } from '@/lib/supabase/server';
 import { Card, Notice, buttonClass } from '@/components/ui';
 
@@ -20,6 +21,7 @@ const pretty = (t: string) => { const h = Number(t.slice(0, 2)); const m = t.sli
 
 export default async function Live() {
   await requireUser('/live');
+  await requireHealthCheck('/live');
   const supabase = await createClient();
   const [{ data: classes }, { data: links }] = await Promise.all([
     supabase.from('live_classes').select('id, weekday, starts_at, name, minutes').eq('active', true).order('weekday').order('starts_at'),
