@@ -26,7 +26,7 @@ export function SiteHeader({ signedIn = false }: { signedIn?: boolean }) {
             <span className="block h-[3px] w-8 bg-white" /><span className="block h-[3px] w-8 bg-white" /><span className="block h-[3px] w-8 bg-white" />
           </summary>
           <nav className="absolute right-0 top-14 w-56 border-[3px] border-white bg-black py-2 text-sm font-bold uppercase">
-            {[['/#community', 'Community'], ['/#how', 'How it works'], ['/#live', 'Live classes'], ['/#progress', 'Programmes'], ['/#studio', 'Studio members'], ['/#membership', 'Membership'], ['/#faq', 'Questions'], ['https://www.baysereformerpilates.com', 'Our studios']].map(([href, label]) => (
+            {[['/#community', 'Community'], ['/#how', 'How it works'], ['/#live', 'Live classes'], ['/#progress', 'Programmes'], ['/#membership', 'Membership'], ['/#faq', 'Questions'], ['https://www.baysereformerpilates.com', 'Our studios']].map(([href, label]) => (
               <Link key={href} href={href} className="block px-4 py-2.5 hover:bg-white hover:text-black">{label}</Link>
             ))}
           </nav>

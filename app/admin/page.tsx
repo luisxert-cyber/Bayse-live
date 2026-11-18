@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { Card, Notice } from '@/components/ui';
 
@@ -14,17 +13,15 @@ async function count(table: string, filter?: (q: any) => any) { // eslint-disabl
 }
 
 export default async function AdminHome() {
-  const [members, onboarded, trials, active, pendingLinks, verifiedLinks] = await Promise.all([
+  const [members, onboarded, trials, active] = await Promise.all([
     count('profiles'),
     count('profiles', (q) => q.not('onboarding_completed_at', 'is', null)),
     count('subscriptions', (q) => q.eq('status', 'trialing')),
     count('subscriptions', (q) => q.eq('status', 'active')),
-    count('studio_memberships', (q) => q.eq('status', 'pending')),
-    count('studio_memberships', (q) => q.eq('status', 'verified')),
   ]);
   const tiles = [
     ['Accounts', members], ['Finished onboarding', onboarded], ['On free trial', trials],
-    ['Paying members', active], ['Studio links waiting', pendingLinks], ['Linked studio members', verifiedLinks],
+    ['Members (paid or code)', active],
   ] as const;
   return (
     <div className="space-y-6">
@@ -35,7 +32,6 @@ export default async function AdminHome() {
           <Card key={label}><p className="text-sm text-muted">{label}</p><p className="mt-1 font-serif text-2xl">{n}</p></Card>
         ))}
       </div>
-      {pendingLinks > 0 && <Link href="/admin/studio-links" className="text-sm underline">Review {pendingLinks} studio link{pendingLinks === 1 ? '' : 's'}</Link>}
     </div>
   );
 }

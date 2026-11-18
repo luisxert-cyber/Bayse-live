@@ -1,6 +1,5 @@
 import 'server-only';
 import { createClient } from '@/lib/supabase/server';
-import { createAdminClient } from '@/lib/supabase/admin';
 import { recommend, type Answers, type Programme } from '@/lib/plan/recommend';
 
 // Not a server action on purpose: server actions are public endpoints, and this must only
@@ -39,12 +38,12 @@ export async function buildRecommendation(userId: string): Promise<SavedRecommen
   };
   const rec = recommend(answers, list);
   const programme = list.find((p) => p.key === rec.programmeKey)!;
-  const { data, error } = await createAdminClient().from('programme_recommendations').insert({
-    user_id: userId, programme_id: programme.id, weeks: rec.weeks, sessions_per_week: rec.sessionsPerWeek,
-    reasons: rec.reasons, engine_version: rec.engineVersion,
-  }).select('id').single();
+  const { data: id, error } = await supabase.rpc('save_my_recommendation', {
+    p_programme: programme.id, p_weeks: rec.weeks, p_sessions: rec.sessionsPerWeek,
+    p_reasons: rec.reasons, p_engine: rec.engineVersion,
+  });
   if (error) throw error;
-  return { id: data.id as string, programmeKey: rec.programmeKey, programmeName: rec.programmeName, weeks: rec.weeks, sessionsPerWeek: rec.sessionsPerWeek, reasons: rec.reasons };
+  return { id: id as string, programmeKey: rec.programmeKey, programmeName: rec.programmeName, weeks: rec.weeks, sessionsPerWeek: rec.sessionsPerWeek, reasons: rec.reasons };
 }
 
 /** The member's current (most recently accepted, else latest) programme, for Today. */

@@ -22,7 +22,7 @@ export default async function You() {
       <Card>
         <p className="eyebrow mb-4">Profile</p>
         <ProfileForm firstName={m.profile?.first_name ?? ''} displayName={m.profile?.display_name ?? ''} />
-        <p className="mt-4 text-sm text-muted">Signed in as {user.email}{m.profile?.studios ? ` · Home studio: ${m.profile.studios.name}` : ''}</p>
+        <p className="mt-4 text-sm text-muted">Signed in as {user.email}</p>
       </Card>
       <Card className="p-0">
         <ul className="divide-y divide-stone">

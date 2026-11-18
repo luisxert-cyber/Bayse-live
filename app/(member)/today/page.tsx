@@ -17,8 +17,6 @@ export default async function Today({ searchParams }: { searchParams: Promise<Re
   const [m, programme] = await Promise.all([loadMember(user.id), currentProgramme(user.id)]);
   const name = m.profile?.first_name;
   const isStaff = m.roles.length > 0;
-  const pendingLink = m.links.find((l) => l.status === 'pending');
-  const studioName = m.profile?.studios?.name ?? m.links[0]?.studios?.name ?? null;
   const goal = programme?.sessions_per_week ?? 3;
 
   return (
@@ -72,7 +70,7 @@ export default async function Today({ searchParams }: { searchParams: Promise<Re
         <p className="mt-3 text-sm text-muted">Each session you finish fills a circle. Counting starts when classes open.</p>
       </Card>
 
-      {/* Your Circle and your studio */}
+      {/* Your Circle and clubs */}
       <div className="grid grid-cols-2 gap-3">
         <Card className="flex flex-col">
           <p className="eyebrow">Your BAYSE Circle</p>
@@ -81,9 +79,9 @@ export default async function Today({ searchParams }: { searchParams: Promise<Re
           <div className="mt-3"><Soon /></div>
         </Card>
         <Card className="flex flex-col">
-          <p className="eyebrow">{studioName ? `Near ${studioName.replace('BAYSE ', '')}` : 'Near your studio'}</p>
-          <p className="mt-3 flex-1 text-sm text-muted">{studioName ? 'Padel, walks and coffee arranged by members will show here.' : 'Train at a BAYSE studio? Link it to see what is on nearby.'}</p>
-          <div className="mt-3">{studioName ? <Soon /> : <Link href="/start/studio" className="text-sm font-semibold underline">Link my studio</Link>}</div>
+          <p className="eyebrow">Clubs near you</p>
+          <p className="mt-3 flex-1 text-sm text-muted">Padel, walks and coffee arranged by members in your area.</p>
+          <div className="mt-3"><Soon /></div>
         </Card>
       </div>
 
@@ -104,12 +102,9 @@ export default async function Today({ searchParams }: { searchParams: Promise<Re
                m.subscription.cancel_at_period_end && m.subscription.current_period_end ? `Ends on ${fmtDate(m.subscription.current_period_end)}` : 'Active'}
             </p>
           </>
-        ) : m.entitlements.has('on_demand') ? (
-          <p className="mt-2 text-sm">Included with your studio membership{m.links[0]?.studios ? ` at ${m.links[0].studios.name}` : ''}.</p>
         ) : (
           <p className="mt-2 text-sm text-muted">No membership yet. <Link href="/start/membership" className="text-ink underline">Choose one</Link></p>
         )}
-        {pendingLink && <p className="mt-3 text-sm text-muted">Waiting for {pendingLink.studios?.name ?? 'your studio'} to confirm your studio membership.</p>}
       </Card>
 
       {isStaff && (
@@ -117,7 +112,6 @@ export default async function Today({ searchParams }: { searchParams: Promise<Re
           <p className="eyebrow">BAYSE team</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {m.roles.some((r) => r.role === 'admin' || r.role === 'super_admin') && <Link href="/admin" className={buttonClass('secondary')}>Admin</Link>}
-            {m.roles.some((r) => r.role === 'studio_manager') && <Link href="/studio" className={buttonClass('secondary')}>My studio</Link>}
           </div>
         </Card>
       )}

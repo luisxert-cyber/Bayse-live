@@ -23,9 +23,9 @@ export default async function Pricing() {
           <p className="eyebrow">Membership</p>
           <h1 className="mt-3 text-[34px] sm:text-[48px]">Find your fit. <span className="script">7 days free.</span></h1>
           <p className="mt-3 max-w-xl text-lg text-muted">Every plan starts with a free trial. Cancel any time.</p>
-          <div className="ink-panel mt-8 flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
-            <p><span className="block text-sm font-bold uppercase tracking-[0.06em]">BAYSE studio member on £99 or £148?</span><span className="script text-[24px]">BAYSE Club is included, at no extra cost.</span></p>
-            <Link href="/start/welcome" className={buttonClass('secondary')}>Link my studio</Link>
+          <div className="ink-panel mt-8 p-6">
+            <p className="text-sm font-bold uppercase tracking-[0.06em]">Have a BAYSE code?</p>
+            <p className="mt-1 text-muted">Choose a plan, then tap &ldquo;Add promotion code&rdquo; on the payment page. A free-membership code means you are not charged.</p>
           </div>
           {plans?.some((p) => p.is_hypothesis) && <div className="mt-6 max-w-xl"><Notice tone="warning" title="Pre-launch">Prices shown are being finalised and may change before launch.</Notice></div>}
           <div className="mt-8 grid gap-4 md:grid-cols-3">

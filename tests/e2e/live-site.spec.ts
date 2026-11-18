@@ -65,7 +65,7 @@ test('home: menu, phone tour and questions all respond', async ({ page }) => {
 });
 
 test('signed-out visitors are sent to sign in from member areas', async ({ page }) => {
-  for (const path of ['/today', '/you', '/you/personalise', '/admin', '/studio']) {
+  for (const path of ['/today', '/you', '/you/personalise', '/admin']) {
     await page.goto(path);
     await expect(page, path).toHaveURL(/\/sign-in/);
   }
@@ -105,8 +105,6 @@ test('full journey: build my plan → account → Today → Personalise', async 
   await expect(page).toHaveURL(/\/start\/equipment/);
   await page.getByText('A mat').click();
   await cont();
-  await expect(page).toHaveURL(/\/start\/studio/);
-  await page.getByRole('button', { name: 'Skip for now' }).click();
   await expect(page).toHaveURL(/\/start\/programme/, { timeout: 15000 });
   await expect(page.getByText(/weeks/).first()).toBeVisible();
   await page.getByRole('button', { name: 'Start this programme' }).click();

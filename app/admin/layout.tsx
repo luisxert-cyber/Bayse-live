@@ -5,7 +5,6 @@ import { Wordmark } from '@/components/ui';
 const NAV = [
   { href: '/admin', label: 'Overview' },
   { href: '/admin/members', label: 'Members' },
-  { href: '/admin/studio-links', label: 'Studio links' },
   { href: '/admin/plans', label: 'Plans and prices' },
   { href: '/admin/flags', label: 'Feature flags' },
   { href: '/admin/audit', label: 'Audit log' },

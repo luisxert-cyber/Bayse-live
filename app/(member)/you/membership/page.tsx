@@ -11,7 +11,6 @@ const STATUS: Record<string, string> = {
   trialing: 'Free trial', active: 'Active', past_due: 'Payment overdue', unpaid: 'Unpaid', canceled: 'Cancelled',
   incomplete: 'Not completed', incomplete_expired: 'Expired', paused: 'Paused',
 };
-const LINK: Record<string, string> = { pending: 'Waiting for your studio to confirm', verified: 'Confirmed', rejected: 'Not confirmed: please speak to your studio', ended: 'Ended' };
 
 export default async function Membership({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const sp = await searchParams;
@@ -39,10 +38,8 @@ export default async function Membership({ searchParams }: { searchParams: Promi
         )}
       </Card>
       <Card>
-        <p className="eyebrow">Studio membership</p>
-        {m.links.length ? m.links.map((l, i) => (
-          <p key={i} className="mt-2 text-sm"><span className="font-medium">{l.studios?.name}</span> · {LINK[l.status] ?? l.status}</p>
-        )) : <p className="mt-2 text-sm text-muted">Not linked. <Link href="/start/studio" className="text-ink underline">Link my studio membership</Link></p>}
+        <p className="eyebrow">Have a BAYSE code?</p>
+        <p className="mt-2 text-sm text-muted">Choose a membership, then tap &ldquo;Add promotion code&rdquo; on the payment page.</p>
       </Card>
       <Card>
         <p className="eyebrow">What you can use</p>

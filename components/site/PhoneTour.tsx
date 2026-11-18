@@ -37,7 +37,7 @@ function Screen({ children, tab }: { children: ReactNode; tab: number }) {
 
 export const TOUR_LABELS = [
   'Today: made around you',
-  'What’s happening near your studio',
+  'What’s on near you',
   'Your BAYSE Circle',
   'Live classes: book in a tap',
   'In class, someone watches your form',
@@ -89,9 +89,9 @@ export function PhoneTour({ photos }: { photos: TourPhotos }) {
                 </Card>
               </Screen>
 
-              {/* 2 Near your studio */}
+              {/* 2 Near you */}
               <Screen tab={3}>
-                <Label>Near BAYSE Altrincham</Label>
+                <Label>Near you · Altrincham</Label>
                 <div className="mt-1"><Title script="this week">What&rsquo;s on</Title></div>
                 <div className="relative mt-3 h-[92px] overflow-hidden rounded-2xl">
                   <img src={photos.group ?? photos.b} alt="" className="h-full w-full object-cover" style={{ objectPosition: '50% 30%' }} />

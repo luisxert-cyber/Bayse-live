@@ -4,7 +4,7 @@
 
 export type Option = { id: string; label: string; hint?: string };
 
-export type StepKind = 'intro' | 'name' | 'single' | 'multi' | 'number' | 'studio' | 'dietary' | 'wellness' | 'result' | 'account' | 'membership' | 'payment' | 'done';
+export type StepKind = 'intro' | 'name' | 'single' | 'multi' | 'number' | 'dietary' | 'wellness' | 'result' | 'account' | 'membership' | 'payment' | 'done';
 
 export type Step = {
   id: string;
@@ -56,7 +56,6 @@ export const STEPS: Step[] = [
     { id: 'mat', label: 'A mat' }, { id: 'weights', label: 'Weights' }, { id: 'bands', label: 'Resistance bands' },
     { id: 'accessories', label: 'Pilates ball, ring or blocks' }, { id: 'reformer', label: 'A reformer' }, { id: 'none', label: 'Nothing yet' },
   ], min: 1 },
-  { id: 'studio', kind: 'studio', optional: true, title: 'Do you train at a BAYSE studio?', subtitle: 'Studio members can link their membership. We check it with your studio before any studio benefits switch on.' },
   { id: 'programme', kind: 'result', title: 'Your programme' },
   { id: 'account', kind: 'account', title: 'Save your plan', subtitle: 'Create your account so your answers and programme are kept safe.' },
   { id: 'membership', kind: 'membership', title: 'Choose your membership' },

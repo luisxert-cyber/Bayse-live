@@ -9,7 +9,7 @@ import { Icon } from '@/components/site/Graphics';
 
 // Home: 70% BAYSE (black, bold Helvetica, square buttons), 30% lifestyle (linen sections,
 // big photography, an editorial italic). Order: offer → community → how it works → live →
-// progress → studio members → membership → questions.
+// progress → membership → questions.
 
 const PHOTO = {
   hero: '/images/studio-bird-dog.webp',
@@ -38,12 +38,12 @@ export default async function Home() {
           <img src={PHOTO.hero} alt="A BAYSE instructor in the studio, mid-movement on the mat" className="absolute inset-0 -z-10 h-full w-full object-cover" style={{ objectPosition: '50% 35%' }} />
           <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black via-black/40 to-black/10" />
           <div className={`${wrap} flex min-h-[560px] flex-col justify-end pb-12 pt-40 sm:min-h-[640px] sm:pb-16`}>
-            <p className="eyebrow !text-white/80">BAYSE online · from the BAYSE studios</p>
+            <p className="eyebrow !text-white/80">BAYSE online · from the instructors behind BAYSE</p>
             <h1 className="mt-4 max-w-2xl text-[42px] sm:text-[68px]">Move well. <span className="script block text-[46px] sm:text-[74px]">Feel good.</span>Find your people.</h1>
-            <p className="mt-5 max-w-lg text-lg text-white/90">Live and on-demand Pilates, a plan made around you, and a community of women who keep you going, at home and near your studio.</p>
+            <p className="mt-5 max-w-lg text-lg text-white/90">Live and on-demand Pilates, a plan made around you, and a community of women who keep you going, wherever you are.</p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link href="/start/welcome" className={buttonClass('secondary')}>Start 7 days free</Link>
-              <Link href="#studio" className={buttonClass('primary')}>Studio member? It&rsquo;s included</Link>
+              <Link href="#membership" className={buttonClass('primary')}>See membership</Link>
             </div>
           </div>
         </section>
@@ -54,7 +54,7 @@ export default async function Home() {
             <div className="max-w-2xl">
               <Eyebrow>More than a class</Eyebrow>
               <h2 className="mt-3 text-[34px] sm:text-[48px]">Pilates is where it starts. <span className="script block">What it gives you is the point.</span></h2>
-              <p className="mt-5 text-lg text-muted">Stronger, calmer, more like yourself. BAYSE brings together the training, the support and the people, all connected to the studios you already love.</p>
+              <p className="mt-5 text-lg text-muted">Stronger, calmer, more like yourself. BAYSE online brings together the training, the support and the people, in one membership.</p>
             </div>
             <div className="mt-12 grid gap-5 md:grid-cols-3">
               <article>
@@ -66,8 +66,8 @@ export default async function Home() {
               <article>
                 <img src={PHOTO.friends} alt="BAYSE members together in the studio" className="aspect-[4/5] w-full object-cover" style={{ objectPosition: '50% 40%' }} />
                 <p className="eyebrow mt-5">Belong</p>
-                <h3 className="mt-2 text-xl">Your Circle, your studio, <span className="script">your people</span></h3>
-                <p className="mt-2 text-muted">Small groups who train at your times, plus padel, walks and coffee arranged by members near your studio.</p>
+                <h3 className="mt-2 text-xl">Your Circle, your clubs, <span className="script">your people</span></h3>
+                <p className="mt-2 text-muted">Small groups who train at your times, plus padel, walks and coffee arranged by members near you.</p>
               </article>
               <article>
                 <img src={PHOTO.move} alt="A BAYSE instructor moving through a mat sequence" className="aspect-[4/5] w-full object-cover" />
@@ -87,13 +87,16 @@ export default async function Home() {
                 <div className="flex flex-wrap items-center gap-3"><Eyebrow>Your people</Eyebrow><Chip /></div>
                 <h2 className="mt-3 text-[34px] sm:text-[52px]">The best part of BAYSE <span className="script block">happens after class.</span></h2>
               </div>
-              <p className="text-lg text-muted">Friendships are why people stay. Join the BAYSE community and your studio&rsquo;s own group, take on monthly challenges together, and meet up in real life through clubs run by members, for members.</p>
+              <p className="text-lg text-muted">Friendships are why people stay. Join the BAYSE community, find your Circle, take on monthly challenges together, and meet up in real life through clubs run by members, for members.</p>
             </div>
-            <figure className="relative mt-12">
-              <img src={PHOTO.selfie} alt="A group of BAYSE members laughing together after a class" className="aspect-[4/3] w-full object-cover sm:aspect-[16/9]" style={{ objectPosition: '50% 45%' }} />
-              <figcaption className="absolute bottom-4 left-4 bg-black/70 px-3 py-1.5 text-sm font-semibold uppercase tracking-[0.06em]">BAYSE members, after class</figcaption>
-            </figure>
-            <div className="grid gap-px bg-white/15 sm:grid-cols-2">
+            <div className="mt-12 grid gap-3 sm:grid-cols-[1.6fr_1fr]">
+              <figure className="relative">
+                <img src={PHOTO.selfie} alt="A group of BAYSE members laughing together after a class" className="aspect-[4/3] h-full w-full object-cover" style={{ objectPosition: '50% 45%' }} />
+                <figcaption className="absolute bottom-4 left-4 bg-black/70 px-3 py-1.5 text-sm font-semibold uppercase tracking-[0.06em]">BAYSE members, after class</figcaption>
+              </figure>
+              <img src={PHOTO.sign} alt="BAYSE members together in front of the BAYSE sign" className="aspect-[4/3] h-full w-full object-cover sm:aspect-auto" style={{ objectPosition: '50% 35%' }} />
+            </div>
+            <div className="mt-3 grid gap-px bg-white/15 sm:grid-cols-2">
               {CLUBS.map((c, i) => (
                 <div key={c.name} className="flex gap-5 bg-black p-6 sm:p-8">
                   <span className="h-10 w-10 shrink-0 text-white">{CLUB_ICONS[i]}</span>
@@ -118,7 +121,7 @@ export default async function Home() {
                 {[
                   ['Tell us about you', 'Your goals, experience and how much time you have. About a minute. Food and wellness can wait until you are ready.'],
                   ['Get your plan', 'We recommend a programme, explain why, and set out each week. Train live, on demand, or both.'],
-                  ['Show up, together', 'Book live classes with two instructors watching your form, join your Circle, and see what is on near your studio.'],
+                  ['Show up, together', 'Book live classes with two instructors watching your form, join your Circle, and see what is on near you.'],
                 ].map(([t, b], i) => (
                   <li key={t} className="flex gap-5">
                     <span className="script w-10 shrink-0 text-[40px] leading-none">{i + 1}</span>
@@ -190,23 +193,6 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* 7 · Studio members: the biggest value, made obvious */}
-        <section id="studio" className="bg-black">
-          <div className={`${wrap} py-16 sm:py-24`}>
-            <div className="panel grid overflow-hidden md:grid-cols-2">
-              <img src={PHOTO.sign} alt="BAYSE studio members in front of the BAYSE sign" className="h-72 w-full object-cover md:h-full" style={{ objectPosition: '50% 35%' }} />
-              <div className="p-7 sm:p-12">
-                <Eyebrow>Already a BAYSE studio member?</Eyebrow>
-                <h2 className="mt-3 text-[32px] sm:text-[44px]">Your membership <span className="script block">just got bigger.</span></h2>
-                <p className="mt-4 text-lg text-muted">On a £99 or £148 studio membership? BAYSE Club is included: live classes, your programme, on demand, your Circle and clubs near your studio.</p>
-                <p className="mt-4 text-sm"><span className="silver-text text-[28px] font-extrabold">£39.99</span> <span className="text-muted">a month of value, at no extra cost</span></p>
-                <Link href="/start/welcome" className={`${buttonClass('secondary')} mt-8`}>Link my studio membership</Link>
-                <p className="mt-3 text-xs text-muted">Choose your studio when you sign up. Your studio confirms your membership, then everything switches on.</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* 8 · Membership */}
         <section id="membership" className="warm">
           <div className={`${wrap} py-16 sm:py-24`}>
@@ -229,7 +215,7 @@ export default async function Home() {
                 );
               })}
             </div>
-            <p className="mt-5 text-sm text-muted">Studio members on £99 or £148: BAYSE Club is included. Prices are being finalised before launch. Cancel any time; no charge if you cancel during your trial. Coaching, nutrition, wellness and Clubs open in stages, and the app always shows what is live.</p>
+            <p className="mt-5 text-sm text-muted">Have a BAYSE code? Enter it on the payment page. Prices are being finalised before launch. Cancel any time; no charge if you cancel during your trial. Coaching, nutrition, wellness and Clubs open in stages, and the app always shows what is live.</p>
           </div>
         </section>
 

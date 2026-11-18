@@ -11,7 +11,7 @@ for (const path of ['/', '/pricing', '/sign-in', '/start/welcome', '/privacy', '
 }
 
 test('member areas send signed-out visitors to sign in', async ({ page }) => {
-  for (const path of ['/today', '/you', '/admin', '/studio']) {
+  for (const path of ['/today', '/you', '/admin']) {
     await page.goto(path);
     await expect(page).toHaveURL(/\/sign-in\?next=/);
   }

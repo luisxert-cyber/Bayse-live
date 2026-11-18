@@ -11,14 +11,13 @@ import { QuestionForm } from '@/components/onboarding/QuestionForm';
 import { NameForm } from '@/components/onboarding/NameForm';
 import { DietaryForm } from '@/components/onboarding/DietaryForm';
 import { WellnessForm } from '@/components/onboarding/WellnessForm';
-import { StudioForm } from '@/components/onboarding/StudioForm';
 import { AccountForm } from '@/components/onboarding/AccountForm';
 import { ProgrammeResult } from '@/components/onboarding/ProgrammeResult';
 import {
-  startOnboarding, saveQuestion, saveName, saveDietary, saveWellness, saveStudio,
+  startOnboarding, saveQuestion, saveName, saveDietary, saveWellness,
   acceptProgramme, createAccount, startCheckout, finishOnboarding,
 } from '../actions';
-import { formatPence, type Plan, type Price, type Studio } from '@/lib/types';
+import { formatPence, type Plan, type Price } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
 
@@ -110,13 +109,6 @@ export default async function StepPage({ params, searchParams }: Props) {
       body = <WellnessForm action={saveWellness} options={step.options ?? []} current={data.wellness} />;
       break;
 
-    case 'studio': {
-      const { data: studios } = await supabase.from('studios').select('id, slug, name, town, status').neq('status', 'closed').order('name');
-      const link = data.links[0] ?? null;
-      body = <StudioForm action={saveStudio} studios={(studios ?? []) as Studio[]} current={link} />;
-      break;
-    }
-
     case 'result': {
       const rec = await buildRecommendation(user.id);
       body = (
@@ -140,21 +132,16 @@ export default async function StepPage({ params, searchParams }: Props) {
 
     case 'membership': {
       if (!hasAccount(user)) redirect('/start/account');
-      const [{ data: plans }, { data: prices }, { data: ents }] = await Promise.all([
+      const [{ data: plans }, { data: prices }] = await Promise.all([
         supabase.from('plans').select('id, key, name, description, sort, is_hypothesis').order('sort'),
         supabase.from('prices').select('id, plan_id, stripe_price_id, billing_interval, amount_pence, currency, trial_days').eq('billing_interval', 'month'),
-        supabase.from('entitlements').select('entitlement_key, source'),
       ]);
-      const studioIncluded = (ents ?? []).some((e) => e.source === 'studio' && e.entitlement_key === 'on_demand');
-      const pendingLink = data.links.some((l) => l.status === 'pending');
       const anyHypothesis = (plans ?? []).some((p) => p.is_hypothesis);
       body = (
         <div className="space-y-4">
           {sp.check_email && <Notice tone="success" title="Account created">We have sent a link to confirm your email. You can carry on now.</Notice>}
           {sp.checkout === 'cancelled' && <Notice title="Checkout cancelled">Nothing was charged.</Notice>}
           {sp.error && <Notice tone="error">{MEMBERSHIP_ERRORS[sp.error] ?? 'Something went wrong.'}</Notice>}
-          {studioIncluded && <Notice tone="success" title="Included with your studio membership">Your studio has confirmed your membership, so your digital access is already switched on.</Notice>}
-          {pendingLink && !studioIncluded && <Notice title="Waiting for your studio">Once your studio confirms your membership, any digital access it includes switches on automatically. You do not need to pay twice.</Notice>}
           {anyHypothesis && <Notice tone="warning" title="Test prices">These prices are still being finalised. Checkout runs in Stripe test mode, so no real payment is taken.</Notice>}
           {(plans as Plan[] | null)?.map((plan) => {
             const price = (prices as Price[] | null)?.find((p) => p.plan_id === plan.id);
@@ -176,8 +163,9 @@ export default async function StepPage({ params, searchParams }: Props) {
               </Card>
             );
           })}
-          <p className="text-xs text-muted">Cancel any time from your account. Studio members with an included membership code can enter it at checkout.</p>
-          <form action={finishOnboarding}><button className="block w-full py-2 text-center text-sm text-muted hover:text-ink">{studioIncluded ? 'Continue' : 'Decide later'}</button></form>
+          <Notice title="Have a BAYSE code?">Choose a plan, then tap <strong>Add promotion code</strong> on the payment page. A free-membership code means you are not charged.</Notice>
+          <p className="text-xs text-muted">Cancel any time from your account.</p>
+          <form action={finishOnboarding}><button className="block w-full py-2 text-center text-sm text-muted hover:text-ink">Decide later</button></form>
         </div>
       );
       break;

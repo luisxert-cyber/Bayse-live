@@ -130,27 +130,6 @@ export async function saveWellness(_prev: StepState, form: FormData): Promise<St
   redirect(`${PERSONALISE_PATH}?saved=wellness`);
 }
 
-export async function saveStudio(_prev: StepState, form: FormData): Promise<StepState> {
-  const { supabase, user } = await requireSession();
-  const studioId = String(form.get('studio_id') ?? '');
-  if (studioId && studioId !== 'none') {
-    if (!isUuid(studioId)) return { error: 'Please choose a studio.' };
-    const tier = String(form.get('tier') ?? 'other');
-    if (!['studio_99', 'studio_148', 'other'].includes(tier)) return { error: 'Please choose your membership.' };
-    const memberRef = String(form.get('member_ref') ?? '').trim().slice(0, 80) || null;
-    const p = await supabase.from('profiles').update({ home_studio_id: studioId }).eq('id', user.id);
-    if (p.error) return { error: 'We could not save that. Please try again.' };
-    // A request only: status is forced to pending by the database until the studio verifies it.
-    const { error } = await supabase.from('studio_memberships').upsert(
-      { user_id: user.id, studio_id: studioId, tier, member_ref: memberRef },
-      { onConflict: 'user_id,studio_id', ignoreDuplicates: true },
-    );
-    if (error) return { error: 'We could not save that. Please try again.' };
-  }
-  await markStep(supabase, user.id, 'programme');
-  redirect('/start/programme');
-}
-
 export async function acceptProgramme(form: FormData) {
   const { supabase, user } = await requireSession();
   const recId = String(form.get('recommendation_id') ?? '');
@@ -239,11 +218,7 @@ export async function startCheckout(form: FormData) {
 export async function finishOnboarding() {
   const { supabase, user } = await requireSession();
   await supabase.from('onboarding_answers').upsert({ user_id: user.id, current_step: 'done', completed_at: new Date().toISOString() }, { onConflict: 'user_id' });
-  try {
-    await createAdminClient().from('profiles').update({ onboarding_completed_at: new Date().toISOString() }).eq('id', user.id);
-  } catch (e) {
-    // Missing service key on this deploy: the answers are saved, only the "finished" stamp waits.
-    console.error('[onboarding] could not stamp completion:', e instanceof Error ? e.message : e);
-  }
+  const { error } = await supabase.from('profiles').update({ onboarding_completed_at: new Date().toISOString() }).eq('id', user.id);
+  if (error) console.error('[onboarding] could not stamp completion:', error.message);
   redirect('/today?welcome=1');
 }

@@ -88,7 +88,7 @@ test('recommendation is deterministic', () => {
 
 test('sign-up asks goals, experience and availability; the rest waits until after joining', () => {
   assert.equal(STEPS.length, 19);
-  assert.deepEqual(FLOW.map((s) => s.id), ['welcome', 'name', 'goals', 'experience', 'sessions', 'length', 'equipment', 'studio', 'programme', 'account', 'membership', 'payment', 'done']);
+  assert.deepEqual(FLOW.map((s) => s.id), ['welcome', 'name', 'goals', 'experience', 'sessions', 'length', 'equipment', 'programme', 'account', 'membership', 'payment', 'done']);
   assert.deepEqual(LATER_STEPS.map((s) => s.id).sort(), ['coaching', 'community', 'dietary', 'nutrition', 'training', 'wellness']);
   assert.equal(nextStepId('welcome'), 'name');
   assert.equal(prevStepId('name'), 'welcome');
@@ -99,7 +99,7 @@ test('sign-up asks goals, experience and availability; the rest waits until afte
 });
 
 test('sensitive and optional screens are skippable', () => {
-  for (const id of ['nutrition', 'dietary', 'wellness', 'community', 'studio', 'training', 'coaching']) {
+  for (const id of ['nutrition', 'dietary', 'wellness', 'community', 'training', 'coaching']) {
     assert.equal(STEPS.find((s) => s.id === id)?.optional, true, id);
   }
   assert.equal(STEPS.find((s) => s.id === 'wellness')?.sensitive, true);
