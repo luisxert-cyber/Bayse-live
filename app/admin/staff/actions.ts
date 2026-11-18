@@ -19,7 +19,7 @@ export async function inviteStaff(f: FormData) {
   const supabase = await createClient();
   const { error } = await supabase.rpc('invite_staff', { p_email: email.data, p_role: role.data });
   if (error) redirect(`/admin/staff?error=${encodeURIComponent(error.message.includes('super admin') ? 'admin' : 'denied')}`);
-  const next = role.data === 'instructor' ? '/teach/profile' : '/admin';
+  const next = role.data === 'instructor' ? '/teach' : '/admin';
   const { error: mailError } = await linkClient().auth.signInWithOtp({
     email: email.data,
     options: { shouldCreateUser: true, emailRedirectTo: `${await siteOrigin()}/auth/callback?next=${encodeURIComponent(next)}` },

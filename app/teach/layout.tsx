@@ -11,6 +11,7 @@ const NAV = [
   ['/teach/classes', 'My classes'],
   ['/teach/availability', 'Availability'],
   ['/teach/profile', 'My profile'],
+  ['/teach/welcome', 'My details'],
   ['/teach/pay', 'My pay'],
 ] as const;
 
