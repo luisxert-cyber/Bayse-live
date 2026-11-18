@@ -48,7 +48,7 @@ export const TOUR_LABELS = [
   'Your weekly progress',
 ];
 
-export type TourPhotos = { hero: string; a: string; b: string; c: string };
+export type TourPhotos = { hero: string; a: string; b: string; c: string; group?: string };
 
 export function PhoneTour({ photos }: { photos: TourPhotos }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -94,13 +94,12 @@ export function PhoneTour({ photos }: { photos: TourPhotos }) {
                 <Label>Near BAYSE Altrincham</Label>
                 <div className="mt-1"><Title script="this week">What&rsquo;s on</Title></div>
                 <div className="relative mt-3 h-[92px] overflow-hidden rounded-2xl">
-                  <img src={photos.b} alt="" className="h-full w-full object-cover" />
+                  <img src={photos.group ?? photos.b} alt="" className="h-full w-full object-cover" style={{ objectPosition: '50% 30%' }} />
                   <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent" />
-                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-white"><p className="text-[8.5px] font-semibold uppercase tracking-[0.18em] text-white/75">Padel Club</p><p className="text-[13px] font-bold">Saturday padel</p><p className="text-white/80">10:00 · Beginner friendly</p></div>
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-white"><p className="text-[8.5px] font-semibold uppercase tracking-[0.18em] text-white/75">Social Club</p><p className="text-[13px] font-bold">Coffee after the 9am</p><p className="text-white/80">Wednesday · 5 going</p></div>
                 </div>
-                <Card className="mt-2"><div className="flex items-center justify-between"><div className="flex -space-x-2">{['A', 'K', 'M'].map((n, i) => <Avatar key={n} i={i} n={n} />)}</div><span className="text-black/55">3 of 4 · 1 space</span></div><Bar v={75} className="my-2" /><Btn>Join game</Btn></Card>
+                <Card className="mt-2"><Label>Padel Club · Saturday 10:00</Label><div className="mt-1.5 flex items-center justify-between"><div className="flex -space-x-2">{['A', 'K', 'M'].map((n, i) => <Avatar key={n} i={i} n={n} />)}</div><span className="text-black/55">3 of 4 · 1 space</span></div><Bar v={75} className="my-2" /><Btn>Join game</Btn></Card>
                 <Card className="mt-2 flex items-center justify-between"><div><Label>Walk Club</Label><p className="mt-0.5 font-semibold">Sunday walk · Dunham · 5 km</p><p className="text-black/50">8 going · easy pace</p></div><span className="rounded-full border border-black/20 px-2.5 py-1 text-[10px] font-semibold">Going</span></Card>
-                <Card className="mt-2"><Label>Social Club</Label><p className="mt-0.5 font-semibold">Coffee after the 9am class</p><p className="text-black/50">Wednesday · 5 going</p></Card>
               </Screen>
 
               {/* 3 Your Circle */}

@@ -16,6 +16,9 @@ const PHOTO = {
   plank: '/images/studio-side-plank.webp',
   core: '/images/studio-mat-core.webp',
   move: '/images/studio-movement.webp',
+  selfie: '/images/community-selfie.webp',
+  sign: '/images/community-studio-sign.webp',
+  friends: '/images/community-friends.webp',
 };
 
 const Eyebrow = ({ children }: { children: React.ReactNode }) => <p className="eyebrow">{children}</p>;
@@ -60,13 +63,11 @@ export default async function Home() {
                 <h3 className="mt-2 text-xl">Pilates that fits your life</h3>
                 <p className="mt-2 text-muted">{LIVE_CLASSES_PER_WEEK} live classes a week, an on-demand library and a programme built from your answers.</p>
               </article>
-              <article className="ink-panel flex flex-col justify-between p-7">
-                <div>
-                  <p className="eyebrow">Belong</p>
-                  <h3 className="mt-2 text-[28px] uppercase leading-[1.05]">Your Circle, your studio, <span className="script normal-case">your people</span></h3>
-                  <p className="mt-3 text-muted">Small groups who train at your times. Padel, walks and coffee arranged by members near your studio.</p>
-                </div>
-                <div className="mt-8 grid grid-cols-4 gap-3 text-white/90">{CLUB_ICONS.map((ic, i) => <span key={i} className="aspect-square border border-white/25 p-3">{ic}</span>)}</div>
+              <article>
+                <img src={PHOTO.friends} alt="BAYSE members together in the studio" className="aspect-[4/5] w-full object-cover" style={{ objectPosition: '50% 40%' }} />
+                <p className="eyebrow mt-5">Belong</p>
+                <h3 className="mt-2 text-xl">Your Circle, your studio, <span className="script">your people</span></h3>
+                <p className="mt-2 text-muted">Small groups who train at your times, plus padel, walks and coffee arranged by members near your studio.</p>
               </article>
               <article>
                 <img src={PHOTO.move} alt="A BAYSE instructor moving through a mat sequence" className="aspect-[4/5] w-full object-cover" />
@@ -88,7 +89,11 @@ export default async function Home() {
               </div>
               <p className="text-lg text-muted">Friendships are why people stay. Join the BAYSE community and your studio&rsquo;s own group, take on monthly challenges together, and meet up in real life through clubs run by members, for members.</p>
             </div>
-            <div className="mt-12 grid gap-px bg-white/15 sm:grid-cols-2">
+            <figure className="relative mt-12">
+              <img src={PHOTO.selfie} alt="A group of BAYSE members laughing together after a class" className="aspect-[4/3] w-full object-cover sm:aspect-[16/9]" style={{ objectPosition: '50% 45%' }} />
+              <figcaption className="absolute bottom-4 left-4 bg-black/70 px-3 py-1.5 text-sm font-semibold uppercase tracking-[0.06em]">BAYSE members, after class</figcaption>
+            </figure>
+            <div className="grid gap-px bg-white/15 sm:grid-cols-2">
               {CLUBS.map((c, i) => (
                 <div key={c.name} className="flex gap-5 bg-black p-6 sm:p-8">
                   <span className="h-10 w-10 shrink-0 text-white">{CLUB_ICONS[i]}</span>
@@ -123,7 +128,7 @@ export default async function Home() {
               </ol>
               <Link href="/start/welcome" className={`${buttonClass('secondary')} mt-10`}>Build my plan</Link>
             </div>
-            <div className="flex justify-center"><PhoneTour photos={{ hero: PHOTO.hero, a: PHOTO.core, b: PHOTO.plank, c: PHOTO.move }} /></div>
+            <div className="flex justify-center"><PhoneTour photos={{ hero: PHOTO.hero, a: PHOTO.core, b: PHOTO.plank, c: PHOTO.move, group: PHOTO.friends }} /></div>
           </div>
         </section>
 
@@ -189,7 +194,7 @@ export default async function Home() {
         <section id="studio" className="bg-black">
           <div className={`${wrap} py-16 sm:py-24`}>
             <div className="panel grid overflow-hidden md:grid-cols-2">
-              <img src={PHOTO.plank} alt="" className="h-64 w-full object-cover md:h-full" style={{ objectPosition: '50% 30%' }} />
+              <img src={PHOTO.sign} alt="BAYSE studio members in front of the BAYSE sign" className="h-72 w-full object-cover md:h-full" style={{ objectPosition: '50% 35%' }} />
               <div className="p-7 sm:p-12">
                 <Eyebrow>Already a BAYSE studio member?</Eyebrow>
                 <h2 className="mt-3 text-[32px] sm:text-[44px]">Your membership <span className="script block">just got bigger.</span></h2>
