@@ -21,7 +21,7 @@ export function initPhoneTour(root: HTMLElement) {
       const on = j === i;
       d.setAttribute('aria-current', String(on));
       d.style.width = on ? '20px' : '6px';
-      d.style.backgroundColor = on ? '#fff' : 'rgba(255,255,255,0.3)';
+      d.style.opacity = on ? '1' : '0.3';
     });
     if (caption) caption.textContent = labels[i] ?? '';
   };

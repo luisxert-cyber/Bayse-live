@@ -2,7 +2,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { recommend, pickWeeks, pickSessions, hasEquipmentFor, type Programme, type Answers } from '../../lib/plan/recommend';
-import { STEPS, validateAnswer, nextStepId, prevStepId, stepIndex } from '../../lib/onboarding/steps';
+import { STEPS, FLOW, LATER_STEPS, validateAnswer, nextStepId, prevStepId, stepIndex } from '../../lib/onboarding/steps';
 import { mapSubscription, normaliseStatus, isUuid } from '../../lib/billing/stripe-map';
 
 // Mirrors supabase/seed.sql
@@ -86,18 +86,20 @@ test('recommendation is deterministic', () => {
   assert.deepEqual(recommend(a, PROGRAMMES), recommend(a, PROGRAMMES));
 });
 
-test('onboarding has the 19 screens from the spec, in order', () => {
+test('sign-up asks goals, experience and availability; the rest waits until after joining', () => {
   assert.equal(STEPS.length, 19);
-  assert.equal(STEPS[0].id, 'welcome');
-  assert.equal(STEPS[18].id, 'done');
+  assert.deepEqual(FLOW.map((s) => s.id), ['welcome', 'name', 'goals', 'experience', 'sessions', 'length', 'equipment', 'studio', 'programme', 'account', 'membership', 'payment', 'done']);
+  assert.deepEqual(LATER_STEPS.map((s) => s.id).sort(), ['coaching', 'community', 'dietary', 'nutrition', 'training', 'wellness']);
   assert.equal(nextStepId('welcome'), 'name');
   assert.equal(prevStepId('name'), 'welcome');
   assert.equal(nextStepId('done'), null);
+  assert.equal(nextStepId('wellness'), null);
+  assert.equal(stepIndex('dietary'), -1);
   assert.ok(stepIndex('programme') < stepIndex('account'));
 });
 
 test('sensitive and optional screens are skippable', () => {
-  for (const id of ['nutrition', 'dietary', 'wellness', 'community', 'studio']) {
+  for (const id of ['nutrition', 'dietary', 'wellness', 'community', 'studio', 'training', 'coaching']) {
     assert.equal(STEPS.find((s) => s.id === id)?.optional, true, id);
   }
   assert.equal(STEPS.find((s) => s.id === 'wellness')?.sensitive, true);

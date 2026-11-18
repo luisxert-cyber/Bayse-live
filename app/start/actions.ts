@@ -5,7 +5,7 @@ import { headers } from 'next/headers';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { STEPS, nextStepId, validateAnswer } from '@/lib/onboarding/steps';
+import { STEPS, nextStepId, validateAnswer, PERSONALISE_PATH } from '@/lib/onboarding/steps';
 import { getStripe } from '@/lib/billing/stripe';
 import { publicEnv } from '@/lib/env';
 import { isUuid } from '@/lib/billing/stripe-map';
@@ -56,6 +56,7 @@ export async function saveQuestion(stepId: string, _prev: StepState, form: FormD
 
   const { error } = await supabase.from(step.table).upsert({ user_id: user.id, [step.field]: result.value }, { onConflict: 'user_id' });
   if (error) return { error: 'We could not save that. Please try again.' };
+  if (step.later) redirect(`${PERSONALISE_PATH}?saved=${step.id}`);
   const next = nextStepId(stepId)!;
   await markStep(supabase, user.id, next);
   redirect(`/start/${next}`);
@@ -107,8 +108,7 @@ export async function saveDietary(_prev: StepState, form: FormData): Promise<Ste
       if (d.error) return { error: 'We could not save that. Please try again.' };
     }
   }
-  await markStep(supabase, user.id, 'wellness');
-  redirect('/start/wellness');
+  redirect(`${PERSONALISE_PATH}?saved=dietary`);
 }
 
 export async function saveWellness(_prev: StepState, form: FormData): Promise<StepState> {
@@ -126,8 +126,7 @@ export async function saveWellness(_prev: StepState, form: FormData): Promise<St
       if (w.error) return { error: 'We could not save that. Please try again.' };
     }
   }
-  await markStep(supabase, user.id, 'community');
-  redirect('/start/community');
+  redirect(`${PERSONALISE_PATH}?saved=wellness`);
 }
 
 export async function saveStudio(_prev: StepState, form: FormData): Promise<StepState> {

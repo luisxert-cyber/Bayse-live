@@ -71,3 +71,45 @@
 .silver-border { border: 1px solid transparent; background: linear-gradient(rgb(var(--surface)), rgb(var(--surface))) padding-box, var(--silver) border-box; }
 .silver-fill { background: var(--silver); color: #0a0a0a; }
 .text-silver { color: rgb(var(--silver-solid)); }
+
+/* ---------- Lifestyle layer (the 30%) ----------
+   .warm swaps the tokens to a soft linen palette for a section, a card or the member app,
+   so every component inside (buttons, cards, text) follows without extra classes.
+   Black stays the BAYSE signature: hero, header, footer and key moments. */
+.warm {
+  --bg: 243 238 231;        /* #F3EEE7 linen */
+  --surface: 252 250 247;   /* #FCFAF7 warm white cards */
+  --stone: 224 215 203;     /* #E0D7CB soft dividers */
+  --ink: 26 23 20;          /* #1A1714 warm black */
+  --muted: 104 96 87;       /* #686057 readable warm grey (6:1 on linen) */
+  --accent: 26 23 20;
+  --accent-ink: 252 250 247;
+  --sage: 60 60 60; --ochre: 90 90 90; --clay: 26 23 20;
+  color-scheme: light;
+  background-color: rgb(var(--bg));
+  color: rgb(var(--ink));
+}
+.warm h1, .warm h2, .warm h3 { color: rgb(var(--ink)); }
+.warm .silver-text { background: none; color: rgb(var(--ink)); }
+.warm .silver-fill { background: rgb(var(--ink)); color: rgb(var(--surface)); }
+.warm .text-silver { color: rgb(var(--muted)); }
+.warm .silver-border { border: 1px solid rgb(var(--stone)); background: rgb(var(--surface)); }
+.warm .shadow-card { box-shadow: 0 1px 2px rgb(26 23 20 / 0.04), 0 8px 24px -12px rgb(26 23 20 / 0.12); }
+
+/* An editorial italic for the emotional line in a heading: the feminine counterpoint to bold Helvetica. */
+.script { font-family: 'Didot', 'Bodoni 72', 'Bodoni MT', 'Playfair Display', Georgia, 'Times New Roman', serif; font-style: italic; font-weight: 400; text-transform: none; letter-spacing: -0.01em; }
+
+/* Small status chip for parts of BAYSE that open in stages. */
+.chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid currentColor; padding: 2px 8px; font-size: 11px; line-height: 16px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.8; }
+
+/* A black card inside a warm section (featured plan, signature moments). */
+.ink-panel {
+  --bg: 0 0 0; --surface: 26 23 20; --stone: 77 77 77; --ink: 255 255 255; --muted: 205 200 194;
+  --accent: 255 255 255; --accent-ink: 10 10 10;
+  color-scheme: dark; background-color: rgb(26 23 20); color: rgb(var(--ink));
+}
+.ink-panel h1, .ink-panel h2, .ink-panel h3 { color: rgb(var(--ink)); }
+.warm .logo-for-dark { display: none; }
+.warm .logo-for-light { display: block; }
+.warm .ink-panel .logo-for-dark { display: block; }
+.warm .ink-panel .logo-for-light { display: none; }

@@ -3,16 +3,26 @@ import { SiteHeader } from '@/components/site/SiteHeader';
 import { SiteFooter } from '@/components/site/SiteFooter';
 import { buttonClass } from '@/components/ui';
 import { getUser } from '@/lib/auth/session';
-import { LIVE_TIMETABLE, LIVE_CLASSES_PER_WEEK, LIVE_CLASS_MINUTES, ON_DEMAND, PROGRAMMES, CLUBS, FAQS } from '@/lib/site/offer';
+import { LIVE_TIMETABLE, LIVE_CLASSES_PER_WEEK, LIVE_CLASS_MINUTES, PROGRAMMES, CLUBS, FAQS, TIERS, OPENING_IN_STAGES } from '@/lib/site/offer';
 import { PhoneTour } from '@/components/site/PhoneTour';
-import { Icon, IconBadge, LiveClassGraphic, CoachGraphic, NutritionGraphic, WellnessGraphic, ActivityGraphic, ProgrammeGraphic } from '@/components/site/Graphics';
+import { Icon } from '@/components/site/Graphics';
 
-const Eyebrow = ({ children, light }: { children: React.ReactNode; light?: boolean }) => (
-  <p className={`eyebrow ${light ? '!text-bg/60' : ''}`}>{children}</p>
-);
-const Tick = () => <span aria-hidden className="silver-fill mt-[3px] grid h-4 w-4 shrink-0 place-items-center rounded-full text-[9px] font-bold">✓</span>;
-const ONDEMAND_ICONS = [Icon.play, Icon.wellness, Icon.people, Icon.circle, Icon.walk, Icon.clock, Icon.clock, Icon.plan];
+// Home: 70% BAYSE (black, bold Helvetica, square buttons), 30% lifestyle (linen sections,
+// big photography, an editorial italic). Order: offer → community → how it works → live →
+// progress → studio members → membership → questions.
+
+const PHOTO = {
+  hero: '/images/studio-bird-dog.webp',
+  plank: '/images/studio-side-plank.webp',
+  core: '/images/studio-mat-core.webp',
+  move: '/images/studio-movement.webp',
+};
+
+const Eyebrow = ({ children }: { children: React.ReactNode }) => <p className="eyebrow">{children}</p>;
+const Tick = () => <span aria-hidden className="mt-[3px] grid h-4 w-4 shrink-0 place-items-center rounded-full bg-ink text-[9px] font-bold text-bg">✓</span>;
+const Chip = ({ children = OPENING_IN_STAGES }: { children?: React.ReactNode }) => <span className="chip">{children}</span>;
 const CLUB_ICONS = [Icon.padel, Icon.walk, Icon.coffee, Icon.circle];
+const wrap = 'mx-auto max-w-5xl px-4 sm:px-6';
 
 export default async function Home() {
   const user = await getUser().catch(() => null);
@@ -20,230 +30,223 @@ export default async function Home() {
     <>
       <SiteHeader signedIn={Boolean(user)} />
       <main>
-        {/* Hero: banner photo with boxed call to action, as on the studio site */}
-        <section className="relative">
-          <img src="/images/studio-bird-dog.webp" alt="A BAYSE instructor demonstrating a bird dog on the mat in the studio" className="h-[300px] w-full object-cover opacity-75 sm:h-[440px]" style={{ objectPosition: '50% 40%' }} />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-black/50" />
-          <div className="absolute inset-x-0 bottom-8 mx-auto max-w-5xl px-4 sm:px-6">
-            <Link href="/start/welcome" className="inline-block border-[3px] border-white bg-black/20 px-5 py-3 text-lg font-bold uppercase tracking-[0.01em] backdrop-blur-[1px] hover:bg-white hover:text-black sm:text-2xl">Start your 7-day free trial</Link>
-          </div>
-        </section>
-
-        <section className="mx-auto grid max-w-5xl grid-cols-2 gap-4 px-4 py-10 sm:gap-6 sm:px-6">
-          <img src="/images/studio-side-plank.webp" alt="A BAYSE instructor holding a side plank with arm reach" className="aspect-square w-full object-cover" />
-          <img src="/images/studio-mat-core.webp" alt="A BAYSE instructor teaching a mat Pilates core exercise" className="aspect-square w-full object-cover" />
-        </section>
-
-        <section className="mx-auto max-w-5xl px-4 pb-14 sm:px-6">
-          <div className="panel grid items-center gap-10 p-6 sm:p-10 md:grid-cols-[1.2fr_1fr]">
-            <div>
-              <h1 className="text-[40px] sm:text-[56px]">Your programme. Your coach. Your people.</h1>
-              <p className="subhead mt-4 text-2xl sm:text-3xl">Live and on-demand Pilates</p>
-              <p className="mt-6 max-w-md text-lg">From the instructors behind BAYSE studios: {LIVE_CLASSES_PER_WEEK} live classes a week, an on-demand library, a plan built around you and a real coach.</p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Link href="/start/welcome" className={buttonClass('primary')}>Build my plan</Link>
-                <Link href="#membership" className={buttonClass('secondary')}>See membership</Link>
-              </div>
-              <p className="mt-4 text-sm text-muted">Three minutes to build your plan. Cancel any time.</p>
-            </div>
-            <div className="flex justify-center"><PhoneTour photos={{ live: '/images/studio-bird-dog.webp', a: '/images/studio-side-plank.webp', b: '/images/studio-mat-core.webp', c: '/images/studio-bird-dog.webp' }} /></div>
-          </div>
-        </section>
-
-        {/* What you get */}
-        <section className="border-y border-white">
-          <div className="mx-auto grid max-w-5xl grid-cols-2 gap-x-4 gap-y-6 px-4 py-10 sm:grid-cols-5 sm:px-6">
-            {[
-              [String(LIVE_CLASSES_PER_WEEK), 'live classes a week'],
-              ['2', 'instructors in every live class'],
-              ['10–60', 'minute on-demand sessions'],
-              ['4–12', 'week personal programmes'],
-              ['7', 'day free trial'],
-            ].map(([n, l]) => (
-              <div key={l}><p className="text-[36px] font-bold leading-none">{n}</p><p className="mt-1.5 text-sm text-muted">{l}</p></div>
-            ))}
-          </div>
-        </section>
-
-        {/* Live */}
-        <section id="live">
-          <div className="mx-auto grid max-w-5xl items-center gap-10 px-4 py-16 sm:px-6 md:grid-cols-2">
-          <div>
-            <Eyebrow>Live classes</Eyebrow>
-            <h2 className="mt-3 text-xl font-semibold sm:text-2xl">Real instructors, live, with someone watching your form</h2>
-            <p className="mt-3 text-muted">Every live class has two BAYSE instructors. One teaches and motivates. The other watches the class, checks your technique, answers questions and makes sure everyone is safe.</p>
-            <ul className="mt-5 space-y-2.5 text-sm">
-              {[`${LIVE_CLASSES_PER_WEEK} classes a week, every one ${LIVE_CLASS_MINUTES} minutes`, 'Early, mid-morning, lunchtime and evening slots', 'Join from your phone, tablet or laptop, inside BAYSE', 'Camera on for pointers, or off if you prefer', 'Mat-based: no reformer needed', 'Beginner and progression options in every class', 'Book ahead and get a reminder before class'].map((t) => (
-                <li key={t} className="flex gap-3"><Tick />{t}</li>
-              ))}
-            </ul>
-          </div>
-            <LiveClassGraphic photo="/images/studio-bird-dog.webp" />
-          </div>
-        <div className="mx-auto max-w-5xl px-4 pb-16 sm:px-6">
-          <div className="flex items-baseline justify-between gap-4">
-            <p className="eyebrow">Weekly timetable · UK time</p>
-            <p className="text-sm text-muted">{LIVE_CLASSES_PER_WEEK} classes · all {LIVE_CLASS_MINUTES} min</p>
-          </div>
-          <div className="mt-4 grid gap-px border-y border-white/20 bg-white/20 sm:grid-cols-7">
-            {LIVE_TIMETABLE.map((d) => (
-              <div key={d.day} className="flex gap-4 bg-black py-4 sm:block sm:px-3">
-                <p className="w-12 shrink-0 text-sm font-bold uppercase sm:w-auto">{d.short}</p>
-                <ul className="flex-1 space-y-3 sm:mt-3">
-                  {d.classes.map((c) => (
-                    <li key={c.time} className="flex items-baseline gap-3 sm:block">
-                      <span className="w-[60px] shrink-0 text-lg font-bold sm:w-auto sm:text-xl">{c.time}</span>
-                      <span className="text-sm text-muted sm:mt-0.5 sm:block">{c.name}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-          <p className="mt-3 text-xs text-muted">Classes may change from time to time; the timetable in the app is always up to date.</p>
-          </div>
-        </section>
-
-        {/* On demand */}
-        <section id="on-demand" className="bg-surface">
-          <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6">
-            <Eyebrow>On demand</Eyebrow>
-            <h2 className="mt-3 max-w-xl text-xl font-semibold sm:text-2xl">Train whenever suits you</h2>
-            <p className="mt-3 max-w-xl text-muted">A growing library of BAYSE classes you can do at home or away. Search by length, level, body area or equipment, and pick up where you left off.</p>
-            <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {ON_DEMAND.map((c, i) => (
-                <div key={c.name} className="rounded-2xl border border-stone bg-bg p-4">
-                  <IconBadge size="sm">{ONDEMAND_ICONS[i]}</IconBadge>
-                  <p className="mt-3 font-semibold">{c.name}</p>
-                  <p className="mt-1 text-sm text-muted">{c.note}</p>
-                </div>
-              ))}
+        {/* 1 · Hero: one big photograph and the promise */}
+        <section className="relative isolate overflow-hidden bg-black">
+          <img src={PHOTO.hero} alt="A BAYSE instructor in the studio, mid-movement on the mat" className="absolute inset-0 -z-10 h-full w-full object-cover" style={{ objectPosition: '50% 35%' }} />
+          <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black via-black/40 to-black/10" />
+          <div className={`${wrap} flex min-h-[560px] flex-col justify-end pb-12 pt-40 sm:min-h-[640px] sm:pb-16`}>
+            <p className="eyebrow !text-white/80">BAYSE online · from the BAYSE studios</p>
+            <h1 className="mt-4 max-w-2xl text-[42px] sm:text-[68px]">Move well. <span className="script block text-[46px] sm:text-[74px]">Feel good.</span>Find your people.</h1>
+            <p className="mt-5 max-w-lg text-lg text-white/90">Live and on-demand Pilates, a plan made around you, and a community of women who keep you going, at home and near your studio.</p>
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <Link href="/start/welcome" className={buttonClass('secondary')}>Start 7 days free</Link>
+              <Link href="#studio" className={buttonClass('primary')}>Studio member? It&rsquo;s included</Link>
             </div>
           </div>
         </section>
 
-        {/* Programmes */}
-        <section id="programmes" className="mx-auto max-w-5xl px-4 py-16 sm:px-6">
-          <div className="grid items-center gap-8 md:grid-cols-2">
-            <div>
-              <Eyebrow>Your plan</Eyebrow>
-              <h2 className="mt-3 max-w-xl text-xl font-semibold sm:text-2xl">A clear path, built from your answers</h2>
-              <p className="mt-3 max-w-xl text-muted">Tell us your goals, experience, equipment and how many sessions a week are realistic. We recommend a programme, explain why, and set out each week for you.</p>
+        {/* 2 · The offer, as a way of life */}
+        <section className="warm">
+          <div className={`${wrap} py-16 sm:py-24`}>
+            <div className="max-w-2xl">
+              <Eyebrow>More than a class</Eyebrow>
+              <h2 className="mt-3 text-[34px] sm:text-[48px]">Pilates is where it starts. <span className="script block">What it gives you is the point.</span></h2>
+              <p className="mt-5 text-lg text-muted">Stronger, calmer, more like yourself. BAYSE brings together the training, the support and the people, all connected to the studios you already love.</p>
             </div>
-            <ProgrammeGraphic />
-          </div>
-          <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {PROGRAMMES.map((p) => (
-              <div key={p.name} className="rounded-card border border-stone bg-surface p-5">
-                <p className="font-serif text-lg">{p.name}</p>
-                <p className="mt-0.5 text-xs uppercase tracking-[0.12em] text-silver">{p.weeks}</p>
-                <p className="mt-2 text-sm text-muted">{p.for}</p>
-              </div>
-            ))}
-          </div>
-          <Link href="/start/welcome" className={`${buttonClass('primary')} mt-8`}>Build my plan</Link>
-        </section>
-
-        {/* Coaching, nutrition, wellness */}
-        <section className="border-y border-white">
-          <div className="mx-auto grid max-w-5xl gap-8 px-4 py-16 sm:px-6 md:grid-cols-3">
-            <div>
-              <CoachGraphic />
-              <div className="mt-6 flex items-center gap-3"><IconBadge size="sm">{Icon.coach}</IconBadge><Eyebrow>Coaching</Eyebrow></div>
-              <h3 className="mt-3 text-lg font-semibold">A coach who knows your plan</h3>
-              <p className="mt-2 text-sm text-muted">Message your coach, get weekly check-ins and feedback, and adjust your plan when life gets busy. Group coaching comes with BAYSE Club, and your own coach with BAYSE Coaching.</p>
-            </div>
-            <div>
-              <NutritionGraphic />
-              <div className="mt-6 flex items-center gap-3"><IconBadge size="sm">{Icon.food}</IconBadge><Eyebrow>Nutrition</Eyebrow></div>
-              <h3 className="mt-3 text-lg font-semibold">Food that fits real life</h3>
-              <p className="mt-2 text-sm text-muted">Simple recipes, flexible weekly meal plans and shopping lists made for you, based on your tastes, budget and time. Never a crash diet.</p>
-            </div>
-            <div>
-              <WellnessGraphic />
-              <div className="mt-6 flex items-center gap-3"><IconBadge size="sm">{Icon.wellness}</IconBadge><Eyebrow>Women&rsquo;s wellness</Eyebrow></div>
-              <h3 className="mt-3 text-lg font-semibold">Support for every stage</h3>
-              <p className="mt-2 text-sm text-muted">Guidance on sleep, stress, cycles, pregnancy, postpartum, perimenopause and menopause, reviewed by professionals. What you share stays private to you.</p>
-            </div>
-          </div>
-        </section>
-
-        {/* Community */}
-        <section id="community" className="mx-auto max-w-5xl px-4 py-16 sm:px-6">
-          <div className="grid items-center gap-8 md:grid-cols-2">
-            <div>
-              <Eyebrow>Your people</Eyebrow>
-              <h2 className="mt-3 max-w-xl text-xl font-semibold sm:text-2xl">Find your people, online and near your studio</h2>
-              <p className="mt-3 max-w-xl text-muted">Join your studio community and the wider BAYSE community, take part in monthly club challenges, and meet members outside class through clubs run by members themselves.</p>
-            </div>
-            <ActivityGraphic />
-          </div>
-          <div className="mt-8 grid gap-3 sm:grid-cols-2">
-            {CLUBS.map((c, i) => (
-              <div key={c.name} className="flex gap-4 rounded-card border border-stone bg-surface p-5">
-                <IconBadge>{CLUB_ICONS[i]}</IconBadge>
+            <div className="mt-12 grid gap-5 md:grid-cols-3">
+              <article>
+                <img src={PHOTO.plank} alt="A BAYSE instructor holding a side plank" className="aspect-[4/5] w-full object-cover" />
+                <p className="eyebrow mt-5">Move</p>
+                <h3 className="mt-2 text-xl">Pilates that fits your life</h3>
+                <p className="mt-2 text-muted">{LIVE_CLASSES_PER_WEEK} live classes a week, an on-demand library and a programme built from your answers.</p>
+              </article>
+              <article className="ink-panel flex flex-col justify-between p-7">
                 <div>
-                <p className="font-serif text-lg">{c.name}</p>
-                <p className="mt-1 text-sm text-muted">{c.body}</p>
+                  <p className="eyebrow">Belong</p>
+                  <h3 className="mt-2 text-[28px] uppercase leading-[1.05]">Your Circle, your studio, <span className="script normal-case">your people</span></h3>
+                  <p className="mt-3 text-muted">Small groups who train at your times. Padel, walks and coffee arranged by members near your studio.</p>
                 </div>
+                <div className="mt-8 grid grid-cols-4 gap-3 text-white/90">{CLUB_ICONS.map((ic, i) => <span key={i} className="aspect-square border border-white/25 p-3">{ic}</span>)}</div>
+              </article>
+              <article>
+                <img src={PHOTO.move} alt="A BAYSE instructor moving through a mat sequence" className="aspect-[4/5] w-full object-cover" />
+                <div className="mt-5 flex flex-wrap items-center gap-2"><p className="eyebrow">Thrive</p><Chip /></div>
+                <h3 className="mt-2 text-xl">Food, rest and every life stage</h3>
+                <p className="mt-2 text-muted">Simple recipes and meal ideas, plus private women&rsquo;s wellness support. Never a crash diet.</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        {/* 3 · Community: a main reason to join and to stay */}
+        <section id="community" className="bg-black">
+          <div className={`${wrap} py-16 sm:py-24`}>
+            <div className="grid gap-10 md:grid-cols-[1.1fr_1fr] md:items-end">
+              <div>
+                <div className="flex flex-wrap items-center gap-3"><Eyebrow>Your people</Eyebrow><Chip /></div>
+                <h2 className="mt-3 text-[34px] sm:text-[52px]">The best part of BAYSE <span className="script block">happens after class.</span></h2>
               </div>
-            ))}
-          </div>
-          <p className="mt-4 text-xs text-muted">Adults only. Meet in public places. Members can report, block and control who can find them.</p>
-        </section>
-
-        {/* Studio members */}
-        <section className="mx-auto max-w-5xl px-4 pb-16 sm:px-6">
-          <div className="panel px-6 py-12 sm:px-12">
-            <Eyebrow>Already a BAYSE studio member?</Eyebrow>
-            <h2 className="mt-3 max-w-lg text-xl font-semibold sm:text-2xl">£99 and £148 members get BAYSE online included</h2>
-            <p className="mt-3 max-w-lg text-muted">Keep your routine going at home or away. Choose your studio when you sign up; once your studio confirms your membership, everything switches on. No second payment.</p>
-            <Link href="/start/welcome" className={`${buttonClass('primary')} mt-6`}>Link my studio membership</Link>
-          </div>
-        </section>
-
-        {/* Membership */}
-        <section id="membership" className="border-t border-white">
-          <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6">
-            <Eyebrow>Membership</Eyebrow>
-            <h2 className="mt-3 text-xl font-semibold sm:text-2xl">Start with 7 days free</h2>
-            <div className="mt-8 grid gap-4 md:grid-cols-3">
-              {[
-                { name: 'BAYSE Essential', price: '£19.99', items: ['Your personal programme', 'On-demand library', 'Recipes and meal plans', 'Progress tracking', 'Community and Clubs'] },
-                { name: 'BAYSE Club', price: '£39.99', items: ['Everything in Essential', `${LIVE_CLASSES_PER_WEEK} live classes a week`, 'Group coaching', 'Monthly club challenges'], featured: true },
-                { name: 'BAYSE Coaching', price: '£79.99', items: ['Everything in Club', 'Your own coach and check-ins', 'Extra nutrition support'] },
-              ].map((p) => (
-                <div key={p.name} className={`p-6 ${p.featured ? 'panel' : 'border border-stone'}`}>
-                  {p.featured && <p className="subhead mb-2 text-sm">Most popular</p>}
-                  <p className="text-lg font-semibold">{p.name}</p>
-                  <p className="mt-2"><span className="text-[32px] font-extrabold leading-none">{p.price}</span> <span className="text-sm text-muted">/ month</span></p>
-                  <ul className="mt-5 space-y-2 text-sm">{p.items.map((i) => <li key={i} className="flex gap-3"><Tick />{i}</li>)}</ul>
-                  <Link href="/start/welcome" className={`${buttonClass(p.featured ? 'primary' : 'secondary', true)} mt-6`}>Start free trial</Link>
+              <p className="text-lg text-muted">Friendships are why people stay. Join the BAYSE community and your studio&rsquo;s own group, take on monthly challenges together, and meet up in real life through clubs run by members, for members.</p>
+            </div>
+            <div className="mt-12 grid gap-px bg-white/15 sm:grid-cols-2">
+              {CLUBS.map((c, i) => (
+                <div key={c.name} className="flex gap-5 bg-black p-6 sm:p-8">
+                  <span className="h-10 w-10 shrink-0 text-white">{CLUB_ICONS[i]}</span>
+                  <div>
+                    <h3 className="text-xl uppercase">{c.name}</h3>
+                    <p className="mt-2 text-muted">{c.body}</p>
+                  </div>
                 </div>
               ))}
             </div>
-            <p className="mt-4 text-xs text-muted">Prices are being finalised before launch. Cancel any time. Studio members on £99 and £148 memberships: included.</p>
+            <p className="mt-5 text-sm text-muted">Adults only. Meet in public places. Members can report, block and choose who can find them.</p>
           </div>
         </section>
 
-        {/* FAQ */}
-        <section id="faq" className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
-          <h2 className="text-xl font-semibold sm:text-2xl">Questions</h2>
-          <div className="mt-6 divide-y divide-stone border-y border-stone">
-            {FAQS.map((f) => (
-              <details key={f.q} className="group py-4">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-medium">
-                  {f.q}<span aria-hidden className="text-muted transition-transform group-open:rotate-45">+</span>
-                </summary>
-                <p className="mt-2 text-sm text-muted">{f.a}</p>
-              </details>
-            ))}
+        {/* 4 · How it works, with the app */}
+        <section id="how" className="warm">
+          <div className={`${wrap} grid items-center gap-14 py-16 sm:py-24 md:grid-cols-[1fr_auto]`}>
+            <div>
+              <Eyebrow>How BAYSE works</Eyebrow>
+              <h2 className="mt-3 text-[34px] sm:text-[48px]">Three steps <span className="script">to your first class</span></h2>
+              <ol className="mt-10 space-y-8">
+                {[
+                  ['Tell us about you', 'Your goals, experience and how much time you have. About a minute. Food and wellness can wait until you are ready.'],
+                  ['Get your plan', 'We recommend a programme, explain why, and set out each week. Train live, on demand, or both.'],
+                  ['Show up, together', 'Book live classes with two instructors watching your form, join your Circle, and see what is on near your studio.'],
+                ].map(([t, b], i) => (
+                  <li key={t} className="flex gap-5">
+                    <span className="script w-10 shrink-0 text-[40px] leading-none">{i + 1}</span>
+                    <div><h3 className="text-xl uppercase">{t}</h3><p className="mt-1.5 max-w-md text-muted">{b}</p></div>
+                  </li>
+                ))}
+              </ol>
+              <Link href="/start/welcome" className={`${buttonClass('secondary')} mt-10`}>Build my plan</Link>
+            </div>
+            <div className="flex justify-center"><PhoneTour photos={{ hero: PHOTO.hero, a: PHOTO.core, b: PHOTO.plank, c: PHOTO.move }} /></div>
           </div>
         </section>
 
-        <section className="mx-auto max-w-5xl px-4 pb-20 text-center sm:px-6">
-          <h2 className="text-xl font-semibold sm:text-2xl">Your first class is a few minutes away</h2>
-          <Link href="/start/welcome" className={`${buttonClass('primary')} mt-6`}>Start your 7-day free trial</Link>
+        {/* 5 · Live */}
+        <section id="live" className="bg-black">
+          <div className={`${wrap} py-16 sm:py-24`}>
+            <div className="grid gap-10 md:grid-cols-2 md:items-end">
+              <div>
+                <Eyebrow>Live classes</Eyebrow>
+                <h2 className="mt-3 text-[34px] sm:text-[52px]">{LIVE_CLASSES_PER_WEEK} live classes <span className="script block">every week.</span></h2>
+              </div>
+              <p className="text-lg text-muted">All {LIVE_CLASS_MINUTES} minutes, all on the mat. Two BAYSE instructors in every class: one teaches, the other watches your form and answers your questions. Camera on for pointers, or off if you prefer.</p>
+            </div>
+            <div className="mt-12 grid gap-px border-y border-white/20 bg-white/20 sm:grid-cols-7">
+              {LIVE_TIMETABLE.map((d) => (
+                <div key={d.day} className="flex gap-4 bg-black py-4 sm:block sm:px-3">
+                  <p className="w-12 shrink-0 text-sm font-bold uppercase sm:w-auto">{d.short}</p>
+                  <ul className="flex-1 space-y-3 sm:mt-3">
+                    {d.classes.map((c) => (
+                      <li key={c.time} className="flex items-baseline gap-3 sm:block">
+                        <span className="w-[60px] shrink-0 text-lg font-bold sm:w-auto sm:text-xl">{c.time}</span>
+                        <span className="text-sm text-muted sm:mt-0.5 sm:block">{c.name}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+            <p className="mt-3 text-xs text-muted">UK time. Included with BAYSE Club and BAYSE Coaching. The app always shows the latest timetable.</p>
+          </div>
+        </section>
+
+        {/* 6 · Progress and programmes */}
+        <section id="progress" className="warm">
+          <div className={`${wrap} grid gap-12 py-16 sm:py-24 md:grid-cols-2 md:items-center`}>
+            <div className="relative">
+              <img src={PHOTO.core} alt="A BAYSE instructor teaching a mat Pilates core exercise" className="aspect-[4/5] w-full object-cover" />
+              <div className="absolute -bottom-6 right-4 w-[230px] bg-surface p-4 shadow-card sm:-right-6">
+                <p className="eyebrow">Your weekly progress</p>
+                <div className="mt-3 flex gap-1.5">{['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
+                  <div key={i} className="flex-1 text-center"><div className={`mx-auto mb-1 grid h-6 w-6 place-items-center rounded-full text-[10px] ${i === 0 || i === 2 ? 'bg-ink text-bg' : i === 4 ? 'border border-dashed border-ink/50' : 'bg-ink/[0.06]'}`}>{i === 0 || i === 2 ? '✓' : ''}</div><span className="text-[10px] text-muted">{d}</span></div>
+                ))}</div>
+                <p className="mt-2 text-sm">2 of 3 this week</p>
+              </div>
+            </div>
+            <div>
+              <Eyebrow>Your programme</Eyebrow>
+              <h2 className="mt-3 text-[34px] sm:text-[48px]">Progress you can see, <span className="script block">and feel.</span></h2>
+              <p className="mt-4 text-lg text-muted">A 4 to 12-week plan matched to you, with a weekly goal you can actually hit, streaks, milestones, and a nudge from your coach when life gets busy.</p>
+              <ul className="mt-8 divide-y divide-stone border-y border-stone">
+                {PROGRAMMES.map((p) => (
+                  <li key={p.name} className="flex items-baseline justify-between gap-4 py-3">
+                    <span><span className="font-bold">{p.name}</span><span className="block text-sm text-muted">{p.for}</span></span>
+                    <span className="shrink-0 text-xs uppercase tracking-[0.1em] text-muted">{p.weeks}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* 7 · Studio members: the biggest value, made obvious */}
+        <section id="studio" className="bg-black">
+          <div className={`${wrap} py-16 sm:py-24`}>
+            <div className="panel grid overflow-hidden md:grid-cols-2">
+              <img src={PHOTO.plank} alt="" className="h-64 w-full object-cover md:h-full" style={{ objectPosition: '50% 30%' }} />
+              <div className="p-7 sm:p-12">
+                <Eyebrow>Already a BAYSE studio member?</Eyebrow>
+                <h2 className="mt-3 text-[32px] sm:text-[44px]">Your membership <span className="script block">just got bigger.</span></h2>
+                <p className="mt-4 text-lg text-muted">On a £99 or £148 studio membership? BAYSE Club is included: live classes, your programme, on demand, your Circle and clubs near your studio.</p>
+                <p className="mt-4 text-sm"><span className="silver-text text-[28px] font-extrabold">£39.99</span> <span className="text-muted">a month of value, at no extra cost</span></p>
+                <Link href="/start/welcome" className={`${buttonClass('secondary')} mt-8`}>Link my studio membership</Link>
+                <p className="mt-3 text-xs text-muted">Choose your studio when you sign up. Your studio confirms your membership, then everything switches on.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 8 · Membership */}
+        <section id="membership" className="warm">
+          <div className={`${wrap} py-16 sm:py-24`}>
+            <div className="max-w-2xl">
+              <Eyebrow>Membership</Eyebrow>
+              <h2 className="mt-3 text-[34px] sm:text-[48px]">Find your fit. <span className="script">7 days free.</span></h2>
+            </div>
+            <div className="mt-10 grid gap-4 md:grid-cols-3">
+              {TIERS.map((t) => {
+                const featured = 'featured' in t && t.featured;
+                return (
+                  <div key={t.key} className={`flex flex-col p-7 ${featured ? 'ink-panel' : 'border border-stone bg-surface'}`}>
+                    <p className="script text-[26px] leading-none">{t.tagline}</p>
+                    <p className="mt-4 text-sm font-bold uppercase tracking-[0.06em]">{t.name}{featured && <span className="ml-2 font-normal text-muted">· Most popular</span>}</p>
+                    <p className="mt-1"><span className="text-[36px] font-extrabold leading-none">{t.price}</span> <span className="text-sm text-muted">/ month</span></p>
+                    <p className="mt-3 text-sm text-muted">{t.bestFor}</p>
+                    <ul className="mt-5 flex-1 space-y-2 text-sm">{t.items.map((i) => <li key={i} className="flex gap-3"><Tick />{i}</li>)}</ul>
+                    <Link href="/start/welcome" className={`${buttonClass(featured ? 'secondary' : 'primary', true)} mt-7`}>Start free trial</Link>
+                  </div>
+                );
+              })}
+            </div>
+            <p className="mt-5 text-sm text-muted">Studio members on £99 or £148: BAYSE Club is included. Prices are being finalised before launch. Cancel any time; no charge if you cancel during your trial. Coaching, nutrition, wellness and Clubs open in stages, and the app always shows what is live.</p>
+          </div>
+        </section>
+
+        {/* 9 · Questions and close */}
+        <section id="faq" className="bg-black">
+          <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-24">
+            <h2 className="text-[34px] sm:text-[44px]">Questions</h2>
+            <div className="mt-6 divide-y divide-white/20 border-y border-white/20">
+              {FAQS.map((f) => (
+                <details key={f.q} className="group py-4">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-medium">
+                    {f.q}<span aria-hidden className="text-muted transition-transform group-open:rotate-45">+</span>
+                  </summary>
+                  <p className="mt-2 text-sm text-muted">{f.a}</p>
+                </details>
+              ))}
+            </div>
+            <div className="mt-20 text-center">
+              <h2 className="text-[34px] sm:text-[48px]">Your first class <span className="script block">is a minute away.</span></h2>
+              <Link href="/start/welcome" className={`${buttonClass('secondary')} mt-8`}>Start 7 days free</Link>
+            </div>
+          </div>
         </section>
       </main>
       <SiteFooter />

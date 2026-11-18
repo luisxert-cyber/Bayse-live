@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
-import { STEPS, stepIndex, prevStepId } from '@/lib/onboarding/steps';
+import { STEPS, FLOW, stepIndex, prevStepId, PERSONALISE_PATH } from '@/lib/onboarding/steps';
 import { createClient } from '@/lib/supabase/server';
 import { loadOnboarding } from '@/lib/data/onboarding';
 import { buildRecommendation } from '@/lib/data/recommendation';
@@ -65,15 +65,23 @@ export default async function StepPage({ params, searchParams }: Props) {
   }
 
   if (!user) redirect('/start/welcome?expired=1');
+  if (step.later && user.is_anonymous) redirect('/start/goals');
   const data = await loadOnboarding(user.id);
 
-  const header = (
+  const header = step.later ? (
+    <div className="mb-8 pt-2">
+      <div className="flex items-center justify-between text-sm text-muted">
+        <Link href={PERSONALISE_PATH} className="-ml-2 rounded-pill px-2 py-1 hover:text-ink">← Personalise</Link>
+        <span>Optional</span>
+      </div>
+    </div>
+  ) : (
     <div className="mb-8 pt-2">
       <div className="mb-4 flex items-center justify-between text-sm text-muted">
         {back ? <Link href={`/start/${back}`} className="-ml-2 rounded-pill px-2 py-1 hover:text-ink">← Back</Link> : <span />}
-        <span>{idx} of {STEPS.length - 1}</span>
+        <span>{idx} of {FLOW.length - 1}</span>
       </div>
-      <Progress value={idx} max={STEPS.length - 1} label="Onboarding progress" />
+      <Progress value={idx} max={FLOW.length - 1} label="Onboarding progress" />
     </div>
   );
 

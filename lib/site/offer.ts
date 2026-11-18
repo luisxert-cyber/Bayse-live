@@ -58,3 +58,25 @@ export const FAQS = [
   { q: 'I am pregnant, postnatal or have an injury.', a: 'Please check with your doctor or physio first. Tell your instructor before class and they will give you options. Remote classes cannot replace an in-person assessment.' },
   { q: 'Is my information private?', a: 'Yes. Anything about your health stays private to you, and other members only see your chosen display name.' },
 ];
+
+// Membership tiers: one clear reason to choose each. Prices are hypotheses until Luis signs them off.
+export const TIERS = [
+  {
+    key: 'essential', name: 'BAYSE Essential', price: '£19.99', tagline: 'Train on your terms',
+    bestFor: 'For you if you like to train at home, in your own time.',
+    items: ['Your personal programme', 'The on-demand library', 'Recipes and meal ideas', 'Progress tracking', 'The BAYSE community and Clubs'],
+  },
+  {
+    key: 'club', name: 'BAYSE Club', price: '£39.99', tagline: 'Train live, together', featured: true,
+    bestFor: 'For you if you want real instructors, a timetable to show up for and people who notice when you do.',
+    items: ['Everything in Essential', `${LIVE_CLASSES_PER_WEEK} live classes a week, with two instructors`, 'Group coaching for your programme', 'Monthly club challenges'],
+  },
+  {
+    key: 'coaching', name: 'BAYSE Coaching', price: '£79.99', tagline: 'Your own coach',
+    bestFor: 'For you if you want someone in your corner: personal check-ins and a plan that changes with you.',
+    items: ['Everything in Club', 'Your own BAYSE coach', 'Weekly personal check-ins', 'Extra nutrition support'],
+  },
+] as const;
+
+// Parts of BAYSE that open in stages after launch. The website labels them honestly.
+export const OPENING_IN_STAGES = 'Opening in stages';

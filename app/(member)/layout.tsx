@@ -7,9 +7,10 @@ export default async function MemberLayout({ children }: { children: React.React
   // Anonymous sessions belong to onboarding until an account is created.
   if (user.is_anonymous) redirect('/start/account');
   return (
-    <>
+    // The member app uses the warm linen palette: inviting to open every day.
+    <div className="warm min-h-dvh">
       <div style={{ paddingTop: 'env(safe-area-inset-top)' }}>{children}</div>
       <BottomNav />
-    </>
+    </div>
   );
 }
