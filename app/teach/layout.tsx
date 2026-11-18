@@ -8,6 +8,7 @@ const NAV = [
   ['/teach', 'Today'],
   ['/teach/sessions', '1-to-1s'],
   ['/teach/classes', 'My classes'],
+  ['/teach/spotter', 'Spotter'],
   ['/teach/availability', 'Availability'],
   ['/teach/profile', 'My profile'],
   ['/teach/pay', 'My pay'],

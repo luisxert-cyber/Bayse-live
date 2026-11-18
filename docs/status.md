@@ -39,3 +39,16 @@ Updated 18 November 2026. Labels: **Complete and tested** · **Built not tested*
 | 5 Community and Clubs: screens | Not started · prototype screens exist (Mocked) |
 | 6 Studio links and recognition | Studio link verification built; the rest not started |
 | 7 Launch readiness | Not started |
+
+## Added 18 November 2026 (evening)
+
+Built, checked by CI (types, lint, build, migrations), not yet tapped through by a person:
+
+| Feature | Where | Notes |
+| --- | --- | --- |
+| Monthly challenges | `/challenge`, Today card, Admin → Monthly challenges | Inner Circle and Black (`challenges` entitlement). Counts finished workouts and live classes joined in the calendar month. A challenge is seeded for every month to December 2027. |
+| Live check-ins | `/live/join/[id]` | Tapping Join notes the member as in today's class, then opens Zoom. |
+| Spotter console | `/teach/spotter` | The class's instructors see who has joined (first names, first-timers) and send a cheer, shown on the member's Today screen. Health answers are deliberately not shown here. |
+| Women's wellness pathways | `/train/wellness` | Pregnancy, after your baby, perimenopause and menopause. Hand-picked classes and written guidance in `lib/wellness/pathways.ts`. **Not yet reviewed by a qualified professional.** |
+| Free 7-day Pilates challenge | `/free-challenge`, Admin → Free challenge sign-ups | Name, email, health agreement and optional marketing consent. No account. No reminder emails until an email provider is connected. |
+| Test mode | `/join` | Temporary skip-payment button, controlled by the `test_mode` flag. Switch off before launch. |

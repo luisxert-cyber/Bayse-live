@@ -8,6 +8,7 @@ const MENU = [
   ['/benefits', 'Benefits'],
   ['/pricing', 'Pricing'],
   ['/free-trial', '7-day free trial'],
+  ['/free-challenge', 'Free 7-day challenge'],
   ['/live-classes', 'Live classes'],
   ['/classes', 'On-demand classes'],
   ['/reformer', 'Reformer at home'],

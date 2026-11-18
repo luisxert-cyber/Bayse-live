@@ -9,6 +9,7 @@ import { nextBestAction } from '@/lib/daily/next';
 import { computeProgress } from '@/lib/daily/progress';
 import { MoveThumb } from '@/components/workout/MoveThumb';
 import { EXERCISES } from '@/lib/workouts/catalog';
+import { loadChallenge } from '@/lib/challenge/data';
 
 export const metadata = { title: 'Today' };
 export const dynamic = 'force-dynamic';
@@ -19,7 +20,7 @@ export const dynamic = 'force-dynamic';
 export default async function Today({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const sp = await searchParams;
   const user = await requireUser('/today');
-  const [m, programme, daily] = await Promise.all([loadMember(user.id), currentProgramme(user.id), loadDaily(user.id)]);
+  const [m, programme, daily, monthly] = await Promise.all([loadMember(user.id), currentProgramme(user.id), loadDaily(user.id), loadChallenge(user.id)]);
   const next = nextBestAction(daily);
   const progress = computeProgress(daily.completions);
   const cover = next.workout ? EXERCISES[(next.workout.blocks[1] ?? next.workout.blocks[0]).ex]?.move : 'birddog';
@@ -33,6 +34,9 @@ export default async function Today({ searchParams }: { searchParams: Promise<Re
   const since = new Date(Date.now() - (todayIdx + 1) * 86400000).toISOString();
   const supabase = await createClient();
   const { data: done } = await supabase.from('workout_completions').select('completed_at, minutes').eq('user_id', user.id).gte('completed_at', since);
+  // Cheers from instructors after live classes in the last week.
+  const { data: cheerRows } = await supabase.from('live_shoutouts').select('id, emoji, note, created_at, live_classes(name), instructors(display_name)').eq('user_id', user.id).gte('created_at', new Date(Date.now() - 7 * 86400000).toISOString()).order('created_at', { ascending: false }).limit(3);
+  const cheers = (cheerRows ?? []) as unknown as { id: string; emoji: string; note: string | null; live_classes: { name: string } | null; instructors: { display_name: string } | null }[];
   const doneDays = new Set((done ?? []).filter((r) => Date.now() - new Date(r.completed_at).getTime() < (todayIdx + 1) * 86400000).map((r) => ukDay(new Date(r.completed_at))).filter((d) => d <= todayIdx));
   const sessions = doneDays.size;
 
@@ -92,6 +96,40 @@ export default async function Today({ searchParams }: { searchParams: Promise<Re
         <p className="mt-3 text-sm text-muted">{sessions >= goal ? `${sessions} of ${goal} this week. Goal reached, brilliant.` : `${sessions} of ${goal} this week. Each workout you finish fills a circle.`}</p>
         <Link href="/you/progress" className="mt-4 flex items-center justify-between border-t border-stone pt-3 text-sm"><span><span className="font-bold">{progress.classes}</span> classes · <span className="font-bold">{progress.streak}</span>-week streak</span><span className="text-muted">Your progress ›</span></Link>
       </Card>
+
+      {/* A cheer from an instructor after a live class */}
+      {cheers.length > 0 && (
+        <Card>
+          <p className="eyebrow">From your instructors</p>
+          <ul className="mt-3 space-y-3">
+            {cheers.map((c) => (
+              <li key={c.id} className="flex items-start gap-3">
+                <span aria-hidden className="text-2xl leading-none">{c.emoji}</span>
+                <span className="text-sm"><span className="font-semibold">{c.instructors?.display_name?.split(' ')[0] ?? 'Your instructor'}</span>{c.live_classes?.name ? <span className="text-muted"> · {c.live_classes.name}</span> : null}{c.note ? <span className="mt-0.5 block text-muted">{c.note}</span> : null}</span>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
+
+      {/* This month's challenge */}
+      {monthly.challenge && (
+        <Link href="/challenge" className="block border border-stone p-4 hover:border-ink">
+          <div className="flex items-center justify-between gap-3">
+            <p className="eyebrow">Monthly challenge</p>
+            <span className="text-xs text-muted">{monthly.daysLeft} {monthly.daysLeft === 1 ? 'day' : 'days'} left</span>
+          </div>
+          <p className="mt-2 font-bold uppercase">{monthly.challenge.title}</p>
+          {monthly.joined ? (
+            <>
+              <div className="mt-3 h-2 w-full bg-ink/10"><div className="h-full bg-ink" style={{ width: `${Math.round((Math.min(monthly.done, monthly.challenge.target) / monthly.challenge.target) * 100)}%` }} /></div>
+              <p className="mt-2 text-sm text-muted">{monthly.done >= monthly.challenge.target ? 'Complete. Brilliant.' : `${Math.min(monthly.done, monthly.challenge.target)} of ${monthly.challenge.target} sessions`} ›</p>
+            </>
+          ) : (
+            <p className="mt-1 text-sm text-muted">{monthly.challenge.target} sessions this month. {monthly.allowed ? 'Join in ›' : 'With BAYSE Inner Circle ›'}</p>
+          )}
+        </Link>
+      )}
 
       {/* Together, Nourish, Rewards */}
       <div className="grid grid-cols-2 gap-3">

@@ -53,7 +53,7 @@ export default async function Live() {
           <p className="text-xs font-bold uppercase tracking-[0.12em] text-muted">{toMin(next.starts_at) <= now ? 'On now' : 'Next today'}</p>
           <p className="mt-1 font-display text-2xl font-extrabold uppercase">{pretty(next.starts_at)} · {next.name}</p>
           <p className="text-sm text-muted">{next.minutes} min · camera on for pointers, or off</p>
-          {linkFor.get(next.id) && <a href={linkFor.get(next.id)} target="_blank" rel="noopener" className={`${buttonClass('primary')} mt-4`}>Join on Zoom</a>}
+          {linkFor.get(next.id) && <a href={`/live/join/${next.id}`} target="_blank" rel="noopener" className={`${buttonClass('primary')} mt-4`}>Join on Zoom</a>}
         </div>
       )}
 
@@ -72,7 +72,7 @@ export default async function Live() {
                     <span className="w-14 shrink-0 font-display text-lg font-extrabold">{pretty(c.starts_at)}</span>
                     <span className="min-w-0 flex-1"><span className="block font-semibold">{c.name}</span><span className="text-sm text-muted">{c.minutes} min · mat</span></span>
                     {over ? <span className="text-xs text-muted">Finished</span> : url
-                      ? <a href={url} target="_blank" rel="noopener" className={`${buttonClass('secondary')} !min-h-[38px] !px-4 text-sm`}>Join</a>
+                      ? <a href={`/live/join/${c.id}`} target="_blank" rel="noopener" className={`${buttonClass('secondary')} !min-h-[38px] !px-4 text-sm`}>Join</a>
                       : <span className="text-xs text-muted">Club</span>}
                   </Card>
                 );

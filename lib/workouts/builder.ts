@@ -2,6 +2,7 @@
 // Shape: warm-up → main moves that match the chosen areas → cool-down. Deterministic for a given seed,
 // so "Shuffle" gives a fresh order and the same choices + seed always give the same workout.
 import { AVAILABLE, EXERCISES, WORKOUTS, type Area, type Exercise, type Style, type Workout } from './catalog';
+import { SET_WORKOUTS } from './sets';
 
 export type Level = 1 | 2 | 3;
 export type Equipment = 'weights' | 'band' | 'ball';
@@ -115,8 +116,8 @@ export const READY: Workout[] = READY_SPECS.map((r, i) => {
 });
 export const READY_STYLE: Record<string, Style> = Object.fromEntries(READY_SPECS.map((r, i) => [READY[i].key, r.style]));
 
-/** Any named workout: the original four or a ready-made class. */
-export const findAnyWorkout = (key: string) => WORKOUTS.find((w) => w.key === key) ?? READY.find((w) => w.key === key);
+/** Any named workout: the original four, a ready-made class, or a hand-picked pathway or challenge class. */
+export const findAnyWorkout = (key: string) => WORKOUTS.find((w) => w.key === key) ?? READY.find((w) => w.key === key) ?? SET_WORKOUTS.find((w) => w.key === key);
 
 /** Sensible defaults from the member's onboarding answers. */
 export function defaultsFromAnswers(goals: string[] | null | undefined, experience: string | null | undefined, sessionLength: string | null | undefined): BuildChoices {

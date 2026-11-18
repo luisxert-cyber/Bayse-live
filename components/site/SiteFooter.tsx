@@ -14,6 +14,7 @@ export function SiteFooter() {
           <Link href="/features" className="block hover:text-ink">Features</Link>
           <Link href="/benefits" className="block hover:text-ink">Benefits</Link>
           <Link href="/free-trial" className="block hover:text-ink">7-day free trial</Link>
+          <Link href="/free-challenge" className="block hover:text-ink">Free 7-day challenge</Link>
           <Link href="/live-classes" className="block hover:text-ink">Live classes</Link>
           <Link href="/classes" className="block hover:text-ink">On-demand classes</Link>
           <Link href="/reformer" className="block hover:text-ink">Reformer at home</Link>

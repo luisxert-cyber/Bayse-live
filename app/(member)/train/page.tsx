@@ -42,6 +42,10 @@ export default async function Train() {
           <span><span className="block font-display text-xl font-extrabold uppercase">Have a bed at home?</span><span className="text-sm text-muted">Reformer classes from the studio, with spring settings.</span></span>
           <span aria-hidden className="text-2xl">›</span>
         </Link>
+        <Link href="/train/wellness" className="flex items-center justify-between gap-4 rounded-card border border-ink p-5">
+          <span><span className="block font-display text-xl font-extrabold uppercase">Women&rsquo;s wellness</span><span className="text-sm text-muted">Pregnancy, after your baby, menopause.</span></span>
+          <span aria-hidden className="text-2xl">›</span>
+        </Link>
         <Link href="/train/moves" className="flex items-center justify-between gap-4 rounded-card border border-ink p-5">
           <span><span className="block font-display text-xl font-extrabold uppercase">Move library</span><span className="text-sm text-muted">{count} moves with cues.</span></span>
           <span aria-hidden className="text-2xl">›</span>

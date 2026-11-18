@@ -5,6 +5,7 @@ import { Wordmark } from '@/components/ui';
 const NAV: { href: string; label: string; area: StaffArea }[] = [
   { href: '/admin', label: 'Dashboard', area: 'overview' },
   { href: '/admin/members', label: 'Members', area: 'members' },
+  { href: '/admin/leads', label: 'Free challenge sign-ups', area: 'members' },
   { href: '/admin/staff', label: 'Staff and instructors', area: 'staff' },
   { href: '/admin/classes', label: 'Live classes', area: 'classes' },
   { href: '/admin/sessions', label: '1-to-1 sessions', area: 'sessions' },
@@ -14,6 +15,7 @@ const NAV: { href: string; label: string; area: StaffArea }[] = [
   { href: '/admin/videos', label: 'Move clips and voice', area: 'content' },
   { href: '/admin/reports', label: 'Community reports', area: 'reports' },
   { href: '/admin/rewards', label: 'Rewards', area: 'rewards' },
+  { href: '/admin/challenges', label: 'Monthly challenges', area: 'rewards' },
   { href: '/admin/flags', label: 'Feature flags', area: 'flags' },
   { href: '/admin/audit', label: 'Audit log', area: 'audit' },
 ];
