@@ -60,7 +60,12 @@ test('home: menu, class library, player and favourites respond', async ({ page }
   await page.keyboard.press('Escape');
   await expect(dialog).toHaveCount(0);
   // Every call to action goes somewhere real
-  for (const name of ['Start your 7-day free trial', 'Play today’s class', 'Start free trial', 'See membership']) {
+  // "Play a free class" opens the class in a window on the page, without leaving it
+  await page.getByRole('button', { name: /Play a free class/ }).click();
+  await expect(page.getByRole('dialog').getByRole('button', { name: 'Start workout' })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page).toHaveURL(/\/$/);
+  for (const name of ['Start your 7-day free trial', 'Start free trial', 'See membership']) {
     const href = await page.getByRole('link', { name }).first().getAttribute('href');
     expect(href, name).toBeTruthy();
   }

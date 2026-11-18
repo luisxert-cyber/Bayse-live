@@ -7,6 +7,7 @@ import { getUser } from '@/lib/auth/session';
 import { hasOnDemand } from '@/lib/auth/access';
 import { LIVE_CLASSES_PER_WEEK } from '@/lib/site/offer';
 import { PhoneTour } from '@/components/site/PhoneTour';
+import { FreeClassButton } from '@/components/site/FreeClassButton';
 import { Icon } from '@/components/site/Graphics';
 import { PHOTO, wrap, Tick, ClassesSection, FeaturesSection, MembershipSection, FaqSection, TrialCta } from '@/components/site/sections';
 
@@ -31,7 +32,7 @@ export default async function Home() {
             <p className="mt-5 max-w-[40ch] text-[17px] text-white/85 sm:text-lg">Your plan, your classes, your food and your people. All in one app.</p>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
               <Link href="/start/welcome" className="inline-flex min-h-[52px] items-center justify-center bg-white px-7 text-[15px] font-bold uppercase tracking-[0.02em] text-black hover:opacity-90">Start my 7-day free trial</Link>
-              <Link href="#play-wake-up-6" className="inline-flex min-h-[52px] items-center justify-center border border-white/70 px-7 text-[15px] font-bold uppercase tracking-[0.02em] hover:bg-white hover:text-black">▶ Play a free class</Link>
+              <FreeClassButton className="inline-flex min-h-[52px] items-center justify-center border border-white/70 px-7 text-[15px] font-bold uppercase tracking-[0.02em] hover:bg-white hover:text-black">▶ Play a free class</FreeClassButton>
             </div>
             <p className="mt-4 text-sm text-white/70">100% free for 7 days · Cancel any time · No reformer needed</p>
           </div>

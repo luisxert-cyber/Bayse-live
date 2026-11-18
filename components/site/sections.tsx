@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { buttonClass } from '@/components/ui';
 import { LIVE_TIMETABLE, LIVE_CLASSES_PER_WEEK, LIVE_CLASS_MINUTES, PROGRAMMES, CLUBS, FAQS, TIERS } from '@/lib/site/offer';
 import { ClassLibrary } from '@/components/site/ClassLibrary';
+import { FreeClassButton } from '@/components/site/FreeClassButton';
 import { HeroInstructor } from '@/components/site/HeroInstructor';
 import { SixFeatures } from '@/components/site/SixFeatures';
 import { LiveTimetable } from '@/components/site/LiveTimetable';
@@ -67,7 +68,7 @@ export function ClassesSection({ member }: { member: boolean }) {
               <h2 className="mt-3 text-[32px] sm:text-[40px]">Train whenever suits you</h2>
               <p className="mt-4 max-w-[52ch] text-muted">Follow-along classes with a timer and voice cues, whenever suits you. Today&rsquo;s class is free.</p>
               <div className="mt-6 flex flex-wrap gap-3">
-                <Link href="/classes#play-wake-up-6" className={buttonClass('primary')}>Play today&rsquo;s class</Link>
+                <FreeClassButton className={buttonClass('primary')}>Play today&rsquo;s class</FreeClassButton>
                 <Link href={member ? '/train/build' : '/try'} className={buttonClass('secondary')}>{member ? 'Build your own workout' : 'See how the workout builder works'}</Link>
               </div>
             </div>
