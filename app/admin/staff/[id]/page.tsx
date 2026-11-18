@@ -19,7 +19,7 @@ export default async function InstructorAdmin({ params, searchParams }: { params
   const [{ data: i }, { data: avail }, { data: classes }, { data: zoom }, { data: det }] = await Promise.all([
     supabase.from('instructors').select('*').eq('id', id).maybeSingle(),
     supabase.from('instructor_availability').select('*').eq('instructor_id', id).order('weekday').order('start_time'),
-    supabase.from('live_class_instructors').select('lead, live_classes(name, weekday, starts_at)').eq('instructor_id', id),
+    supabase.from('live_class_instructors').select('lead, live_classes(name, weekday, starts_at, active, one_off_date)').eq('instructor_id', id),
     supabase.from('instructor_private').select('zoom_url').eq('instructor_id', id).maybeSingle(),
     supabase.from('instructor_details').select('*').eq('instructor_id', id).maybeSingle(),
   ]);
@@ -92,7 +92,8 @@ export default async function InstructorAdmin({ params, searchParams }: { params
         <p className="font-bold">Live classes they teach</p>
         <ul className="text-sm text-muted">
           {(classes ?? []).map((c, n) => {
-            const lc = c.live_classes as unknown as { name: string; weekday: number; starts_at: string } | null;
+            const raw = c.live_classes as unknown as { name: string; weekday: number; starts_at: string; active: boolean; one_off_date: string | null } | null;
+            const lc = raw?.active && !raw.one_off_date ? raw : null;
             return lc ? <li key={n}>{WEEKDAYS[lc.weekday - 1]} {lc.starts_at.slice(0, 5)} · {lc.name}</li> : null;
           })}
           {!classes?.length && <li>None yet. Assign classes in <Link href="/admin/classes" className="underline">Live classes</Link>.</li>}
