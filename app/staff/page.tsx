@@ -16,7 +16,12 @@ export default async function Staff({ searchParams }: { searchParams: Promise<{ 
       <p className="eyebrow mt-6">BAYSE staff</p>
       <h1 className="mt-2 text-[30px]">Back office sign in</h1>
       <p className="mt-1 text-sm text-muted">For BAYSE admins, instructors and moderators. Members sign in on the main website.</p>
-      {(sp.denied || (user && !user.is_anonymous)) && <div className="mt-5"><Notice tone="warning" title="No staff access on this account">Ask a BAYSE admin to add a staff role to your account, or sign in with your staff account.</Notice></div>}
+      {user && !user.is_anonymous ? (
+        <div className="mt-5 space-y-3">
+          <Notice tone="warning" title="This account has no staff access">You are signed in as {user.email}. Sign out, then sign in with your staff email below.</Notice>
+          <form action="/auth/sign-out?next=/staff" method="post"><button className="w-full border border-white py-3 text-sm font-bold uppercase">Sign out of {user.email}</button></form>
+        </div>
+      ) : sp.denied ? <div className="mt-5"><Notice tone="warning" title="No staff access">Sign in with your staff email below.</Notice></div> : null}
       <div className="mt-6"><SignInForms next="/admin" /></div>
     </main>
   );
