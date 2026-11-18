@@ -16,11 +16,12 @@ export default async function InstructorAdmin({ params, searchParams }: { params
   const { id } = await params;
   const sp = await searchParams;
   const supabase = await createClient();
-  const [{ data: i }, { data: avail }, { data: classes }, { data: zoom }] = await Promise.all([
+  const [{ data: i }, { data: avail }, { data: classes }, { data: zoom }, { data: det }] = await Promise.all([
     supabase.from('instructors').select('*').eq('id', id).maybeSingle(),
     supabase.from('instructor_availability').select('*').eq('instructor_id', id).order('weekday').order('start_time'),
     supabase.from('live_class_instructors').select('lead, live_classes(name, weekday, starts_at)').eq('instructor_id', id),
     supabase.from('instructor_private').select('zoom_url').eq('instructor_id', id).maybeSingle(),
+    supabase.from('instructor_details').select('*').eq('instructor_id', id).maybeSingle(),
   ]);
   if (!i) notFound();
   const back = `/admin/staff/${id}`;
@@ -33,6 +34,22 @@ export default async function InstructorAdmin({ params, searchParams }: { params
       </div>
       {sp.ok && <Notice tone="success">Saved.</Notice>}
       {sp.error && <Notice tone="error">That could not be saved. Check the times or fields.</Notice>}
+
+      <section className="space-y-2 border border-stone p-4 text-sm">
+        <p className="font-bold">Contact and pay details {det ? <span className="font-normal text-muted">· completed {new Date(det.completed_at).toLocaleDateString('en-GB')}</span> : null}</p>
+        {det ? (
+          <dl className="grid gap-x-6 gap-y-2 sm:grid-cols-2">
+            <div><dt className="text-xs text-muted">Full name</dt><dd>{det.full_name}</dd></div>
+            <div><dt className="text-xs text-muted">Mobile</dt><dd>{det.phone}</dd></div>
+            <div className="sm:col-span-2"><dt className="text-xs text-muted">Address</dt><dd>{[det.address_line1, det.address_line2, det.city, det.postcode].filter(Boolean).join(', ')}</dd></div>
+            <div><dt className="text-xs text-muted">Bank account</dt><dd>{det.bank_account_name} · {String(det.bank_sort_code).replace(/(\d{2})(\d{2})(\d{2})/, '$1-$2-$3')} · {det.bank_account_number}</dd></div>
+            <div><dt className="text-xs text-muted">Self-employed</dt><dd>{det.self_employed ? 'Yes' : 'Not confirmed'}</dd></div>
+            <div><dt className="text-xs text-muted">Emergency contact</dt><dd>{det.emergency_name ? `${det.emergency_name} · ${det.emergency_phone ?? ''}` : 'Not given'}</dd></div>
+            <div><dt className="text-xs text-muted">Insurance</dt><dd>{det.insurance_provider ? `${det.insurance_provider}${det.insurance_expires ? ` · valid until ${new Date(det.insurance_expires).toLocaleDateString('en-GB')}` : ''}` : 'Not given'}</dd></div>
+          </dl>
+        ) : <p className="text-muted">Not completed yet. They are asked for their full name, address, mobile and bank details the first time they open the instructor portal.</p>}
+        <p className="text-xs text-muted">Only admins and the instructor can see these.</p>
+      </section>
 
       <section className="space-y-2">
         <p className="font-bold">Photos</p>

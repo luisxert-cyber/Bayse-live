@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { requireInstructor } from '@/lib/auth/session';
 import { createClient } from '@/lib/supabase/server';
 import { Notice } from '@/components/ui';
@@ -12,6 +13,9 @@ export default async function TeachHome() {
   const { me } = await requireInstructor();
   if (!me) return null;
   const supabase = await createClient();
+  // New instructors finish their details (contact and pay) before anything else.
+  const { data: details } = await supabase.from('instructor_details').select('instructor_id').eq('instructor_id', me.id).maybeSingle();
+  if (!details) redirect('/teach/welcome');
   const [sessions, classes, { data: period }] = await Promise.all([
     mySessions(me.id, { from: new Date(Date.now() - 864e5).toISOString(), limit: 50 }),
     myClasses(me.id),
