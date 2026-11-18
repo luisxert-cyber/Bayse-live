@@ -11,13 +11,16 @@ export function SiteFooter() {
         </div>
         <div className="space-y-2">
           <p className="eyebrow">BAYSE</p>
+          <Link href="/features" className="block hover:text-ink">Features</Link>
+          <Link href="/benefits" className="block hover:text-ink">Benefits</Link>
+          <Link href="/free-trial" className="block hover:text-ink">7-day free trial</Link>
           <Link href="/live-classes" className="block hover:text-ink">Live classes</Link>
           <Link href="/classes" className="block hover:text-ink">On-demand classes</Link>
           <Link href="/programmes" className="block hover:text-ink">Programmes</Link>
           <Link href="/instructors" className="block hover:text-ink">Instructors and 1-to-1s</Link>
           <Link href="/clubs" className="block hover:text-ink">Community and Clubs</Link>
           <Link href="/faq" className="block hover:text-ink">Questions</Link>
-          <Link href="/pricing" className="block hover:text-ink">Membership</Link>
+          <Link href="/pricing" className="block hover:text-ink">Pricing</Link>
           <Link href="/start/welcome" className="block hover:text-ink">Build my plan</Link>
           <a href="https://www.baysereformerpilates.com" className="block hover:text-ink">Our studios</a>
         </div>

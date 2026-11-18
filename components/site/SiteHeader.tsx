@@ -4,12 +4,15 @@ import { SiteMenu } from './SiteMenu';
 
 // Studio-brand header: BAYSE logo, the free-trial button and a full-screen menu.
 const MENU = [
+  ['/features', 'Features'],
+  ['/benefits', 'Benefits'],
+  ['/pricing', 'Pricing'],
+  ['/free-trial', '7-day free trial'],
   ['/live-classes', 'Live classes'],
   ['/classes', 'On-demand classes'],
   ['/programmes', 'Programmes'],
   ['/instructors', 'Instructors and 1-to-1s'],
   ['/clubs', 'Community and Clubs'],
-  ['/pricing', 'Membership'],
   ['/faq', 'Questions'],
   ['https://www.baysereformerpilates.com', 'Our studios'],
 ] as const;

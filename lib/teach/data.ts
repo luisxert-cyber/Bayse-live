@@ -1,7 +1,7 @@
 import 'server-only';
 import { createClient } from '@/lib/supabase/server';
 
-export type Session = { id: string; starts_at: string; minutes: number; status: string; payment: string; member_note: string | null; instructor_note: string | null; cancel_reason: string | null; member_name?: string };
+export type Session = { id: string; starts_at: string; minutes: number; status: string; payment: string; member_note: string | null; instructor_note: string | null; cancel_reason: string | null; member_name?: string; health_flag?: boolean };
 
 /** This instructor's sessions with the member's first name (via a function that checks access). */
 export async function mySessions(instructorId: string, opts: { from?: string; to?: string; limit?: number } = {}) {
@@ -15,6 +15,7 @@ export async function mySessions(instructorId: string, opts: { from?: string; to
   await Promise.all(rows.map(async (r) => {
     const { data: p } = await supabase.rpc('session_people', { p_id: r.id }).maybeSingle();
     r.member_name = (p as { member_name?: string } | null)?.member_name ?? 'Member';
+    r.health_flag = Boolean((p as { health_flag?: boolean } | null)?.health_flag);
   }));
   return rows;
 }

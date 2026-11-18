@@ -11,7 +11,7 @@ import { FreeClassButton } from '@/components/site/FreeClassButton';
 import { Icon } from '@/components/site/Graphics';
 import { PHOTO, wrap, Tick, ClassesSection, FeaturesSection, MembershipSection, FaqSection, TrialCta } from '@/components/site/sections';
 
-// Home: what BAYSE Online is, then a taste of each part. Each part has its own page for the detail.
+// Home: what The BAYSE Club is, then a taste of each part. Each part has its own page for the detail.
 
 export default async function Home() {
   const user = await getUser().catch(() => null);
@@ -20,14 +20,14 @@ export default async function Home() {
     <>
       <SiteHeader signedIn={hasAccount(user)} />
       <main>
-        {/* Hero: what BAYSE Online is, in one look */}
+        {/* Hero: what The BAYSE Club is, in one look */}
         <section className="relative overflow-hidden">
           <div className="relative h-[52vw] max-h-[420px] min-h-[240px] sm:absolute sm:inset-0 sm:h-auto sm:max-h-none">
             <img src={PHOTO.hero} alt="A BAYSE instructor coaching a bird dog in the studio" className="h-full w-full object-cover" style={{ objectPosition: '60% 30%' }} />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent sm:bg-gradient-to-r sm:from-black sm:via-black/70 sm:to-black/0" />
           </div>
           <div className={`${wrap} relative flex flex-col pb-10 pt-2 sm:min-h-[640px] sm:justify-center sm:py-20`}>
-            <p className="eyebrow !text-white/80">BAYSE Online · Pilates coaching at home</p>
+            <p className="eyebrow !text-white/80">The BAYSE Club · Pilates, nutrition &amp; personal coaching for women</p>
             <h1 className="mt-4 max-w-[14ch] text-[42px] leading-[0.98] sm:text-[68px]">Online Pilates coaching from the BAYSE team</h1>
             <p className="mt-5 max-w-[40ch] text-[17px] text-white/85 sm:text-lg">Your plan, your classes, your food and your people. All in one app.</p>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">

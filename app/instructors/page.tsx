@@ -16,9 +16,9 @@ export default async function Instructors() {
   return (
     <SitePage>
       <section className={`${wrap} py-10`}>
-        <p className="eyebrow">BAYSE Online</p>
+        <p className="eyebrow">The BAYSE Club</p>
         <h1 className="mt-3 text-[40px] leading-none sm:text-[56px]">Our instructors</h1>
-        <p className="mt-4 max-w-[52ch] text-lg text-muted">The same team that teaches in our studios. Join their live classes, or book a {settings?.session_minutes ?? 45}-minute 1-to-1 on Zoom for {money(settings?.price_pence ?? 4499)}. One a month is included with BAYSE Personal Coaching.</p>
+        <p className="mt-4 max-w-[52ch] text-lg text-muted">The same team that teaches in our studios. Join their live classes, or book a {settings?.session_minutes ?? 45}-minute 1-to-1 on Zoom for {money(settings?.price_pence ?? 4499)}. One every 28 days is included with BAYSE Black.</p>
         <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {(team ?? []).map((t) => (
             <li key={t.slug}>

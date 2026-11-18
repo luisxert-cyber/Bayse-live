@@ -59,7 +59,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
     <div className="space-y-7">
       <div>
         <h1 className="text-xl font-semibold">Dashboard</h1>
-        <p className="mt-1 text-sm text-muted">BAYSE Online at a glance. {m.test_accounts ? `${m.test_accounts} automatic test accounts are left out of these figures.` : ''}</p>
+        <p className="mt-1 text-sm text-muted">The BAYSE Club at a glance. {m.test_accounts ? `${m.test_accounts} automatic test accounts are left out of these figures.` : ''}</p>
       </div>
       <Notice tone="warning" title="Payments are in test mode">Stripe is not connected for real payments yet, so revenue shows £0 until it is. Member, trial and activity numbers are live.</Notice>
 

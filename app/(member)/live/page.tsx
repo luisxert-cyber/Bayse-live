@@ -43,8 +43,8 @@ export default async function Live() {
       </div>
 
       {!canJoin && (
-        <Notice title="Live classes come with BAYSE Club">
-          You can see the timetable. To join, choose BAYSE Club or BAYSE Coaching, or use a BAYSE code. <Link href="/start/membership" className="underline">See membership</Link>
+        <Notice title="Live classes come with BAYSE Inner Circle">
+          You can see the timetable. To join, choose BAYSE Inner Circle or BAYSE Black, or use a BAYSE code. <Link href="/start/membership" className="underline">See membership</Link>
         </Notice>
       )}
 

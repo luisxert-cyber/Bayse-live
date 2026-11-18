@@ -203,14 +203,14 @@ export function MembershipSection() {
                 <div key={t.key} className={`flex min-w-0 flex-col gap-3 p-6 ${featured ? 'border-2 border-white' : 'border border-stone'}`}>
                   {featured && <p className="text-xs font-bold uppercase italic">Most popular</p>}
                   <p className="text-xl font-bold">{t.name}</p>
-                  <p><span className="font-display text-[34px] font-bold leading-none">{t.price}</span> <span className="text-sm text-muted">/ month</span></p>
+                  <p><span className="font-display text-[34px] font-bold leading-none">{t.price}</span> <span className="text-sm text-muted">every 28 days</span></p>
                   <ul className="flex-1 space-y-2 text-[15px]">{t.items.map((i) => <li key={i} className="flex gap-3"><Tick />{i}</li>)}</ul>
                   <Link href="/start/welcome" className={`${buttonClass(featured ? 'primary' : 'solid', true)} mt-2`}>Start free trial</Link>
                 </div>
               );
             })}
           </div>
-          <p className="mt-3 text-xs text-muted">Prices are being finalised before launch. Cancel any time.</p>
+          <p className="mt-3 text-xs text-muted">Billed every 28 days (13 payments a year). 7 days free first, cancel during the trial and you pay nothing. Qualifying £99 and £148 studio members get Foundation free. <Link href="/pricing" className="underline">Full pricing</Link></p>
         </section>
 
     </>

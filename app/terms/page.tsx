@@ -3,19 +3,19 @@ import { AGREEMENT, PARQ } from '@/lib/health/parq';
 
 export const metadata = { title: 'Terms and conditions' };
 
-// BAYSE Online Terms & Conditions, version 1 (draft for approval, supplied by BAYSE on 18 Nov 2026).
+// The BAYSE Club Terms & Conditions, version 1 (draft for approval, supplied by BAYSE on 18 Nov 2026).
 // Placeholders in [brackets] are filled in once the company details are confirmed.
 export default function Terms() {
   return (
-    <LegalPage title="BAYSE Online Terms and Conditions" updated="18 November 2026 · Version 1 · Draft for approval · Effective date [Insert launch date]">
-      <h2>1. Who supplies BAYSE Online</h2>
-      <p>BAYSE Online is supplied by Northwest Reformer Pilates Ltd, company number [number], registered office [address]. In these terms, “BAYSE”, “we” and “us” mean that company. Contact us through the support section of your BAYSE Online account or at [support email]. Our <a href="/privacy" className="underline">BAYSE Online Privacy Policy</a> explains how we use personal data.</p>
-      <p>These terms apply to BAYSE Online memberships, digital content, online classes, private sessions and The BAYSE Club community. Your studio operator’s terms govern any studio membership or in-person bookings.</p>
+    <LegalPage title="The BAYSE Club Terms and Conditions" updated="18 November 2026 · Version 1 · Draft for approval · Effective date [Insert launch date]">
+      <h2>1. Who supplies The BAYSE Club</h2>
+      <p>The BAYSE Club is supplied by Northwest Reformer Pilates Ltd, company number [number], registered office [address]. In these terms, “BAYSE”, “we” and “us” mean that company. Contact us through the support section of your BAYSE Club account or at [support email]. Our <a href="/privacy" className="underline">Privacy Policy</a> explains how we use personal data.</p>
+      <p>These terms apply to BAYSE Club memberships, digital content, online classes, private sessions and the member community. Your studio operator’s terms govern any studio membership or in-person bookings.</p>
 
       <h2>2. Memberships and access</h2>
-      <p>BAYSE Online offers BAYSE Foundation, BAYSE Inner Circle and BAYSE Black. Before you buy, we show the total price, billing frequency, start date, what your plan includes and any limits on live bookings or coaching. Features may include an on-demand Pilates library, live online classes, member community access and personal coaching, depending on your plan.</p>
+      <p>The BAYSE Club offers BAYSE Foundation, BAYSE Inner Circle and BAYSE Black. Before you buy, we show the total price, billing frequency, start date, what your plan includes and any limits on live bookings or coaching. Features may include an on-demand Pilates library, live online classes, member community access and personal coaching, depending on your plan.</p>
       <p>BAYSE Black costs £79.99 every 28 days and includes one 45-minute private Zoom Pilates session per paid billing period, alongside its advertised digital and live benefits. Book through the method shown in your account. If we cannot offer a reasonable opportunity to use your included session within the applicable period, contact us so we can arrange an alternative or provide any remedy you are entitled to.</p>
-      <p>Eligible BAYSE studio members on the £99 or £148 studio memberships receive BAYSE Online access at no extra charge while their qualifying membership remains active. This access carries no recurring BAYSE Online charge and ends when eligibility ends. A paid online plan starts only if you actively purchase one. Studio membership includes no complimentary private online sessions. Studio members can book and pay for private sessions separately at the price shown before booking.</p>
+      <p>Eligible BAYSE studio members on the £99 or £148 studio memberships receive BAYSE Club access at no extra charge while their qualifying membership remains active. This access carries no recurring BAYSE Club charge and ends when eligibility ends. A paid online plan starts only if you actively purchase one. Studio membership includes no complimentary private online sessions. Studio members can book and pay for private sessions separately at the price shown before booking.</p>
 
       <h2>3. Billing and renewal</h2>
       <p>Your first payment covers the first 28 days. Paid plans renew automatically every 28 days until cancelled. A full year normally includes 13 payments, and some calendar months may contain two payments. Your checkout and confirmation show the total payable per period, including applicable taxes, and your next billing date.</p>
@@ -23,7 +23,7 @@ export default function Terms() {
       <p>Any trial or introductory offer will show its length, expiry, and any later charge and renewal date before you accept it. Browsing free material or activating studio-included access does not authorise a paid subscription.</p>
 
       <h2>4. Cancelling a paid membership</h2>
-      <p>You can give 28 days’ notice through the cancellation option in your BAYSE Online account or by emailing [support email]. Your notice starts when we receive it. We will confirm receipt, any final payment, and the date access ends.</p>
+      <p>You can give 28 days’ notice through the cancellation option in your BAYSE Club account or by emailing [support email]. Your notice starts when we receive it. We will confirm receipt, any final payment, and the date access ends.</p>
       <p>If your current paid period covers the full notice period, no further payment is due. If your next renewal falls before the notice period ends, we will collect one final full 28-day payment. You keep access and the plan benefits for that full paid period. Your subscription then ends without another renewal.</p>
       <p><strong>Example.</strong> If you give notice on 10 September, your 28-day notice ends on 8 October. If your next payment is due on 20 September, that payment covers 20 September through 17 October inclusive. Your access ends after 17 October.</p>
       <p>The first paid period is subject to your statutory cancellation rights and any other rights to end the contract earlier. If you become unable to use the service because of a significant change in circumstances, contact us so we can consider your request for early cancellation.</p>
@@ -38,9 +38,9 @@ export default function Terms() {
       <h2>6. Live classes and private bookings</h2>
       <p>Live classes and private sessions are subject to availability. Your booking is confirmed when we send confirmation or display it as confirmed in your account. Booking details show the time, joining instructions and any applicable cancellation or rescheduling window.</p>
       <p>A standalone private online Pilates session lasts 45 minutes. The price for someone without an online membership is £44.99, payable in full when booking. Any member-specific rate is shown before payment.</p>
-      <p>You may cancel a separately paid private session at least 48 hours before the scheduled start for a full refund. Later cancellations and missed sessions are generally non-refundable, subject to your legal rights. For included coaching sessions, the booking screen explains how late cancellations and missed sessions affect your entitlement. If BAYSE cannot provide a separately paid session, you can choose a replacement or full refund. For an included session we cancel, we will offer a replacement and preserve the entitlement long enough to use it, or provide any applicable remedy.</p>
+      <p>You may cancel a separately paid private session at least 12 hours before the scheduled start for a full refund. Later cancellations and missed sessions are generally non-refundable, subject to your legal rights. For included coaching sessions, the booking screen explains how late cancellations and missed sessions affect your entitlement. If BAYSE cannot provide a separately paid session, you can choose a replacement or full refund. For an included session we cancel, we will offer a replacement and preserve the entitlement long enough to use it, or provide any applicable remedy.</p>
 
-      <h2 id="health">7. Using BAYSE Online safely</h2>
+      <h2 id="health">7. Using The BAYSE Club safely</h2>
       <p>Use a suitable device, a stable internet connection and a clear exercise space. Follow the instructor’s guidance, select a level appropriate to your experience and use only the equipment specified. Stop if you experience pain, dizziness or feel unwell. Speak to an appropriate healthcare professional if you are unsure whether exercise is suitable, including during pregnancy, after surgery or injury, or if you have a health condition that could affect safe participation.</p>
       <p>Online instructors may have limited visibility, and on-demand sessions are unsupervised. Fitness, wellbeing and any nutrition information are for general guidance. Seek qualified medical advice for individual diagnosis or treatment.</p>
       <p><strong>Health check and health and safety agreement.</strong> Before your first class we ask {PARQ.length} health questions and for your agreement to the points below. If you answer yes to any question, we ask you to get advice from a doctor or qualified health professional before taking part. We ask you to confirm your health check every 12 months.</p>

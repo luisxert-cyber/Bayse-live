@@ -141,7 +141,7 @@ export default async function StepPage({ params, searchParams }: Props) {
       if (!hasAccount(user)) redirect('/start/account');
       const [{ data: plans }, { data: prices }] = await Promise.all([
         supabase.from('plans').select('id, key, name, description, sort, is_hypothesis').order('sort'),
-        supabase.from('prices').select('id, plan_id, stripe_price_id, billing_interval, amount_pence, currency, trial_days').eq('billing_interval', 'month'),
+        supabase.from('prices').select('id, plan_id, stripe_price_id, billing_interval, amount_pence, currency, trial_days').in('billing_interval', ['month', '28_days']),
       ]);
       const anyHypothesis = (plans ?? []).some((p) => p.is_hypothesis);
       body = (
@@ -156,7 +156,7 @@ export default async function StepPage({ params, searchParams }: Props) {
               <Card key={plan.id}>
                 <div className="flex items-baseline justify-between gap-3">
                   <h2 className="text-lg font-semibold">{plan.name}</h2>
-                  {price && <p className="text-sm"><span className="font-serif text-xl">{formatPence(price.amount_pence, price.currency)}</span> <span className="text-muted">/ month</span></p>}
+                  {price && <p className="text-sm"><span className="font-serif text-xl">{formatPence(price.amount_pence, price.currency)}</span> <span className="text-muted">every 28 days</span></p>}
                 </div>
                 <p className="mt-1 text-sm text-muted">{plan.description}</p>
                 {price && (

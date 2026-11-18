@@ -47,7 +47,7 @@ export function HealthForm({ action, next, defaultName }: { action: Action; next
       </section>
 
       <div className="space-y-3">
-        <label className="flex items-start gap-3 text-sm"><input type="checkbox" name="consent" required className="mt-0.5 h-5 w-5 shrink-0 accent-white" /><span>I agree to BAYSE keeping my health check answers to help keep me safe. Only I and BAYSE’s admin team can see them; instructors, other members and advertisers never can.</span></label>
+        <label className="flex items-start gap-3 text-sm"><input type="checkbox" name="consent" required className="mt-0.5 h-5 w-5 shrink-0 accent-white" /><span>I agree to BAYSE keeping my health check answers to help keep me safe. Only I and BAYSE’s admin team can see my answers. If I book a 1-to-1, my instructor is told only whether I have a health condition to discuss. Other members and advertisers never see any of it.</span></label>
         <label className="flex items-start gap-3 text-sm"><input type="checkbox" name="agree" required className="mt-0.5 h-5 w-5 shrink-0 accent-white" /><span>I have read and agree to the health and safety agreement, and my answers are true.</span></label>
         <label className="grid gap-1 text-sm">Type your full name to sign
           <input name="signed_name" required minLength={2} maxLength={100} autoComplete="name" defaultValue={defaultName} className="w-full border border-stone bg-bg px-3 py-3 text-base" />

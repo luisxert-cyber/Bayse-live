@@ -8,9 +8,9 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-body', display: 'swa
 
 
 export const metadata: Metadata = {
-  title: { default: 'BAYSE: your programme, your coach, your people', template: '%s · BAYSE' },
-  description: 'Personalised Pilates programmes, live classes with real instructors, nutrition, coaching and a community of women, from BAYSE studios.',
-  applicationName: 'BAYSE',
+  title: { default: 'The BAYSE Club · Pilates, nutrition & personal coaching for women', template: '%s · The BAYSE Club' },
+  description: 'The BAYSE Club: Pilates, nutrition & personal coaching for women. Your plan, live and on-demand classes, recipes, 1-to-1s and a community, from the BAYSE studio team.',
+  applicationName: 'The BAYSE Club',
   robots: { index: false, follow: false }, // switched on at launch, with Luis's approval
 };
 

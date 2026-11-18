@@ -1,4 +1,4 @@
-// What BAYSE online offers, in one place, so the website, pricing page and FAQs say the same thing.
+// What The BAYSE Club offers, in one place, so the website, pricing page and FAQs say the same thing.
 // Update here when the offer changes.
 
 // Launch timetable: 17 live classes a week, all 45 minutes, UK time.
@@ -83,22 +83,24 @@ export const FAQS = [
   { q: 'Is my information private?', a: 'Yes. Anything about your health stays private to you, and other members only see your chosen display name.' },
 ];
 
-// Membership tiers: one clear reason to choose each. Prices are hypotheses until Luis signs them off.
+// Membership tiers (owner decision 18 Nov 2026). Billed every 28 days: 13 payments a year.
+export const BILLING = 'every 28 days';
+export const PRIVATE_SESSION_PRICE = '£44.99';
 export const TIERS = [
   {
-    key: 'essential', name: 'BAYSE Essential', price: '£19.99', tagline: 'Train on your terms',
+    key: 'essential', name: 'BAYSE Foundation', price: '£19.99', tagline: 'Train on your terms',
     bestFor: 'For you if you like to train at home, in your own time.',
-    items: ['Your personal programme', 'The on-demand library', 'Recipes and meal ideas', 'Progress tracking', 'The BAYSE community and Clubs'],
+    items: ['Your personal plan, 4 to 12 weeks', 'The on-demand library and workout builder', 'Recipes and shopping lists', 'Progress, milestones and rewards', 'The member community and Clubs'],
   },
   {
-    key: 'club', name: 'BAYSE Club', price: '£39.99', tagline: 'Train live, together', featured: true,
+    key: 'club', name: 'BAYSE Inner Circle', price: '£39.99', tagline: 'Train live, together', featured: true,
     bestFor: 'For you if you want real instructors, a timetable to show up for and people who notice when you do.',
-    items: ['Everything in Essential', `${LIVE_CLASSES_PER_WEEK} live classes a week, with two instructors`, 'Group coaching for your programme', 'Monthly club challenges'],
+    items: ['Everything in Foundation', `${LIVE_CLASSES_PER_WEEK} live Zoom classes a week, two instructors in each`, 'Monthly challenges'],
   },
   {
-    key: 'coaching', name: 'BAYSE Coaching', price: '£79.99', tagline: 'Your own coach',
-    bestFor: 'For you if you want someone in your corner: personal check-ins and a plan that changes with you.',
-    items: ['Everything in Club', 'Your own BAYSE coach', 'Weekly personal check-ins', 'Extra nutrition support'],
+    key: 'coaching', name: 'BAYSE Black', price: '£79.99', tagline: 'One-to-one with your instructor',
+    bestFor: 'For you if you want time with an instructor who knows you: form, progress and a plan that changes with you.',
+    items: ['Everything in Inner Circle', 'One 45-minute private Zoom session every 28 days', 'Unused session carries over one extra period', `Extra 1-to-1s any time (${PRIVATE_SESSION_PRICE})`],
   },
 ] as const;
 

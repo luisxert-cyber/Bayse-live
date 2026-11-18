@@ -14,6 +14,7 @@ export function SessionCard({ s, joinUrl, back }: { s: Session; joinUrl?: string
         <div>
           <p className="font-bold">{ukDateTime(s.starts_at)} · {s.minutes} min</p>
           <p>{s.member_name}</p>
+          {s.health_flag && <p className="mt-1 border border-white px-2 py-1 text-xs">Has told BAYSE about a health condition. Ask them about it before you start.</p>}
           <p className="text-xs text-muted">{STATUS[s.status]} · {PAYMENT[s.payment]}</p>
         </div>
         {s.status === 'confirmed' && !ended && joinUrl && <a href={joinUrl} target="_blank" rel="noopener noreferrer" className={btnSolid}>Open Zoom</a>}
