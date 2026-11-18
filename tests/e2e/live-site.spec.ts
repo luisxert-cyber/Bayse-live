@@ -136,6 +136,9 @@ test('sign in: wrong password shows a friendly error', async ({ page }) => {
 
 test('full journey: build my plan → account → Today → Personalise', async ({ page }) => {
   test.setTimeout(120_000);
+  page.on('pageerror', (e) => console.log('[pageerror]', e.message.slice(0, 300)));
+  page.on('console', (m) => { if (m.type() === 'error') console.log('[console]', m.text().slice(0, 300)); });
+  page.on('response', (r) => { if (r.status() >= 400 || (r.request().isNavigationRequest() && r.status() >= 300)) console.log('[response]', r.status(), r.url().slice(0, 160)); });
   const cont = () => page.getByRole('button', { name: 'Continue' }).click();
   await page.goto('/start/welcome');
   await page.getByRole('button', { name: 'Build my plan' }).click();
@@ -184,8 +187,8 @@ test('full journey: build my plan → account → Today → Personalise', async 
 
   // Bottom navigation
   for (const [name, url] of [['Train', /\/train/], ['Live', /\/live/], ['Community', /\/community/], ['You', /\/you/], ['Today', /\/today/]] as const) {
-    await page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name }).click();
-    await expect(page, name).toHaveURL(url, { timeout: 15000 });
+    await page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name, exact: true }).click();
+    await expect(page, name).toHaveURL(url, { timeout: 15000 }).catch(async (e) => { console.log('[nav-fail]', name, page.url(), (await page.locator('main').innerText().catch(() => '')).slice(0, 400)); throw e; });
   }
 
   // Personalise: answer one optional question and come back
