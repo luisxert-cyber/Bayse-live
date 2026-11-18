@@ -42,7 +42,7 @@ export default async function Home() {
         <section className={wrap}>
           <div className="grid grid-cols-2 gap-px border border-stone bg-stone lg:grid-cols-4">
           {[
-            [Icon.live, 'Live coached classes', `${LIVE_CLASSES_PER_WEEK} a week, two instructors in every class`, '/live'],
+            [Icon.live, 'Live coached classes', `${LIVE_CLASSES_PER_WEEK} a week, two instructors in every class`, '/live-classes'],
             [Icon.plan, 'Your personal plan', '4 to 12 weeks, built from your answers', '/programmes'],
             [Icon.play, 'On-demand library', 'Follow-along classes and a workout builder', '/classes'],
             [Icon.people, 'Community', 'Circles, Clubs and members near you', '/clubs'],

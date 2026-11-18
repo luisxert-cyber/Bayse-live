@@ -11,7 +11,7 @@ export function SiteFooter() {
         </div>
         <div className="space-y-2">
           <p className="eyebrow">BAYSE</p>
-          <Link href="/live" className="block hover:text-ink">Live classes</Link>
+          <Link href="/live-classes" className="block hover:text-ink">Live classes</Link>
           <Link href="/classes" className="block hover:text-ink">On-demand classes</Link>
           <Link href="/programmes" className="block hover:text-ink">Programmes</Link>
           <Link href="/clubs" className="block hover:text-ink">Community and Clubs</Link>

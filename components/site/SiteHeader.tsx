@@ -4,7 +4,7 @@ import { SiteMenu } from './SiteMenu';
 
 // Studio-brand header: BAYSE logo, the free-trial button and a full-screen menu.
 const MENU = [
-  ['/live', 'Live classes'],
+  ['/live-classes', 'Live classes'],
   ['/classes', 'On-demand classes'],
   ['/programmes', 'Programmes'],
   ['/clubs', 'Community and Clubs'],
