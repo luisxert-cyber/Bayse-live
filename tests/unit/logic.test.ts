@@ -138,3 +138,29 @@ test('Stripe subscription mapping', () => {
   assert.equal(isUuid('11111111-1111-4111-8111-111111111111'), true);
   assert.equal(isUuid("1' or 1=1"), false);
 });
+
+import { buildWorkout, defaultsFromAnswers } from '../../lib/workouts/builder';
+import { EXERCISES, workoutSeconds } from '../../lib/workouts/catalog';
+
+test('workout builder fits the time, matches areas and respects joints', () => {
+  for (const minutes of [5, 10, 15, 20, 30]) {
+    const w = buildWorkout({ areas: ['core'], minutes, level: 2, avoid: [], seed: 3 });
+    assert.ok(workoutSeconds(w) <= minutes * 60 + 5, `fits ${minutes} min`);
+    assert.ok(w.blocks.length >= 3);
+    for (let i = 1; i < w.blocks.length; i++) assert.notEqual(w.blocks[i].ex, w.blocks[i - 1].ex, 'no move twice in a row');
+  }
+  const core = buildWorkout({ areas: ['core'], minutes: 15, level: 2, avoid: [], seed: 1 });
+  const middle = core.blocks.slice(1, -1).map((b) => EXERCISES[b.ex]);
+  assert.ok(middle.every((e) => e.areas.includes('core')), 'main moves match the area');
+  const safe = buildWorkout({ areas: ['glutes', 'back'], minutes: 20, level: 1, avoid: ['knees', 'wrists'], seed: 2 });
+  assert.ok(safe.blocks.every((b) => !(EXERCISES[b.ex].loads ?? []).some((l) => l === 'knees' || l === 'wrists')), 'avoids loaded joints');
+  assert.deepEqual(buildWorkout({ areas: ['core'], minutes: 10, level: 1, avoid: [], seed: 7 }), buildWorkout({ areas: ['core'], minutes: 10, level: 1, avoid: [], seed: 7 }));
+});
+
+test('builder defaults come from onboarding answers', () => {
+  const d = defaultsFromAnswers(['core', 'posture'], 'intermediate', '20-30');
+  assert.deepEqual(d.areas, ['core', 'back']);
+  assert.equal(d.level, 2);
+  assert.equal(d.minutes, 20);
+  assert.deepEqual(defaultsFromAnswers(null, null, null).areas, ['core', 'glutes']);
+});

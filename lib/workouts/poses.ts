@@ -57,6 +57,16 @@ export const MOVES: Record<string, Move> = {
     a: { hip: [150, 98], shoulder: [151, 44], head: [152, 26], elbowN: [176, 52], handN: [202, 54], kneeN: [150, 134], footN: [150, 168], kneeF: [154, 134], footF: [154, 168] },
     b: { hip: [122, 126], shoulder: [152, 80], head: [163, 64], elbowN: [178, 82], handN: [204, 82], kneeN: [162, 128], footN: [150, 168], kneeF: [166, 129], footF: [154, 168] },
   },
+  swimming: {
+    tempo: 2.4,
+    a: { head: [216, 158], shoulder: [196, 163], hip: [132, 163], elbowN: [222, 164], handN: [248, 165], elbowF: [224, 163], handF: [250, 164], kneeN: [96, 165], footN: [60, 166], kneeF: [98, 165], footF: [62, 166] },
+    b: { head: [216, 154], shoulder: [196, 162], hip: [132, 163], elbowN: [222, 152], handN: [248, 146], elbowF: [224, 163], handF: [250, 164], kneeN: [96, 165], footN: [60, 166], kneeF: [96, 156], footF: [60, 148] },
+  },
+  singleleg: {
+    tempo: 3,
+    a: { hip: [132, 163], shoulder: [188, 152], head: [204, 142], elbowN: [170, 138], handN: [154, 128], elbowF: [172, 139], handF: [156, 129], kneeN: [152, 130], footN: [130, 118], kneeF: [100, 150], footF: [66, 140] },
+    b: { hip: [132, 163], shoulder: [188, 152], head: [204, 142], elbowN: [170, 139], handN: [156, 129], elbowF: [172, 138], handF: [154, 128], kneeN: [100, 150], footN: [66, 140], kneeF: [152, 130], footF: [130, 118] },
+  },
   childs: {
     tempo: 6,
     a: { hip: [100, 140], shoulder: [160, 157], head: [178, 160], elbowN: [192, 164], handN: [222, 166], elbowF: [194, 163], handF: [224, 165], kneeN: [126, 166], footN: [76, 166], kneeF: [130, 166], footF: [80, 166] },

@@ -1,20 +1,23 @@
 // Guided timer workouts with the illustrated instructor.
 // Mat-only, beginner-friendly cues with an easier option for every move.
 
-export type Exercise = { key: string; move: string; name: string; cue: string; easier: string };
+export type Area = 'core' | 'glutes' | 'back' | 'mobility' | 'full';
+export type Exercise = { key: string; move: string; name: string; cue: string; easier: string; areas: Area[]; level: 1 | 2 | 3; loads?: ('knees' | 'wrists')[]; role?: 'warmup' | 'cooldown' };
 export type Block = { ex: string; seconds: number };
 export type Workout = { key: string; name: string; summary: string; level: 'Beginner' | 'All levels' | 'Intermediate'; focus: string; rest: number; blocks: Block[]; free?: boolean };
 
 export const EXERCISES: Record<string, Exercise> = {
-  catcow: { key: 'catcow', move: 'catcow', name: 'Cat-cow', cue: 'Breathe in to lift your chest, breathe out to round your back. Move slowly.', easier: 'Make the movement smaller.' },
-  bridge: { key: 'bridge', move: 'bridge', name: 'Glute bridge', cue: 'Press through your heels, lift your hips, squeeze your glutes at the top. Lower with control.', easier: 'Lift halfway and hold for a breath.' },
-  deadbug: { key: 'deadbug', move: 'deadbug', name: 'Dead bug', cue: 'Keep your lower back heavy on the mat. Reach the opposite arm and leg away, then swap sides.', easier: 'Move only the legs, tapping a heel to the floor.' },
-  birddog: { key: 'birddog', move: 'birddog', name: 'Bird dog', cue: 'Hands under shoulders, knees under hips. Reach the opposite arm and leg long, hips level. Swap sides.', easier: 'Slide just the leg back, toes on the floor.' },
-  plank: { key: 'plank', move: 'plank', name: 'Plank', cue: 'Long line from head to heels. Draw your belly in and keep breathing.', easier: 'Drop your knees to the mat.' },
-  hundred: { key: 'hundred', move: 'hundred', name: 'The hundred', cue: 'Head and shoulders lifted, pump the arms. Breathe in for five pumps, out for five.', easier: 'Keep your head down and knees bent.' },
-  spinestretch: { key: 'spinestretch', move: 'spinestretch', name: 'Spine stretch forward', cue: 'Sit tall, then peel forward one vertebra at a time, reaching past your toes. Roll back up.', easier: 'Bend your knees or sit on a cushion.' },
-  squat: { key: 'squat', move: 'squat', name: 'Squat', cue: 'Feet hip-width, sit back as if into a chair, chest proud. Drive up through your heels.', easier: 'Squat to a chair and stand back up.' },
-  childs: { key: 'childs', move: 'childs', name: "Child's pose", cue: 'Sit back towards your heels, arms long, forehead down. Breathe into your back.', easier: 'Widen your knees or rest on a pillow.' },
+  catcow: { key: 'catcow', move: 'catcow', name: 'Cat-cow', cue: 'Breathe in to lift your chest, breathe out to round your back. Move slowly.', easier: 'Make the movement smaller.', areas: ['back', 'mobility'], level: 1, loads: ['wrists'], role: 'warmup' },
+  bridge: { key: 'bridge', move: 'bridge', name: 'Glute bridge', cue: 'Press through your heels, lift your hips, squeeze your glutes at the top. Lower with control.', easier: 'Lift halfway and hold for a breath.', areas: ['glutes', 'back'], level: 1 },
+  deadbug: { key: 'deadbug', move: 'deadbug', name: 'Dead bug', cue: 'Keep your lower back heavy on the mat. Reach the opposite arm and leg away, then swap sides.', easier: 'Move only the legs, tapping a heel to the floor.', areas: ['core'], level: 2 },
+  birddog: { key: 'birddog', move: 'birddog', name: 'Bird dog', cue: 'Hands under shoulders, knees under hips. Reach the opposite arm and leg long, hips level. Swap sides.', easier: 'Slide just the leg back, toes on the floor.', areas: ['core', 'back', 'glutes'], level: 1, loads: ['wrists'] },
+  plank: { key: 'plank', move: 'plank', name: 'Plank', cue: 'Long line from head to heels. Draw your belly in and keep breathing.', easier: 'Drop your knees to the mat.', areas: ['core', 'full'], level: 2, loads: ['wrists'] },
+  hundred: { key: 'hundred', move: 'hundred', name: 'The hundred', cue: 'Head and shoulders lifted, pump the arms. Breathe in for five pumps, out for five.', easier: 'Keep your head down and knees bent.', areas: ['core'], level: 2 },
+  spinestretch: { key: 'spinestretch', move: 'spinestretch', name: 'Spine stretch forward', cue: 'Sit tall, then peel forward one vertebra at a time, reaching past your toes. Roll back up.', easier: 'Bend your knees or sit on a cushion.', areas: ['mobility', 'back'], level: 1, role: 'warmup' },
+  squat: { key: 'squat', move: 'squat', name: 'Squat', cue: 'Feet hip-width, sit back as if into a chair, chest proud. Drive up through your heels.', easier: 'Squat to a chair and stand back up.', areas: ['glutes', 'full'], level: 1, loads: ['knees'] },
+  swimming: { key: 'swimming', move: 'swimming', name: 'Swimming', cue: 'Lying on your front, lift the opposite arm and leg a little, then swap with a steady flutter. Keep your neck long.', easier: 'Lift one limb at a time, slowly.', areas: ['back', 'glutes'], level: 1 },
+  singleleg: { key: 'singleleg', move: 'singleleg', name: 'Single-leg stretch', cue: 'Head and shoulders lifted, hug one knee in and reach the other leg long. Switch smoothly.', easier: 'Keep your head down and the long leg higher.', areas: ['core'], level: 2 },
+  childs: { key: 'childs', move: 'childs', name: "Child's pose", cue: 'Sit back towards your heels, arms long, forehead down. Breathe into your back.', easier: 'Widen your knees or rest on a pillow.', areas: ['mobility', 'back'], level: 1, loads: ['knees'], role: 'cooldown' },
 };
 
 export const WORKOUTS: Workout[] = [
