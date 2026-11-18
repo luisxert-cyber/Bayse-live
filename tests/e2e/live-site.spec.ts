@@ -5,7 +5,7 @@ import { test, expect, type Page } from '@playwright/test';
 // 2. Every interactive control on the home page responds (menu, phone tour, FAQs).
 // 3. The whole sign-up journey works, from "Build my plan" to Today and Personalise.
 
-const PUBLIC = ['/', '/live-and-community', '/pricing', '/sign-in', '/start/welcome', '/privacy', '/terms', '/community-guidelines'];
+const PUBLIC = ['/', '/try', '/pricing', '/sign-in', '/start/welcome', '/privacy', '/terms', '/community-guidelines'];
 
 async function linksOn(page: Page) {
   return page.$$eval('a[href]', (as) => as.map((a) => (a as HTMLAnchorElement).getAttribute('href') || ''));
@@ -41,15 +41,11 @@ test('home: menu, class library, player and favourites respond', async ({ page }
   await page.goto('/');
   // Menu
   const menu = page.locator('summary[aria-label="Menu"]');
-  if (await menu.isVisible()) {
-    await expect(async () => {
-      if (!(await page.locator('header details[open]').count())) await menu.click();
-      await expect(page.locator('header details[open] a[href="/#membership"]')).toBeVisible({ timeout: 2000 });
-    }).toPass({ timeout: 15000 });
-    await page.locator('header details[open] a[href="/#membership"]').click();
-  } else {
-    await page.locator('header nav > a[href="/#membership"]').click();
-  }
+  await expect(async () => {
+    if (!(await page.locator('header details[open]').count())) await menu.click();
+    await expect(page.locator('header details[open] a[href="/#membership"]')).toBeVisible({ timeout: 2000 });
+  }).toPass({ timeout: 15000 });
+  await page.locator('header details[open] a[href="/#membership"]').click();
   await expect(page).toHaveURL(/#membership/);
   // Class library filters narrow the list
   const cards = page.locator('[data-class-card]');

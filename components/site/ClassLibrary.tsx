@@ -59,20 +59,6 @@ const LS = { saved: 'bayse_saved', done: 'bayse_done' };
 const read = <T,>(k: string, d: T): T => { try { return JSON.parse(localStorage.getItem(k) || '') as T; } catch { return d; } };
 const write = (k: string, v: unknown) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* optional */ } };
 
-function Motif({ i }: { i: number }) {
-  const o = (i * 23) % 60;
-  const reformer = i % 2 === 1;
-  return (
-    <svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice" aria-hidden className="absolute inset-0 h-full w-full">
-      <g stroke="#fff" strokeOpacity=".28" strokeWidth="2.5" fill="none" strokeLinecap="round">
-        {reformer
-          ? <><path d="M40 150 H280" /><path d="M60 150 V110 M50 110 H70" /><rect x="120" y="128" width="70" height="14" rx="4" /><path d="M250 150 l10 -20 l10 20 l10 -20" /></>
-          : <><circle cx={220 - o} cy="150" r="40" /><circle cx={220 - o} cy="150" r="72" /><circle cx={220 - o} cy="150" r="106" /><rect x="40" y="150" width="120" height="12" rx="6" /></>}
-      </g>
-    </svg>
-  );
-}
-
 export function ClassLibrary({ signedIn, onRecord }: { signedIn: boolean; onRecord?: (key: string) => Promise<void> }) {
   const [style, setStyle] = useState<(typeof STYLE_OPTS)[number]>('All');
   const [kit, setKit] = useState<(typeof KIT_OPTS)[number]>('All');
@@ -168,8 +154,9 @@ export function ClassLibrary({ signedIn, onRecord }: { signedIn: boolean; onReco
               <article key={c.w.key} className="relative flex min-w-0 flex-col overflow-hidden rounded-card border border-stone bg-surface">
                 <button type="button" data-class-card onClick={() => setOpen(c)} aria-label={`${c.w.name}, ${c.minutes} minutes${c.free ? ', free class' : ''}`}
                   className="group flex flex-1 flex-col text-left">
-                  <div className="relative aspect-[16/10] w-full overflow-hidden text-white" style={{ background: `linear-gradient(135deg, hsl(0 0% ${10 + (i % 4) * 3}%), hsl(0 0% ${26 + (i % 4) * 3}%))` }}>
-                    <Motif i={i} />
+                  <div className="relative aspect-[16/10] w-full overflow-hidden bg-surface text-white">
+                    <MoveThumb move={thumbMove(c.w)} className="absolute inset-0 h-full w-full transition-transform duration-500 group-hover:scale-105" />
+                    <span aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-black/30" />
                     <span className="absolute inset-0 grid place-items-center"><span className="grid h-12 w-12 place-items-center rounded-full border-[1.5px] border-white/70 bg-white/15 transition-transform group-hover:scale-110">▶</span></span>
                     <span className="absolute bottom-2.5 left-2.5 rounded-full bg-black/60 px-2.5 py-0.5 text-xs font-bold">{c.minutes} min</span>
                     {c.free && <span className="absolute left-2.5 top-2.5 rounded-full bg-white px-2.5 py-0.5 text-[11px] font-bold text-black">Free class</span>}

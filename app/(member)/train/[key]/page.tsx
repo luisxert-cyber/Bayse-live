@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
+import { hasOnDemand } from '@/lib/auth/access';
 import { requireUser } from '@/lib/auth/session';
 import { workoutMinutes } from '@/lib/workouts/catalog';
 import { findAnyWorkout } from '@/lib/workouts/builder';
@@ -11,6 +12,8 @@ export default async function WorkoutPage({ params }: { params: Promise<{ key: s
   const w = findAnyWorkout(key);
   if (!w) notFound();
   await requireUser(`/train/${key}`);
+  // Only the free class plays without a membership or free trial.
+  if (!w.free && !(await hasOnDemand())) redirect('/you/membership');
   return (
     <main className="page space-y-4">
       <Link href="/train" className="text-sm text-muted hover:text-ink">← Train</Link>

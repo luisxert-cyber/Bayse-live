@@ -3,6 +3,7 @@ import { SiteHeader } from '@/components/site/SiteHeader';
 import { SiteFooter } from '@/components/site/SiteFooter';
 import { buttonClass } from '@/components/ui';
 import { getUser } from '@/lib/auth/session';
+import { hasOnDemand } from '@/lib/auth/access';
 import { LIVE_TIMETABLE, LIVE_CLASSES_PER_WEEK, LIVE_CLASS_MINUTES, PROGRAMMES, CLUBS, FAQS, TIERS } from '@/lib/site/offer';
 import { PhoneTour } from '@/components/site/PhoneTour';
 import { ClassLibrary } from '@/components/site/ClassLibrary';
@@ -36,6 +37,7 @@ const CLUB_ICONS = [Icon.padel, Icon.walk, Icon.coffee, Icon.circle];
 
 export default async function Home() {
   const user = await getUser().catch(() => null);
+  const member = user ? await hasOnDemand() : false;
   return (
     <>
       <SiteHeader signedIn={Boolean(user)} />
@@ -133,12 +135,12 @@ export default async function Home() {
               <p className="mt-4 max-w-[52ch] text-muted">A growing library of BAYSE classes you can do at home or away. Filter by style, length, level or kit, tap a class and follow along with a timer and voice cues. Today&rsquo;s class is free.</p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Link href="#play-wake-up-6" className={buttonClass('primary')}>Play today&rsquo;s class</Link>
-                <Link href="/try" className={buttonClass('secondary')}>Build your own workout</Link>
+                <Link href={member ? '/train/build' : '/try'} className={buttonClass('secondary')}>{member ? 'Build your own workout' : 'See how the workout builder works'}</Link>
               </div>
             </div>
             <HeroInstructor />
           </div>
-          <div className="mt-10"><ClassLibrary signedIn={Boolean(user)} onRecord={user ? recordCompletion : undefined} /></div>
+          <div className="mt-10"><ClassLibrary signedIn={member} onRecord={member ? recordCompletion : undefined} /></div>
         </section>
 
         {/* Your plan */}

@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 // Public pages: load, no horizontal scroll on phones, primary action visible.
-for (const path of ['/', '/live-and-community', '/pricing', '/sign-in', '/start/welcome', '/privacy', '/terms', '/community-guidelines']) {
+for (const path of ['/', '/try', '/pricing', '/sign-in', '/start/welcome', '/privacy', '/terms', '/community-guidelines']) {
   test(`public page ${path} loads and fits the screen`, async ({ page }) => {
     const res = await page.goto(path);
     expect(res?.status()).toBeLessThan(400);
