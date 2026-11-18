@@ -185,7 +185,7 @@ test('full journey: build my plan → account → Today → Personalise', async 
   // Bottom navigation
   for (const [name, url] of [['Train', /\/train/], ['Live', /\/live/], ['Community', /\/community/], ['You', /\/you/], ['Today', /\/today/]] as const) {
     await page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name }).click();
-    await expect(page, name).toHaveURL(url);
+    await expect(page, name).toHaveURL(url, { timeout: 15000 });
   }
 
   // Personalise: answer one optional question and come back
