@@ -4,11 +4,14 @@ import { SiteFooter } from '@/components/site/SiteFooter';
 import { buttonClass } from '@/components/ui';
 import { getUser } from '@/lib/auth/session';
 import { LIVE_SCHEDULE, ON_DEMAND, PROGRAMMES, CLUBS, FAQS } from '@/lib/site/offer';
+import { Icon, IconBadge, TodayPhone, LiveClassGraphic, CoachGraphic, NutritionGraphic, WellnessGraphic, ActivityGraphic, ProgrammeGraphic } from '@/components/site/Graphics';
 
 const Eyebrow = ({ children, light }: { children: React.ReactNode; light?: boolean }) => (
   <p className={`eyebrow ${light ? '!text-bg/60' : ''}`}>{children}</p>
 );
-const Tick = () => <span aria-hidden className="mt-[3px] grid h-4 w-4 shrink-0 place-items-center rounded-full bg-accent/15 text-[10px] text-accent">✓</span>;
+const Tick = () => <span aria-hidden className="silver-fill mt-[3px] grid h-4 w-4 shrink-0 place-items-center rounded-full text-[9px] font-bold">✓</span>;
+const ONDEMAND_ICONS = [Icon.play, Icon.wellness, Icon.people, Icon.circle, Icon.walk, Icon.clock, Icon.clock, Icon.plan];
+const CLUB_ICONS = [Icon.padel, Icon.walk, Icon.coffee, Icon.circle];
 
 export default async function Home() {
   const user = await getUser().catch(() => null);
@@ -28,13 +31,9 @@ export default async function Home() {
             </div>
             <p className="mt-4 text-sm text-muted">Build your plan in three minutes. Cancel any time.</p>
           </div>
-          <div className="relative">
-            <img src="/images/studio-mat-core.webp" alt="A BAYSE instructor teaching a mat Pilates core exercise" className="aspect-[4/5] w-full rounded-[28px] object-cover" />
-            <div className="absolute -bottom-5 left-5 right-5 rounded-card border border-stone bg-surface/95 p-4 shadow-card backdrop-blur sm:left-auto sm:w-64">
-              <p className="eyebrow">Live tonight · 7pm</p>
-              <p className="mt-1 font-serif text-lg">Full Body Mat Pilates</p>
-              <p className="text-sm text-muted">45 minutes · mat and light weights</p>
-            </div>
+          <div className="relative mx-auto w-full max-w-md pb-10 md:pb-0">
+            <img src="/images/studio-mat-core.webp" alt="A BAYSE instructor teaching a mat Pilates core exercise" className="aspect-[4/5] w-[78%] rounded-[28px] object-cover grayscale" />
+            <div className="absolute -bottom-2 right-0 origin-bottom-right scale-[0.82] sm:scale-90 md:-bottom-8"><TodayPhone /></div>
           </div>
         </section>
 
@@ -48,7 +47,7 @@ export default async function Home() {
               ['4–12', 'week personal programmes'],
               ['7', 'day free trial'],
             ].map(([n, l]) => (
-              <div key={l}><p className="font-serif text-[32px] leading-none">{n}</p><p className="mt-1.5 text-sm text-muted">{l}</p></div>
+              <div key={l}><p className="silver-text text-[34px] font-extrabold leading-none">{n}</p><p className="mt-1.5 text-sm text-muted">{l}</p></div>
             ))}
           </div>
         </section>
@@ -65,14 +64,19 @@ export default async function Home() {
               ))}
             </ul>
           </div>
-          <div className="rounded-card border border-stone bg-surface p-6">
-            <p className="eyebrow">Weekly timetable (UK time)</p>
-            <ul className="mt-4 divide-y divide-stone">
-              {LIVE_SCHEDULE.map((s) => (
-                <li key={s.day} className="flex items-baseline justify-between py-3"><span>{s.day}</span><span className="font-serif text-lg">{s.time}</span></li>
-              ))}
-            </ul>
-            <p className="mt-4 text-xs text-muted">Classes may change from time to time; your timetable in the app is always up to date.</p>
+          <div className="space-y-4">
+            <LiveClassGraphic photo="/images/studio-mat-core.webp" />
+            <div>
+              <p className="eyebrow mb-2">Weekly timetable (UK time)</p>
+              <div className="grid grid-cols-5 gap-2">
+                {LIVE_SCHEDULE.map((s) => (
+                  <div key={s.day} className="rounded-2xl border border-stone bg-surface px-2 py-3 text-center">
+                    <p className="text-xs text-muted">{s.day.slice(0, 3)}</p>
+                    <p className="mt-0.5 text-base font-bold">{s.time}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 
@@ -83,9 +87,10 @@ export default async function Home() {
             <h2 className="mt-3 max-w-xl text-xl font-semibold sm:text-2xl">Train whenever suits you</h2>
             <p className="mt-3 max-w-xl text-muted">A growing library of BAYSE classes you can do at home or away. Search by length, level, body area or equipment, and pick up where you left off.</p>
             <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {ON_DEMAND.map((c) => (
+              {ON_DEMAND.map((c, i) => (
                 <div key={c.name} className="rounded-2xl border border-stone bg-bg p-4">
-                  <p className="font-medium">{c.name}</p>
+                  <IconBadge size="sm">{ONDEMAND_ICONS[i]}</IconBadge>
+                  <p className="mt-3 font-semibold">{c.name}</p>
                   <p className="mt-1 text-sm text-muted">{c.note}</p>
                 </div>
               ))}
@@ -95,14 +100,19 @@ export default async function Home() {
 
         {/* Programmes */}
         <section id="programmes" className="mx-auto max-w-5xl px-4 py-16 sm:px-6">
-          <Eyebrow>Your plan</Eyebrow>
-          <h2 className="mt-3 max-w-xl text-xl font-semibold sm:text-2xl">A clear path, built from your answers</h2>
-          <p className="mt-3 max-w-xl text-muted">Tell us your goals, experience, equipment and how many sessions a week are realistic. We recommend a programme, explain why, and set out each week for you.</p>
+          <div className="grid items-center gap-8 md:grid-cols-2">
+            <div>
+              <Eyebrow>Your plan</Eyebrow>
+              <h2 className="mt-3 max-w-xl text-xl font-semibold sm:text-2xl">A clear path, built from your answers</h2>
+              <p className="mt-3 max-w-xl text-muted">Tell us your goals, experience, equipment and how many sessions a week are realistic. We recommend a programme, explain why, and set out each week for you.</p>
+            </div>
+            <ProgrammeGraphic />
+          </div>
           <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {PROGRAMMES.map((p) => (
               <div key={p.name} className="rounded-card border border-stone bg-surface p-5">
                 <p className="font-serif text-lg">{p.name}</p>
-                <p className="mt-0.5 text-xs uppercase tracking-[0.12em] text-accent">{p.weeks}</p>
+                <p className="mt-0.5 text-xs uppercase tracking-[0.12em] text-silver">{p.weeks}</p>
                 <p className="mt-2 text-sm text-muted">{p.for}</p>
               </div>
             ))}
@@ -114,17 +124,20 @@ export default async function Home() {
         <section className="border-y border-stone bg-surface">
           <div className="mx-auto grid max-w-5xl gap-8 px-4 py-16 sm:px-6 md:grid-cols-3">
             <div>
-              <Eyebrow>Coaching</Eyebrow>
+              <CoachGraphic />
+              <div className="mt-6 flex items-center gap-3"><IconBadge size="sm">{Icon.coach}</IconBadge><Eyebrow>Coaching</Eyebrow></div>
               <h3 className="mt-3 text-lg font-semibold">A coach who knows your plan</h3>
               <p className="mt-2 text-sm text-muted">Message your coach, get weekly check-ins and feedback, and adjust your plan when life gets busy. Group coaching comes with BAYSE Club, and your own coach with BAYSE Coaching.</p>
             </div>
             <div>
-              <Eyebrow>Nutrition</Eyebrow>
+              <NutritionGraphic />
+              <div className="mt-6 flex items-center gap-3"><IconBadge size="sm">{Icon.food}</IconBadge><Eyebrow>Nutrition</Eyebrow></div>
               <h3 className="mt-3 text-lg font-semibold">Food that fits real life</h3>
               <p className="mt-2 text-sm text-muted">Simple recipes, flexible weekly meal plans and shopping lists made for you, based on your tastes, budget and time. Never a crash diet.</p>
             </div>
             <div>
-              <Eyebrow>Women&rsquo;s wellness</Eyebrow>
+              <WellnessGraphic />
+              <div className="mt-6 flex items-center gap-3"><IconBadge size="sm">{Icon.wellness}</IconBadge><Eyebrow>Women&rsquo;s wellness</Eyebrow></div>
               <h3 className="mt-3 text-lg font-semibold">Support for every stage</h3>
               <p className="mt-2 text-sm text-muted">Guidance on sleep, stress, cycles, pregnancy, postpartum, perimenopause and menopause, reviewed by professionals. What you share stays private to you.</p>
             </div>
@@ -133,14 +146,22 @@ export default async function Home() {
 
         {/* Community */}
         <section id="community" className="mx-auto max-w-5xl px-4 py-16 sm:px-6">
-          <Eyebrow>Your people</Eyebrow>
-          <h2 className="mt-3 max-w-xl text-xl font-semibold sm:text-2xl">Find your people, online and near your studio</h2>
-          <p className="mt-3 max-w-xl text-muted">Join your studio community and the wider BAYSE community, take part in monthly club challenges, and meet members outside class through clubs run by members themselves.</p>
+          <div className="grid items-center gap-8 md:grid-cols-2">
+            <div>
+              <Eyebrow>Your people</Eyebrow>
+              <h2 className="mt-3 max-w-xl text-xl font-semibold sm:text-2xl">Find your people, online and near your studio</h2>
+              <p className="mt-3 max-w-xl text-muted">Join your studio community and the wider BAYSE community, take part in monthly club challenges, and meet members outside class through clubs run by members themselves.</p>
+            </div>
+            <ActivityGraphic />
+          </div>
           <div className="mt-8 grid gap-3 sm:grid-cols-2">
-            {CLUBS.map((c) => (
-              <div key={c.name} className="rounded-card border border-stone bg-surface p-5">
+            {CLUBS.map((c, i) => (
+              <div key={c.name} className="flex gap-4 rounded-card border border-stone bg-surface p-5">
+                <IconBadge>{CLUB_ICONS[i]}</IconBadge>
+                <div>
                 <p className="font-serif text-lg">{c.name}</p>
-                <p className="mt-2 text-sm text-muted">{c.body}</p>
+                <p className="mt-1 text-sm text-muted">{c.body}</p>
+                </div>
               </div>
             ))}
           </div>
@@ -168,10 +189,10 @@ export default async function Home() {
                 { name: 'BAYSE Club', price: '£39.99', items: ['Everything in Essential', 'Five live classes a week', 'Group coaching', 'Monthly club challenges'], featured: true },
                 { name: 'BAYSE Coaching', price: '£79.99', items: ['Everything in Club', 'Your own coach and check-ins', 'Extra nutrition support'] },
               ].map((p) => (
-                <div key={p.name} className={`rounded-card border bg-bg p-6 ${p.featured ? 'border-ink' : 'border-stone'}`}>
-                  {p.featured && <p className="eyebrow mb-2 !text-accent">Most popular</p>}
+                <div key={p.name} className={`rounded-card p-6 ${p.featured ? 'silver-border' : 'border border-stone bg-bg'}`}>
+                  {p.featured && <p className="silver-text mb-2 text-xs font-bold uppercase tracking-[0.14em]">Most popular</p>}
                   <p className="text-lg font-semibold">{p.name}</p>
-                  <p className="mt-2"><span className="font-serif text-[32px] leading-none">{p.price}</span> <span className="text-sm text-muted">/ month</span></p>
+                  <p className="mt-2"><span className="text-[32px] font-extrabold leading-none">{p.price}</span> <span className="text-sm text-muted">/ month</span></p>
                   <ul className="mt-5 space-y-2 text-sm">{p.items.map((i) => <li key={i} className="flex gap-3"><Tick />{i}</li>)}</ul>
                   <Link href="/start/welcome" className={`${buttonClass(p.featured ? 'primary' : 'secondary', true)} mt-6`}>Start free trial</Link>
                 </div>

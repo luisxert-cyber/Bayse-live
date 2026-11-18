@@ -18,7 +18,7 @@
 
 ## Technical notes
 
-- The existing Supabase project (`bayse-on-demand`) already has tables from the earlier prototype (`profiles`, `member_plans`, `checkins`). The new migrations also create `profiles`, so they should go into a **fresh project** (recommended: `bayse-live`), not on top of the prototype project.
+- The existing Supabase project (`bayse-on-demand`) already has tables from the earlier prototype (`profiles`, `member_plans`, `checkins`). The new migrations also create `profiles`, so they went into a **fresh project**: `bayse-live` (ref `joasvincukvmqlwtsssl`, London), created and loaded on 18 November 2026 with all five migrations and the seed data.
 - Later test runs roll themselves back and leave nothing behind. The first RLS test run left a temporary schema `bayse_t`, 7 fake users (`rls-*@bayse.invalid`) and a trigger `bayse_t_on_auth_user_created` in the prototype project. Cleanup is waiting for your approval of the Supabase prompt. The cleanup SQL is in `scripts/build-remote-rls-test.py` (third file).
 - Programme recommendations are rebuilt if onboarding answers change after the last recommendation. Moving between screens also updates the answers' timestamp, so one extra (identical) recommendation row can be created. Harmless; tidy in Phase 2.
 - Database types are written by hand in `lib/types.ts`. Switch to `supabase gen types` once the CLI runs in CI.

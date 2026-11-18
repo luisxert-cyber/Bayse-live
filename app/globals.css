@@ -10,12 +10,12 @@
   --surface: 21 21 21;      /* #151515 */
   --stone: 42 42 42;        /* #2A2A2A lines */
   --ink: 245 245 244;       /* #F5F5F4 text */
-  --muted: 154 154 151;     /* #9A9A97 */
+  --muted: 184 184 184;     /* #B8B8B8 grey, readable on black */
   --accent: 255 255 255;    /* white */
   --accent-ink: 10 10 10;
-  --sage: 185 243 201;      /* #B9F3C9 */
-  --ochre: 233 196 120;
-  --clay: 240 128 108;
+  --sage: 230 230 230;      /* brand is black, white and grey only */
+  --ochre: 200 200 200;
+  --clay: 255 255 255;
   color-scheme: dark;
 }
 :root[data-theme='light'] {
@@ -26,9 +26,9 @@
   --muted: 110 102 92;
   --accent: 31 28 25;
   --accent-ink: 255 253 249;
-  --sage: 111 138 106;
-  --ochre: 184 138 62;
-  --clay: 169 84 63;
+  --sage: 60 60 60;
+  --ochre: 90 90 90;
+  --clay: 20 20 20;
   color-scheme: light;
 }
 
@@ -36,8 +36,10 @@
   html { -webkit-text-size-adjust: 100%; }
   body {
     @apply bg-bg text-ink font-sans antialiased;
+    color: rgb(var(--ink));
     min-height: 100dvh;
   }
+  h1, h2, h3 { color: rgb(var(--ink)); }
   h1, h2 { font-family: var(--font-brand), Montserrat, system-ui, sans-serif; font-weight: 800; text-transform: uppercase; letter-spacing: -0.02em; line-height: 1.02; text-wrap: balance; }
   h3 { font-family: var(--font-brand), Montserrat, system-ui, sans-serif; font-weight: 700; letter-spacing: -0.01em; text-wrap: balance; }
   :focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 2px; }
@@ -60,3 +62,10 @@
 .logo-for-dark { display: block; }
 :root[data-theme='light'] .logo-for-light { display: block; }
 :root[data-theme='light'] .logo-for-dark { display: none; }
+
+/* Silver: the one brand highlight, used sparingly (key numbers, featured plan, icons). */
+:root { --silver: linear-gradient(135deg, #f4f4f4 0%, #c9cacb 28%, #8f9193 52%, #e3e4e5 74%, #a9abad 100%); --silver-solid: 192 193 194; }
+.silver-text { background: var(--silver); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.silver-border { border: 1px solid transparent; background: linear-gradient(rgb(var(--surface)), rgb(var(--surface))) padding-box, var(--silver) border-box; }
+.silver-fill { background: var(--silver); color: #0a0a0a; }
+.text-silver { color: rgb(var(--silver-solid)); }
