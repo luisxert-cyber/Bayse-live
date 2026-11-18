@@ -34,7 +34,8 @@ export async function buildRecommendation(userId: string): Promise<SavedRecommen
 
   const answers: Answers = {
     goals: a?.goals ?? [], experience: a?.experience ?? null, preferred_training: a?.preferred_training ?? [],
-    equipment: a?.equipment ?? [], sessions_per_week: a?.sessions_per_week ?? null, session_length: a?.session_length ?? null,
+    // Equipment is asked after joining; until then assume the usual home kit (no reformer).
+    equipment: a?.equipment?.length ? a.equipment : ['mat', 'weights', 'bands'], sessions_per_week: a?.sessions_per_week ?? null, session_length: a?.session_length ?? null,
   };
   const rec = recommend(answers, list);
   const programme = list.find((p) => p.key === rec.programmeKey)!;

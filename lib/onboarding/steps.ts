@@ -38,7 +38,7 @@ export const GOALS: Option[] = [
 ];
 
 export const STEPS: Step[] = [
-  { id: 'welcome', kind: 'intro', title: 'Start your 7-day free trial', subtitle: 'A few quick questions about your goals, experience and time, and we will build a plan around you. About a minute. Food and wellness preferences can wait until later.' },
+  { id: 'welcome', kind: 'intro', title: 'Start your 7-day free trial', subtitle: 'Three quick questions and we will build a plan around you. 100% free for 7 days, cancel any time.' },
   { id: 'name', kind: 'name', title: 'What should we call you?', subtitle: 'Your first name is for your coach. Your display name is what other members see in the community.' },
   { id: 'goals', kind: 'multi', field: 'goals', table: 'onboarding_answers', title: 'What would you like BAYSE to help with?', subtitle: 'Choose as many as you like.', options: GOALS, min: 1 },
   { id: 'experience', kind: 'single', field: 'experience', table: 'onboarding_answers', title: 'How much Pilates have you done?', options: [
@@ -48,11 +48,11 @@ export const STEPS: Step[] = [
     { id: 'advanced', label: 'A lot', hint: 'Confident with advanced work' },
   ] },
   { id: 'sessions', kind: 'number', field: 'sessions_per_week', table: 'onboarding_answers', title: 'How many sessions a week feels realistic?', subtitle: 'Be kind to yourself. We would rather you hit two than miss five.', min: 1, max: 7 },
-  { id: 'length', kind: 'single', field: 'session_length', table: 'onboarding_answers', title: 'How long do you usually have?', options: [
+  { id: 'length', later: true, optional: true, kind: 'single', field: 'session_length', table: 'onboarding_answers', title: 'How long do you usually have?', options: [
     { id: '10-15', label: '10 to 15 minutes' }, { id: '20-30', label: '20 to 30 minutes' }, { id: '30-45', label: '30 to 45 minutes' },
     { id: '45-60', label: '45 to 60 minutes' }, { id: 'flexible', label: 'It varies' },
   ] },
-  { id: 'equipment', kind: 'multi', field: 'equipment', table: 'onboarding_answers', title: 'What do you have at home?', options: [
+  { id: 'equipment', later: true, optional: true, kind: 'multi', field: 'equipment', table: 'onboarding_answers', title: 'What do you have at home?', options: [
     { id: 'mat', label: 'A mat' }, { id: 'weights', label: 'Weights' }, { id: 'bands', label: 'Resistance bands' },
     { id: 'accessories', label: 'Pilates ball, ring or blocks' }, { id: 'reformer', label: 'A reformer' }, { id: 'none', label: 'Nothing yet' },
   ], min: 1 },

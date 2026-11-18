@@ -47,14 +47,10 @@ test('home: menu, class library, player and favourites respond', async ({ page }
   }).toPass({ timeout: 15000 });
   await page.locator('header details[open] a[href="/#membership"]').click();
   await expect(page).toHaveURL(/#membership/);
-  // Class library filters narrow the list
+  // Class preview: three classes, then the free trial
   const cards = page.locator('[data-class-card]');
-  const all = await cards.count();
-  expect(all).toBeGreaterThan(6);
-  await page.getByRole('button', { name: 'Sculpt', exact: true }).click();
-  await expect.poll(() => cards.count()).toBeLessThan(all);
-  await page.getByRole('button', { name: 'All', exact: true }).nth(1).click(); // Style: All
-  await expect.poll(() => cards.count()).toBe(all);
+  await expect(cards).toHaveCount(3);
+  await expect(page.getByRole('link', { name: 'Start my 7-day free trial' })).toHaveAttribute('href', '/start/welcome');
   // The free class plays on the page; a members' class offers the free trial instead
   await cards.filter({ hasText: 'Free class' }).first().click();
   const dialog = page.getByRole('dialog');
@@ -65,11 +61,6 @@ test('home: menu, class library, player and favourites respond', async ({ page }
   await expect(dialog.getByRole('link', { name: 'Start 7 days free' })).toHaveAttribute('href', '/start/welcome');
   await page.keyboard.press('Escape');
   await expect(dialog).toHaveCount(0);
-  // Favourites: the heart saves a class and "Saved only" shows it
-  await page.getByRole('button', { name: /^Save / }).first().click();
-  await page.getByRole('button', { name: 'Saved only' }).click();
-  await expect.poll(() => cards.count()).toBe(1);
-  await page.getByRole('button', { name: 'Saved only' }).click();
   // Every call to action goes somewhere real
   for (const name of ['Start your 7-day free trial', 'Play today’s class', 'Start free trial', 'See membership']) {
     const href = await page.getByRole('link', { name }).first().getAttribute('href');
@@ -134,12 +125,6 @@ test('full journey: build my plan → account → Today → Personalise', async 
   await cont();
   await expect(page).toHaveURL(/\/start\/sessions/);
   await cont(); // 3 is preselected
-  await expect(page).toHaveURL(/\/start\/length/);
-  await page.getByText('20 to 30 minutes').click();
-  await cont();
-  await expect(page).toHaveURL(/\/start\/equipment/);
-  await page.getByText('A mat').click();
-  await cont();
   await expect(page).toHaveURL(/\/start\/programme/, { timeout: 15000 });
   await expect(page.getByText(/weeks/).first()).toBeVisible();
   await page.getByRole('button', { name: 'Start this programme' }).click();

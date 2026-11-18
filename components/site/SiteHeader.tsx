@@ -36,7 +36,6 @@ export function SiteHeader({ signedIn = false }: { signedIn?: boolean }) {
       <div className="relative mx-auto max-w-6xl px-4 pb-2 pt-3 sm:px-6">
         <Link href="/" aria-label="BAYSE home" className="mx-auto block w-fit text-center">
           <Wordmark className="mx-auto h-7 sm:h-8" />
-          <span className="mt-1 block text-[8px] font-semibold uppercase tracking-[0.22em] sm:text-[9px]">Your home for Pilates</span>
         </Link>
         <nav aria-label="Main" className="mx-auto mt-2 flex w-fit items-stretch divide-x divide-stone">
           {actions.map(([href, label, icon]) => (

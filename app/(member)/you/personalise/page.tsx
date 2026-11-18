@@ -12,6 +12,8 @@ const BLURB: Record<string, string> = {
   coaching: 'Live, on demand, a plan or messages: how you like to be coached.',
   community: 'Padel, walks, coffee or accountability: what you would enjoy with other members.',
   nutrition: 'Food goals for recipes and meal ideas. Never a strict diet.',
+  equipment: 'So classes only use kit you have.',
+  length: 'So BAYSE Daily suggests classes that fit your day.',
   dietary: 'How you like to eat, plus any allergies (kept private, with your permission).',
   wellness: 'Private to you. Sleep, stress, cycles, pregnancy, perimenopause and more.',
 };
@@ -21,6 +23,8 @@ export default async function Personalise({ searchParams }: { searchParams: Prom
   const user = await requireUser('/you/personalise');
   const d = await loadOnboarding(user.id);
   const done: Record<string, boolean> = {
+    equipment: Boolean(d.answers?.equipment?.length),
+    length: Boolean(d.answers?.session_length),
     training: Boolean(d.answers?.preferred_training?.length),
     coaching: Boolean(d.answers?.coaching_style?.length),
     community: Boolean(d.answers?.community_interests?.length),

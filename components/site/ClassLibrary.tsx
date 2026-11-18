@@ -40,26 +40,13 @@ const LEVELS = ['All', 'Beginner', 'All levels', 'Intermediate'] as const;
 const thumbMove = (w: Workout) => EXERCISES[(w.blocks[1] ?? w.blocks[0]).ex]?.move ?? 'childs';
 const SORTS = { newest: 'Newest', short: 'Shortest first', long: 'Longest first' } as const;
 
-function Chips<T extends string>({ label, options, value, onChange, name }: { label: string; options: readonly T[]; value: T; onChange: (v: T) => void; name?: (v: T) => string }) {
-  return (
-    <div className="flex flex-wrap items-center gap-2">
-      <span className="w-[64px] shrink-0 text-xs font-bold uppercase tracking-[0.1em] text-muted">{label}</span>
-      {options.map((o) => (
-        <button key={o} type="button" aria-pressed={value === o} onClick={() => onChange(o)}
-          className="min-h-[36px] rounded-full border border-stone bg-surface px-3.5 text-sm hover:border-ink aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:font-bold aria-pressed:text-bg">
-          {name ? name(o) : o}
-        </button>
-      ))}
-    </div>
-  );
-}
 
 // Per-browser conveniences: favourites and a simple practice tally. Members' progress is saved to their account too.
 const LS = { saved: 'bayse_saved', done: 'bayse_done' };
 const read = <T,>(k: string, d: T): T => { try { return JSON.parse(localStorage.getItem(k) || '') as T; } catch { return d; } };
 const write = (k: string, v: unknown) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* optional */ } };
 
-export function ClassLibrary({ signedIn, onRecord }: { signedIn: boolean; onRecord?: (key: string) => Promise<void> }) {
+export function ClassLibrary({ signedIn, onRecord, preview = false }: { signedIn: boolean; onRecord?: (key: string) => Promise<void>; preview?: boolean }) {
   const [style, setStyle] = useState<(typeof STYLE_OPTS)[number]>('All');
   const [kit, setKit] = useState<(typeof KIT_OPTS)[number]>('All');
   const [len, setLen] = useState<(typeof LENGTH)[number]>('Any');
@@ -123,31 +110,46 @@ export function ClassLibrary({ signedIn, onRecord }: { signedIn: boolean; onReco
 
   return (
     <div>
-      <dl className="mb-5 grid grid-cols-3 gap-3 rounded-card border border-stone bg-surface p-4" data-stats>
-        {[[done.n, 'classes done'], [done.minutes, 'minutes practised'], [saved.length, 'saved']].map(([n, l]) => (
-          <div key={l}><dt className="sr-only">{l}</dt><dd><span className="block font-display text-2xl font-extrabold leading-none">{n}</span><span className="text-xs text-muted">{l}</span></dd></div>
+      {!preview && (<>
+      {done.n > 0 && (
+        <p className="mb-4 text-sm text-muted" data-stats>
+          <span className="font-bold text-ink">{done.n}</span> {done.n === 1 ? 'class' : 'classes'} done · <span className="font-bold text-ink">{done.minutes}</span> minutes practised
+        </p>
+      )}
+      {/* Row 1: style, the main way people browse */}
+      <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0">
+        {STYLE_OPTS.map((o) => (
+          <button key={o} type="button" aria-pressed={style === o} onClick={() => setStyle(o)}
+            className="shrink-0 whitespace-nowrap border border-stone px-4 py-2 text-sm hover:border-ink aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:font-bold aria-pressed:text-bg">
+            {o === 'All' ? 'All' : STYLES[o as Style].label}
+          </button>
         ))}
-      </dl>
-      <div className="mb-4 flex flex-wrap gap-2">
-        <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by name, style or focus" aria-label="Search classes"
-          className="min-h-[44px] min-w-0 flex-1 rounded-[10px] border border-stone bg-surface px-3 text-base sm:min-w-[260px]" />
-        <select value={sort} onChange={(e) => setSort(e.target.value as keyof typeof SORTS)} aria-label="Sort classes"
-          className="min-h-[44px] rounded-[10px] border border-stone bg-surface px-3 text-sm">
-          {Object.entries(SORTS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
-        </select>
+      </div>
+      {/* Row 2: search, then compact dropdowns */}
+      <div className="mt-3 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+        <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search classes" aria-label="Search classes"
+          className="col-span-2 min-h-[42px] min-w-0 border border-stone bg-bg px-3 text-base sm:min-w-[220px] sm:flex-1" />
+        {([
+          ['Kit', kit, (v: string) => setKit(v as typeof kit), KIT_OPTS.map((o) => [o, o === 'All' ? 'Any kit' : o])],
+          ['Level', level, (v: string) => setLevel(v as typeof level), LEVELS.map((o) => [o, o === 'All' ? 'Any level' : o])],
+          ['Length', len, (v: string) => setLen(v as typeof len), LENGTH.map((o) => [o, o === 'Any' ? 'Any length' : o])],
+          ['Sort', sort, (v: string) => setSort(v as keyof typeof SORTS), Object.entries(SORTS)],
+        ] as [string, string, (v: string) => void, string[][]][]).map(([label, value, set, opts]) => (
+          <select key={label} value={value} onChange={(e) => set(e.target.value)} aria-label={label}
+            className={`min-h-[42px] border bg-bg px-3 text-sm ${(label !== 'Sort' && value !== 'All' && value !== 'Any') ? 'border-ink font-bold' : 'border-stone'}`}>
+            {opts.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+          </select>
+        ))}
         <button type="button" aria-pressed={savedOnly} onClick={() => setSavedOnly((v) => !v)}
-          className="min-h-[44px] rounded-full border border-stone bg-surface px-4 text-sm hover:border-ink aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:font-bold aria-pressed:text-bg">Saved only</button>
+          className="min-h-[42px] border border-stone px-4 text-sm hover:border-ink aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:font-bold aria-pressed:text-bg">
+          ♥ Saved only{saved.length ? ` (${saved.length})` : ''}
+        </button>
       </div>
-      <div className="grid gap-3">
-        <Chips label="Kit" options={KIT_OPTS} value={kit} onChange={setKit} />
-        <Chips label="Style" options={STYLE_OPTS} value={style} onChange={setStyle} name={(o) => (o === 'All' ? 'All' : STYLES[o as Style].label)} />
-        <Chips label="Level" options={LEVELS} value={level} onChange={setLevel} />
-        <Chips label="Length" options={LENGTH} value={len} onChange={setLen} />
-      </div>
-      <p className="mb-3 mt-5 text-sm text-muted">{shown.length} {shown.length === 1 ? 'class' : 'classes'}{signedIn ? '' : ' · the free class plays now, the rest come with your free trial'}</p>
+      </>)}
+      {!preview && <p className="mb-3 mt-4 text-sm text-muted">{shown.length} {shown.length === 1 ? 'class' : 'classes'}{signedIn ? '' : ' · the free class plays now, the rest come with your free trial'}</p>}
       {shown.length ? (
         <div className="grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(220px,1fr))]">
-          {shown.map((c) => {
+          {(preview ? shown.slice(0, 3) : shown).map((c) => {
             const i = CLASSES.indexOf(c);
             const isSaved = saved.includes(c.w.key);
             return (
@@ -182,6 +184,14 @@ export function ClassLibrary({ signedIn, onRecord }: { signedIn: boolean; onReco
       ) : (
         <div className="rounded-card border border-dashed border-stone px-4 py-10 text-center text-muted">
           No classes match. <button type="button" className="underline" onClick={clear}>Clear filters</button>
+        </div>
+      )}
+      {preview && (
+        <div className="mt-4 border-2 border-white p-6 text-center sm:p-8">
+          <p className="eyebrow">{CLASSES.length - 3}+ more classes, the workout builder and live classes</p>
+          <p className="mt-3 font-display text-[26px] font-bold uppercase leading-tight sm:text-[34px]">{signedIn ? 'Your full library is waiting' : 'Try everything 100% free for 7 days'}</p>
+          {!signedIn && <p className="mx-auto mt-2 max-w-[46ch] text-muted">Every class, every style, your own plan and 17 live classes a week. Cancel any time before day 7 and you pay nothing.</p>}
+          <a href={signedIn ? '/train' : '/start/welcome'} className="mt-5 inline-flex min-h-[48px] items-center justify-center border-2 border-white bg-white px-7 text-[15px] font-bold uppercase text-black hover:opacity-90">{signedIn ? 'See all classes' : 'Start my 7-day free trial'}</a>
         </div>
       )}
 
