@@ -12,6 +12,7 @@ import { NameForm } from '@/components/onboarding/NameForm';
 import { DietaryForm } from '@/components/onboarding/DietaryForm';
 import { WellnessForm } from '@/components/onboarding/WellnessForm';
 import { AccountForm } from '@/components/onboarding/AccountForm';
+import { Prefill } from '@/components/onboarding/Prefill';
 import { ProgrammeResult } from '@/components/onboarding/ProgrammeResult';
 import {
   startOnboarding, saveQuestion, saveName, saveDietary, saveWellness,
@@ -89,7 +90,7 @@ export default async function StepPage({ params, searchParams }: Props) {
 
   switch (step.kind) {
     case 'name':
-      body = <NameForm action={saveName} firstName={data.profile?.first_name ?? ''} displayName={data.profile?.display_name ?? ''} adult={data.profile?.adult_confirmed ?? false} />;
+      body = <><NameForm action={saveName} firstName={data.profile?.first_name ?? ''} displayName={data.profile?.display_name ?? ''} adult={data.profile?.adult_confirmed ?? false} /><Prefill fields={{ first_name: 'name', display_name: 'name' }} /></>;
       break;
 
     case 'single':
@@ -127,7 +128,7 @@ export default async function StepPage({ params, searchParams }: Props) {
 
     case 'account':
       if (hasAccount(user)) redirect('/start/membership');
-      body = <AccountForm action={createAccount} />;
+      body = <><AccountForm action={createAccount} /><Prefill fields={{ email: 'email' }} /></>;
       break;
 
     case 'membership': {

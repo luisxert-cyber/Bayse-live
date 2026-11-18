@@ -5,7 +5,7 @@ import { test, expect, type Page } from '@playwright/test';
 // 2. Every interactive control on the home page responds (menu, phone tour, FAQs).
 // 3. The whole sign-up journey works, from "Build my plan" to Today and Personalise.
 
-const PUBLIC = ['/', '/pricing', '/sign-in', '/start/welcome', '/privacy', '/terms', '/community-guidelines'];
+const PUBLIC = ['/', '/live-and-community', '/pricing', '/sign-in', '/start/welcome', '/privacy', '/terms', '/community-guidelines'];
 
 async function linksOn(page: Page) {
   return page.$$eval('a[href]', (as) => as.map((a) => (a as HTMLAnchorElement).getAttribute('href') || ''));
@@ -37,20 +37,20 @@ for (const path of PUBLIC) {
   });
 }
 
-test('home: menu, phone tour and questions all respond', async ({ page }) => {
+test('home: menu, class library, player and favourites respond', async ({ page }) => {
   await page.goto('/');
   // Menu
   const menu = page.locator('summary[aria-label="Menu"]');
   if (await menu.isVisible()) await menu.click();
-  await page.locator('header a[href="/#community"]:visible').first().click();
-  await expect(page).toHaveURL(/#community/);
+  await page.locator('header a[href="/#membership"]:visible').first().click();
+  await expect(page).toHaveURL(/#membership/);
   // Class library filters narrow the list
   const cards = page.locator('[data-class-card]');
   const all = await cards.count();
   expect(all).toBeGreaterThan(6);
   await page.getByRole('button', { name: 'Sculpt', exact: true }).click();
   await expect.poll(() => cards.count()).toBeLessThan(all);
-  await page.getByRole('button', { name: 'All', exact: true }).first().click();
+  await page.getByRole('button', { name: 'All', exact: true }).nth(1).click(); // Style: All
   await expect.poll(() => cards.count()).toBe(all);
   // The free class plays on the page; a members' class offers the free trial instead
   await cards.filter({ hasText: 'Free class' }).first().click();
@@ -62,6 +62,20 @@ test('home: menu, phone tour and questions all respond', async ({ page }) => {
   await expect(dialog.getByRole('link', { name: 'Start 7 days free' })).toHaveAttribute('href', '/start/welcome');
   await page.keyboard.press('Escape');
   await expect(dialog).toHaveCount(0);
+  // Favourites: the heart saves a class and "Saved only" shows it
+  await page.getByRole('button', { name: /^Save / }).first().click();
+  await page.getByRole('button', { name: 'Saved only' }).click();
+  await expect.poll(() => cards.count()).toBe(1);
+  await page.getByRole('button', { name: 'Saved only' }).click();
+  // Every call to action goes somewhere real
+  for (const name of ['Get your first class free', 'Play today’s class', 'Start free trial']) {
+    const href = await page.getByRole('link', { name }).first().getAttribute('href');
+    expect(href, name).toBeTruthy();
+  }
+});
+
+test('live & community: phone tour and questions respond', async ({ page }) => {
+  await page.goto('/live-and-community');
   // Phone tour: every dot changes the caption
   const caption = page.locator('[data-caption]');
   const dots = page.locator('[data-dot]');
@@ -76,8 +90,7 @@ test('home: menu, phone tour and questions all respond', async ({ page }) => {
   const first = page.locator('#faq details').first();
   await first.locator('summary').click();
   await expect(first).toHaveAttribute('open', '');
-  // Every call to action goes somewhere real
-  for (const name of ['Start 7 days free', 'Build my plan', 'Play today’s class']) {
+  for (const name of ['Build my plan', 'Start 7 days free']) {
     const href = await page.getByRole('link', { name }).first().getAttribute('href');
     expect(href, name).toBeTruthy();
   }

@@ -11,6 +11,9 @@ export function SiteFooter() {
         </div>
         <div className="space-y-2">
           <p className="eyebrow">BAYSE</p>
+          <Link href="/#classes" className="block hover:text-ink">Classes</Link>
+          <Link href="/live-and-community" className="block hover:text-ink">Live classes &amp; community</Link>
+          <Link href="/live-and-community#faq" className="block hover:text-ink">Questions</Link>
           <Link href="/pricing" className="block hover:text-ink">Membership</Link>
           <Link href="/start/welcome" className="block hover:text-ink">Build my plan</Link>
           <a href="https://www.baysereformerpilates.com" className="block hover:text-ink">Our studios</a>

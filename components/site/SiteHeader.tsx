@@ -5,8 +5,7 @@ import { Wordmark, buttonClass } from '@/components/ui';
 const LINKS = [
   ['/#classes', 'Classes'],
   ['/#plans', 'Programmes'],
-  ['/#live', 'Live'],
-  ['/#community', 'Community'],
+  ['/live-and-community', 'Live & community'],
   ['/#membership', 'Membership'],
 ] as const;
 
@@ -16,7 +15,7 @@ export function SiteHeader({ signedIn = false }: { signedIn?: boolean }) {
       <div className="mx-auto flex min-h-[64px] max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
         <Link href="/" aria-label="BAYSE home" className="flex items-center gap-2">
           <Wordmark className="h-8" />
-          <span className="hidden text-[11px] font-medium uppercase tracking-[0.14em] text-muted sm:inline">Online</span>
+          <span className="hidden text-[11px] font-medium uppercase tracking-[0.14em] text-muted sm:inline">On Demand</span>
         </Link>
         <nav aria-label="Main" className="flex items-center gap-6">
           {LINKS.map(([href, label]) => (

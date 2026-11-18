@@ -24,9 +24,21 @@ const CLASSES: Card[] = [...WORKOUTS, ...READY].map((w) => ({
   free: Boolean(w.free),
 }));
 
+type Kit = 'Mat' | 'Weights' | 'Band' | 'Ball';
+const KIT_OF: Record<string, Kit> = { weights: 'Weights', band: 'Band', ball: 'Ball' };
+const kitsOf = (w: Workout): Kit[] => {
+  const k = new Set<Kit>();
+  for (const b of w.blocks) { const p = EXERCISES[b.ex]?.prop; if (p) k.add(KIT_OF[p]); }
+  return k.size ? [...k] : ['Mat'];
+};
+const KITS = new Map(CLASSES.map((c) => [c.w.key, kitsOf(c.w)]));
+
 const STYLE_OPTS = ['All', ...(Object.keys(STYLES) as Style[])] as const;
+const KIT_OPTS = ['All', 'Mat', 'Weights', 'Band', 'Ball'] as const;
 const LENGTH = ['Any', 'Up to 15 min', '16 to 25 min', 'Over 25 min'] as const;
 const LEVELS = ['All', 'Beginner', 'All levels', 'Intermediate'] as const;
+const thumbMove = (w: Workout) => EXERCISES[(w.blocks[1] ?? w.blocks[0]).ex]?.move ?? 'childs';
+const SORTS = { newest: 'Newest', short: 'Shortest first', long: 'Longest first' } as const;
 
 function Chips<T extends string>({ label, options, value, onChange, name }: { label: string; options: readonly T[]; value: T; onChange: (v: T) => void; name?: (v: T) => string }) {
   return (
@@ -42,19 +54,54 @@ function Chips<T extends string>({ label, options, value, onChange, name }: { la
   );
 }
 
-const thumbMove = (w: Workout) => EXERCISES[(w.blocks[1] ?? w.blocks[0]).ex]?.move ?? 'childs';
+// Per-browser conveniences: favourites and a simple practice tally. Members' progress is saved to their account too.
+const LS = { saved: 'bayse_saved', done: 'bayse_done' };
+const read = <T,>(k: string, d: T): T => { try { return JSON.parse(localStorage.getItem(k) || '') as T; } catch { return d; } };
+const write = (k: string, v: unknown) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* optional */ } };
+
+function Motif({ i }: { i: number }) {
+  const o = (i * 23) % 60;
+  const reformer = i % 2 === 1;
+  return (
+    <svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice" aria-hidden className="absolute inset-0 h-full w-full">
+      <g stroke="#fff" strokeOpacity=".28" strokeWidth="2.5" fill="none" strokeLinecap="round">
+        {reformer
+          ? <><path d="M40 150 H280" /><path d="M60 150 V110 M50 110 H70" /><rect x="120" y="128" width="70" height="14" rx="4" /><path d="M250 150 l10 -20 l10 20 l10 -20" /></>
+          : <><circle cx={220 - o} cy="150" r="40" /><circle cx={220 - o} cy="150" r="72" /><circle cx={220 - o} cy="150" r="106" /><rect x="40" y="150" width="120" height="12" rx="6" /></>}
+      </g>
+    </svg>
+  );
+}
 
 export function ClassLibrary({ signedIn, onRecord }: { signedIn: boolean; onRecord?: (key: string) => Promise<void> }) {
   const [style, setStyle] = useState<(typeof STYLE_OPTS)[number]>('All');
+  const [kit, setKit] = useState<(typeof KIT_OPTS)[number]>('All');
   const [len, setLen] = useState<(typeof LENGTH)[number]>('Any');
   const [level, setLevel] = useState<(typeof LEVELS)[number]>('All');
+  const [q, setQ] = useState('');
+  const [sort, setSort] = useState<keyof typeof SORTS>('newest');
+  const [savedOnly, setSavedOnly] = useState(false);
+  const [saved, setSaved] = useState<string[]>([]);
+  const [done, setDone] = useState<{ n: number; minutes: number }>({ n: 0, minutes: 0 });
   const [open, setOpen] = useState<Card | null>(null);
 
-  const shown = useMemo(() => CLASSES.filter((c) =>
-    (style === 'All' || c.style === style) &&
-    (level === 'All' || LEVEL_NAME[c.level] === level) &&
-    (len === 'Any' || (len === 'Up to 15 min' ? c.minutes <= 15 : len === '16 to 25 min' ? c.minutes > 15 && c.minutes <= 25 : c.minutes > 25)),
-  ).sort((a, b) => Number(b.free) - Number(a.free)), [style, len, level]);
+  useEffect(() => { setSaved(read<string[]>(LS.saved, [])); setDone(read(LS.done, { n: 0, minutes: 0 })); }, []);
+  const toggleSave = (key: string) => setSaved((s) => { const n = s.includes(key) ? s.filter((x) => x !== key) : [...s, key]; write(LS.saved, n); return n; });
+
+  const shown = useMemo(() => {
+    const t = q.trim().toLowerCase();
+    const list = CLASSES.filter((c) =>
+      (style === 'All' || c.style === style) &&
+      (kit === 'All' || (KITS.get(c.w.key) ?? []).includes(kit)) &&
+      (level === 'All' || LEVEL_NAME[c.level] === level) &&
+      (len === 'Any' || (len === 'Up to 15 min' ? c.minutes <= 15 : len === '16 to 25 min' ? c.minutes > 15 && c.minutes <= 25 : c.minutes > 25)) &&
+      (!savedOnly || saved.includes(c.w.key)) &&
+      (!t || `${c.w.name} ${STYLES[c.style].label} ${c.w.focus}`.toLowerCase().includes(t)));
+    if (sort === 'short') list.sort((a, b) => a.minutes - b.minutes);
+    else if (sort === 'long') list.sort((a, b) => b.minutes - a.minutes);
+    else list.sort((a, b) => Number(b.free) - Number(a.free));
+    return list;
+  }, [style, kit, len, level, q, sort, savedOnly, saved]);
 
   // "Play today's class" and other links open a class with #play-<key>.
   const fromHash = useCallback(() => {
@@ -82,44 +129,72 @@ export function ClassLibrary({ signedIn, onRecord }: { signedIn: boolean; onReco
   }, [open, close]);
 
   const canPlay = (c: Card) => c.free || signedIn;
+  const finished = async (c: Card) => {
+    setDone((d) => { const n = { n: d.n + 1, minutes: d.minutes + c.minutes }; write(LS.done, n); return n; });
+    if (signedIn && onRecord) await onRecord(c.w.key);
+  };
+  const clear = () => { setStyle('All'); setKit('All'); setLevel('All'); setLen('Any'); setQ(''); setSavedOnly(false); };
 
   return (
     <div>
-      <div className="grid gap-3">
-        <Chips label="Style" options={STYLE_OPTS} value={style} onChange={setStyle} name={(o) => (o === 'All' ? 'All' : STYLES[o as Style].label)} />
-        <Chips label="Length" options={LENGTH} value={len} onChange={setLen} />
-        <Chips label="Level" options={LEVELS} value={level} onChange={setLevel} />
+      <dl className="mb-5 grid grid-cols-3 gap-3 rounded-card border border-stone bg-surface p-4" data-stats>
+        {[[done.n, 'classes done'], [done.minutes, 'minutes practised'], [saved.length, 'saved']].map(([n, l]) => (
+          <div key={l}><dt className="sr-only">{l}</dt><dd><span className="block font-display text-2xl font-extrabold leading-none">{n}</span><span className="text-xs text-muted">{l}</span></dd></div>
+        ))}
+      </dl>
+      <div className="mb-4 flex flex-wrap gap-2">
+        <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by name, style or focus" aria-label="Search classes"
+          className="min-h-[44px] min-w-0 flex-1 rounded-[10px] border border-stone bg-surface px-3 text-base sm:min-w-[260px]" />
+        <select value={sort} onChange={(e) => setSort(e.target.value as keyof typeof SORTS)} aria-label="Sort classes"
+          className="min-h-[44px] rounded-[10px] border border-stone bg-surface px-3 text-sm">
+          {Object.entries(SORTS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+        </select>
+        <button type="button" aria-pressed={savedOnly} onClick={() => setSavedOnly((v) => !v)}
+          className="min-h-[44px] rounded-full border border-stone bg-surface px-4 text-sm hover:border-ink aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:font-bold aria-pressed:text-bg">Saved only</button>
       </div>
-      <p className="mb-3 mt-5 text-sm text-muted">{shown.length} {shown.length === 1 ? 'class' : 'classes'} · {signedIn ? 'tap any class to start' : 'the free class plays now, the rest come with your free trial'}</p>
+      <div className="grid gap-3">
+        <Chips label="Kit" options={KIT_OPTS} value={kit} onChange={setKit} />
+        <Chips label="Style" options={STYLE_OPTS} value={style} onChange={setStyle} name={(o) => (o === 'All' ? 'All' : STYLES[o as Style].label)} />
+        <Chips label="Level" options={LEVELS} value={level} onChange={setLevel} />
+        <Chips label="Length" options={LENGTH} value={len} onChange={setLen} />
+      </div>
+      <p className="mb-3 mt-5 text-sm text-muted">{shown.length} {shown.length === 1 ? 'class' : 'classes'}{signedIn ? '' : ' · the free class plays now, the rest come with your free trial'}</p>
       {shown.length ? (
-        <div className="grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(230px,1fr))]">
-          {shown.map((c) => (
-            <button key={c.w.key} type="button" data-class-card onClick={() => setOpen(c)}
-              className="group flex min-w-0 flex-col overflow-hidden rounded-card border border-stone bg-surface text-left transition-colors hover:border-ink">
-              <div className="relative bg-bg">
-                <FigureStill move={thumbMove(c.w)} t={0.7} className="block w-full" />
-                <span className="absolute bottom-2.5 left-2.5 rounded-full bg-ink px-2.5 py-0.5 text-xs font-bold text-bg">{c.minutes} min</span>
-                <span className={`absolute right-2.5 top-2.5 rounded-full px-2.5 py-0.5 text-[11px] font-bold ${c.free ? 'bg-ink text-bg' : 'border border-stone bg-surface text-ink'}`}>
-                  {c.free ? 'Free class' : signedIn ? 'Included' : 'Members'}
-                </span>
-                <span aria-hidden className="absolute inset-0 grid place-items-center opacity-0 transition-opacity group-hover:opacity-100">
-                  <span className="grid h-12 w-12 place-items-center rounded-full bg-ink text-bg">▶</span>
-                </span>
-              </div>
-              <div className="grid gap-1.5 px-4 pb-4 pt-3.5">
-                <h3 className="text-base uppercase">{c.w.name}</h3>
-                <p className="text-sm text-muted">{STYLES[c.style].label} · {c.w.blocks.length} moves</p>
-                <p className="flex items-center gap-1.5 text-[13px] text-muted">
-                  {[1, 2, 3].map((n) => <i key={n} className={`h-2 w-2 rounded-full border-[1.5px] border-ink ${n <= c.level ? 'bg-ink' : ''}`} />)}
-                  <span className="ml-1">{LEVEL_NAME[c.level]}</span>
-                </p>
-              </div>
-            </button>
-          ))}
+        <div className="grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(220px,1fr))]">
+          {shown.map((c) => {
+            const i = CLASSES.indexOf(c);
+            const isSaved = saved.includes(c.w.key);
+            return (
+              <article key={c.w.key} className="relative flex min-w-0 flex-col overflow-hidden rounded-card border border-stone bg-surface">
+                <button type="button" data-class-card onClick={() => setOpen(c)} aria-label={`${c.w.name}, ${c.minutes} minutes${c.free ? ', free class' : ''}`}
+                  className="group flex flex-1 flex-col text-left">
+                  <div className="relative aspect-[16/10] w-full overflow-hidden text-white" style={{ background: `linear-gradient(135deg, hsl(0 0% ${10 + (i % 4) * 3}%), hsl(0 0% ${26 + (i % 4) * 3}%))` }}>
+                    <Motif i={i} />
+                    <span className="absolute inset-0 grid place-items-center"><span className="grid h-12 w-12 place-items-center rounded-full border-[1.5px] border-white/70 bg-white/15 transition-transform group-hover:scale-110">▶</span></span>
+                    <span className="absolute bottom-2.5 left-2.5 rounded-full bg-black/60 px-2.5 py-0.5 text-xs font-bold">{c.minutes} min</span>
+                    {c.free && <span className="absolute left-2.5 top-2.5 rounded-full bg-white px-2.5 py-0.5 text-[11px] font-bold text-black">Free class</span>}
+                    {!c.free && !signedIn && <span className="absolute left-2.5 top-2.5 rounded-full bg-black/60 px-2.5 py-0.5 text-[11px] font-bold">Members</span>}
+                  </div>
+                  <div className="grid gap-1.5 px-4 pb-4 pt-3.5">
+                    <h3 className="text-base uppercase">{c.w.name}</h3>
+                    <p className="text-sm text-muted">{STYLES[c.style].label} · {(KITS.get(c.w.key) ?? ['Mat']).join(', ')}</p>
+                    <p className="flex items-center gap-1.5 text-[13px] text-muted">
+                      {[1, 2, 3].map((n) => <i key={n} className={`h-2 w-2 rounded-full border-[1.5px] border-ink ${n <= c.level ? 'bg-ink' : ''}`} />)}
+                      <span className="ml-1">{LEVEL_NAME[c.level]}</span>
+                    </p>
+                  </div>
+                </button>
+                <button type="button" onClick={() => toggleSave(c.w.key)} aria-pressed={isSaved} aria-label={isSaved ? `Remove ${c.w.name} from saved` : `Save ${c.w.name}`}
+                  className="absolute right-2.5 top-2.5 grid h-8 w-8 place-items-center rounded-full bg-white text-black">
+                  <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill={isSaved ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinejoin="round" /></svg>
+                </button>
+              </article>
+            );
+          })}
         </div>
       ) : (
         <div className="rounded-card border border-dashed border-stone px-4 py-10 text-center text-muted">
-          No classes match. <button type="button" className="underline" onClick={() => { setStyle('All'); setLevel('All'); setLen('Any'); }}>Clear filters</button>
+          No classes match. <button type="button" className="underline" onClick={clear}>Clear filters</button>
         </div>
       )}
 
@@ -136,7 +211,7 @@ export function ClassLibrary({ signedIn, onRecord }: { signedIn: boolean; onReco
             </div>
             {canPlay(open) ? (
               <WorkoutPlayer key={open.w.key} workout={open.w} exitHref="/#classes" onExit={close}
-                onComplete={signedIn && onRecord ? () => onRecord(open.w.key) : undefined} />
+                onComplete={() => finished(open)} />
             ) : (
               <div className="rounded-3xl border border-stone bg-surface p-4 sm:p-5">
                 <div className="overflow-hidden rounded-2xl bg-bg"><FigureStill move={thumbMove(open.w)} t={0.7} className="block w-full" /></div>
