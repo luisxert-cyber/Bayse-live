@@ -8,6 +8,7 @@ const MENU = [
   ['/#live', 'Live timetable'],
   ['/#community', 'Community'],
   ['/#membership', 'Membership'],
+  ['/#different', 'Why BAYSE'],
   ['/#faq', 'Questions'],
   ['https://www.baysereformerpilates.com', 'Our studios'],
 ] as const;

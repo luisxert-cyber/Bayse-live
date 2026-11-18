@@ -8,6 +8,8 @@ export const metadata = { title: 'You' };
 export const dynamic = 'force-dynamic';
 
 const ROWS = [
+  { href: '/you/progress', label: 'Progress and rewards' },
+  { href: '/nourish', label: 'Nourish: recipes and shopping list' },
   { href: '/you/personalise', label: 'Personalise BAYSE' },
   { href: '/you/membership', label: 'Membership and billing' },
   { href: '/you/privacy', label: 'Privacy and your data' },

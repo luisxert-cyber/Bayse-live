@@ -4,6 +4,7 @@ import type { Status } from '@/lib/community/data';
 
 const TABS = [
   ['/community', 'Feed'],
+  ['/community/together', 'Together'],
   ['/community/circles', 'Circles'],
   ['/community/clubs', 'Clubs'],
   ['/community/settings', 'Privacy'],

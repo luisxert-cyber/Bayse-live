@@ -175,21 +175,36 @@ export default async function Home() {
           <Link href="/start/welcome" className={`${buttonClass('primary')} mt-7`}>Build my plan</Link>
         </section>
 
-        {/* Coaching, nutrition, wellness: opening in stages */}
+        {/* What makes BAYSE different: the six BAYSE experiences */}
         <Rule />
-        <section className={`${wrap} grid gap-8 py-14 md:grid-cols-3`}>
-          {[
-            ['Coaching', 'A coach who knows your plan', 'Message your coach, get weekly check-ins and feedback, and adjust your plan when life gets busy. Group coaching comes with BAYSE Club, and your own coach with BAYSE Coaching.', Icon.coach],
-            ['Nutrition', 'Food that fits real life', 'Simple recipes, flexible weekly meal plans and shopping lists made for you, based on your tastes, budget and time. Never a crash diet.', Icon.food],
-            ['Women’s wellness', 'Support for every stage', 'Guidance on sleep, stress, cycles, pregnancy, postpartum, perimenopause and menopause, reviewed by professionals. What you share stays private to you.', Icon.wellness],
-          ].map(([label, title, body, icon]) => (
-            <div key={label as string}>
-              <div className="flex items-center gap-3"><span className="grid h-9 w-9 place-items-center border border-stone p-1.5">{icon}</span><span className="eyebrow">{label}</span></div>
-              <h3 className="mt-4 text-xl">{title}</h3>
-              <p className="mt-2 text-[15px] text-muted">{body}</p>
-              <span className="chip mt-3 text-muted">Opening in stages</span>
-            </div>
-          ))}
+        <section id="different" className={`${wrap} scroll-mt-28 py-14`}>
+          <Eyebrow>More than a Pilates subscription</Eyebrow>
+          <h2 className="mt-3 max-w-[20ch] text-[32px] sm:text-[40px]">Six things that make BAYSE different</h2>
+          <div className="mt-8 grid gap-px border border-stone bg-stone sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              { name: 'BAYSE Daily', img: '/clips/preview/birddog.jpg', body: 'Open the app and see your next best move: picked from your goals, the time you have, the live timetable and what you did this week. Back after a break? It starts you gently.' },
+              { name: 'BAYSE Together', img: PHOTO.friends, body: 'Meet members who share your interests. Join a Circle, or set up padel, walks and coffee yourselves, with group chat and waiting lists handled for you.' },
+              { name: 'BAYSE Progress', img: null, body: 'Classes, hours, weekly streaks and milestones like your first 25 classes or coming back after a break. Never the scales.' },
+              { name: 'BAYSE Nourish', img: null, body: 'Simple recipes for the way you eat, with filters for vegetarian, high protein, quick or family meals, saved favourites and a shopping list that fills itself.' },
+              { name: 'BAYSE Live Coach', img: PHOTO.plank, body: 'Live classes with two instructors: one teaches, one watches your form and gives you pointers by name, with camera on or off.' },
+              { name: 'BAYSE Rewards', img: null, body: 'Milestones for showing up, from your first class to your hundredth, and member rewards that unlock as your classes add up, as partner offers launch.' },
+            ].map((f, i) => (
+              <article key={f.name} className="flex flex-col bg-bg">
+                {f.img ? <img src={f.img} alt="" className="aspect-[16/9] w-full object-cover" /> : (
+                  <div className="flex aspect-[16/9] items-end gap-1.5 border-b border-stone p-5" aria-hidden>
+                    {i === 2 ? [2, 3, 2, 4, 3, 4, 5].map((n, j) => <span key={j} className={`flex-1 ${j === 6 ? 'bg-white' : 'bg-stone'}`} style={{ height: `${n * 18}%` }} />)
+                      : i === 3 ? <span className="w-full text-[13px] leading-6 text-muted">Berry protein oats · 5 min<br />Chicken &amp; quinoa bowl · 20 min<br />Lemon chicken traybake · 40 min<br /><span className="text-ink">☐ cherry tomatoes &nbsp;☑ Greek yoghurt</span></span>
+                      : <span className="flex w-full items-center gap-3">{[1, 5, 10, 25].map((n) => <span key={n} className={`grid h-14 w-14 place-items-center rounded-full border-2 font-bold ${n <= 10 ? 'border-white' : 'border-dashed border-stone text-muted'}`}>{n}</span>)}</span>}
+                  </div>
+                )}
+                <div className="flex flex-1 flex-col p-5">
+                  <h3 className="text-xl">{f.name}</h3>
+                  <p className="mt-2 flex-1 text-[15px] text-muted">{f.body}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+          <p className="mt-4 text-sm text-muted">All six are included with membership and the free trial. Coaching check-ins and women&rsquo;s wellness guidance open in stages after launch.</p>
         </section>
         <Rule />
 

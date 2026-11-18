@@ -193,3 +193,34 @@ test('builder defaults come from onboarding answers', () => {
   assert.equal(d.minutes, 20);
   assert.deepEqual(defaultsFromAnswers(null, null, null).areas, ['core', 'glutes']);
 });
+
+import { computeProgress } from '../../lib/daily/progress';
+import { nextBestAction } from '../../lib/daily/next';
+
+test('progress: totals, streaks, milestones and comebacks', () => {
+  const now = new Date('2026-11-18T12:00:00Z'); // a Wednesday
+  const at = (daysAgo: number) => new Date(now.getTime() - daysAgo * 86400000).toISOString();
+  const rows = [0, 7, 14, 40].map((d, i) => ({ key: `k${i}`, minutes: 15, at: at(d) }));
+  const p = computeProgress(rows, now);
+  assert.equal(p.classes, 4);
+  assert.equal(p.minutes, 60);
+  assert.equal(p.streak, 3, 'three weeks in a row');
+  assert.ok(p.milestones.find((m) => m.key === 'classes-1')?.earned);
+  assert.ok(!p.milestones.find((m) => m.key === 'classes-5')?.earned);
+  assert.ok(p.milestones.find((m) => m.key === 'streak-3')?.earned);
+  assert.ok(p.milestones.find((m) => m.key === 'comeback')?.earned, 'came back after 26 days');
+  assert.equal(p.perWeek.length, 8);
+  assert.equal(computeProgress([], now).streak, 0);
+});
+
+test('daily: live class first, recovery after training, gentle restart after a break', () => {
+  const wed10 = new Date('2026-11-18T10:00:00Z'); // Wednesday 10:00 UK
+  const live = [{ weekday: 3, starts_at: '12:00:00', name: 'Lunchtime Core', minutes: 45 }];
+  const base = { goals: ['core'], sessionLength: '10-15', weeklyGoal: 3, live, now: wed10 };
+  assert.equal(nextBestAction({ ...base, completions: [], canLive: true }).kind, 'live');
+  assert.equal(nextBestAction({ ...base, completions: [], canLive: false }).kind, 'class');
+  assert.equal(nextBestAction({ ...base, completions: [{ key: 'core-10', minutes: 10, at: '2026-11-18T08:00:00Z' }], canLive: true }).kind, 'recover');
+  assert.equal(nextBestAction({ ...base, completions: [{ key: 'core-10', minutes: 10, at: '2026-11-01T08:00:00Z' }], canLive: false }).kind, 'welcome-back');
+  const c = nextBestAction({ ...base, completions: [], canLive: false });
+  assert.ok(c.href.startsWith('/train/') && c.minutes > 0);
+});

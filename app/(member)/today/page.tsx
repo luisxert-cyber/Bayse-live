@@ -4,22 +4,28 @@ import { loadMember, greeting, fmtDate } from '@/lib/data/member';
 import { currentProgramme } from '@/lib/data/recommendation';
 import { Card, Notice, buttonClass, Wordmark } from '@/components/ui';
 import { createClient } from '@/lib/supabase/server';
-import { WORKOUTS, workoutMinutes } from '@/lib/workouts/catalog';
+import { loadDaily } from '@/lib/daily/data';
+import { nextBestAction } from '@/lib/daily/next';
+import { computeProgress } from '@/lib/daily/progress';
+import { MoveThumb } from '@/components/workout/MoveThumb';
+import { EXERCISES } from '@/lib/workouts/catalog';
 
 export const metadata = { title: 'Today' };
 export const dynamic = 'force-dynamic';
 
 // Today: personal, visual and honest. Parts of BAYSE that have not opened yet say so,
 // rather than showing pretend activity.
-const Soon = () => <span className="chip">Opening soon</span>;
 
 export default async function Today({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const sp = await searchParams;
   const user = await requireUser('/today');
-  const [m, programme] = await Promise.all([loadMember(user.id), currentProgramme(user.id)]);
+  const [m, programme, daily] = await Promise.all([loadMember(user.id), currentProgramme(user.id), loadDaily(user.id)]);
+  const next = nextBestAction(daily);
+  const progress = computeProgress(daily.completions);
+  const cover = next.workout ? EXERCISES[(next.workout.blocks[1] ?? next.workout.blocks[0]).ex]?.move : 'birddog';
   const name = m.profile?.first_name;
   const isStaff = m.roles.length > 0;
-  const goal = programme?.sessions_per_week ?? 3;
+  const goal = daily.weeklyGoal;
 
   // This week's finished workouts (Monday to Sunday, UK time) fill the progress circles.
   const ukDay = (d: Date) => ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].indexOf(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', weekday: 'short' }).format(d));
@@ -29,7 +35,6 @@ export default async function Today({ searchParams }: { searchParams: Promise<Re
   const { data: done } = await supabase.from('workout_completions').select('completed_at, minutes').eq('user_id', user.id).gte('completed_at', since);
   const doneDays = new Set((done ?? []).filter((r) => Date.now() - new Date(r.completed_at).getTime() < (todayIdx + 1) * 86400000).map((r) => ukDay(new Date(r.completed_at))).filter((d) => d <= todayIdx));
   const sessions = doneDays.size;
-  const suggested = WORKOUTS.find((w) => w.key === (todayIdx >= 5 ? 'wind-down-8' : sessions % 2 ? 'glutes-12' : 'core-10')) ?? WORKOUTS[0];
 
   return (
     <main className="page space-y-4">
@@ -47,24 +52,28 @@ export default async function Today({ searchParams }: { searchParams: Promise<Re
       {sp.denied && <Notice tone="warning">That area is for BAYSE staff only.</Notice>}
       {!m.profile?.onboarding_completed_at && <Notice title="Finish setting up">You have not finished building your plan. <Link href="/start/goals" className="underline">Carry on</Link></Notice>}
 
-      {/* Your next session */}
-      {programme?.programmes ? (
-        <div className="relative overflow-hidden rounded-card">
-          <img src="/images/studio-mat-core.webp" alt="" className="h-[220px] w-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-          <div className="absolute inset-x-5 bottom-5 text-white">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/75">Your next session</p>
-            <p className="mt-1 text-xl font-bold uppercase leading-tight">{programme.programmes.name}</p>
-            <p className="text-sm text-white/85">{programme.weeks} weeks · {programme.sessions_per_week} sessions a week</p>
-            <p className="mt-3 text-sm text-white/85">Your first session unlocks when the on-demand library opens. We will let you know.</p>
+      {/* BAYSE Daily: the one next best thing to do today */}
+      <Link href={next.href} className="group block border border-stone">
+        <div className="relative overflow-hidden bg-surface">
+          <MoveThumb move={cover ?? 'birddog'} className="block h-[200px] w-full object-cover" />
+          <span aria-hidden className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+          <div className="absolute inset-x-4 bottom-4">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/75">BAYSE Daily · your next best move</p>
+            <p className="mt-1 text-2xl font-bold uppercase leading-tight text-white">{next.title}</p>
+            <p className="text-sm text-white/80">{next.minutes} min{next.kind === 'live' ? ' · live on Zoom' : ''}</p>
           </div>
         </div>
-      ) : (
-        <Card className="p-6">
+        <div className="flex items-center justify-between gap-3 p-4">
+          <p className="text-sm text-muted">{next.why}</p>
+          <span className="shrink-0 border border-ink px-4 py-2 text-sm font-bold uppercase group-hover:bg-ink group-hover:text-bg">{next.kind === 'live' ? 'See class' : 'Start'}</span>
+        </div>
+      </Link>
+      {programme?.programmes && <p className="text-sm text-muted">Your programme: <span className="text-ink">{programme.programmes.name}</span> · {programme.weeks} weeks · {programme.sessions_per_week} a week</p>}
+      {!programme?.programmes && (
+        <Card className="p-5">
           <p className="eyebrow">Your plan</p>
-          <h2 className="mt-2 text-xl">No programme yet</h2>
-          <p className="mt-1 text-sm text-muted">A few quick questions and we will recommend one.</p>
-          <Link href="/start/goals" className={`${buttonClass('primary')} mt-4`}>Build my plan</Link>
+          <p className="mt-1 text-sm text-muted">A few quick questions and we will recommend a programme.</p>
+          <Link href="/start/goals" className={`${buttonClass('primary')} mt-3`}>Build my plan</Link>
         </Card>
       )}
 
@@ -80,22 +89,21 @@ export default async function Today({ searchParams }: { searchParams: Promise<Re
           ))}
         </div>
         <p className="mt-3 text-sm text-muted">{sessions >= goal ? `${sessions} of ${goal} this week. Goal reached, brilliant.` : `${sessions} of ${goal} this week. Each workout you finish fills a circle.`}</p>
-        <Link href={`/train/${suggested.key}`} className={`${buttonClass('primary', true)} mt-4`}>Start {suggested.name} · {workoutMinutes(suggested)} min</Link>
+        <Link href="/you/progress" className="mt-4 flex items-center justify-between border-t border-stone pt-3 text-sm"><span><span className="font-bold">{progress.classes}</span> classes · <span className="font-bold">{progress.streak}</span>-week streak</span><span className="text-muted">Your progress ›</span></Link>
       </Card>
 
-      {/* Your Circle and clubs */}
+      {/* Together, Nourish, Rewards */}
       <div className="grid grid-cols-2 gap-3">
-        <Card className="flex flex-col">
-          <p className="eyebrow">Your BAYSE Circle</p>
-          <div className="mt-3 flex -space-x-2">{['bg-[#E6DCCF]', 'bg-[#D4C7B7]', 'bg-[#BFB1A0]'].map((c) => <span key={c} className={`h-8 w-8 rounded-full border-2 border-surface ${c}`} />)}</div>
-          <p className="mt-3 flex-1 text-sm text-muted">10 to 20 members who train at your times.</p>
-          <div className="mt-3"><Soon /></div>
-        </Card>
-        <Card className="flex flex-col">
-          <p className="eyebrow">Clubs near you</p>
-          <p className="mt-3 flex-1 text-sm text-muted">Padel, walks and coffee arranged by members in your area.</p>
-          <div className="mt-3"><Soon /></div>
-        </Card>
+        <Link href="/community/together" className="flex flex-col border border-stone p-4 hover:border-ink">
+          <p className="eyebrow">BAYSE Together</p>
+          <p className="mt-2 flex-1 text-sm text-muted">Members who share your interests, Circles and Clubs.</p>
+          <p className="mt-3 text-sm font-bold">Find your people ›</p>
+        </Link>
+        <Link href="/nourish" className="flex flex-col border border-stone p-4 hover:border-ink">
+          <p className="eyebrow">BAYSE Nourish</p>
+          <p className="mt-2 flex-1 text-sm text-muted">Simple recipes for how you eat, and a shopping list.</p>
+          <p className="mt-3 text-sm font-bold">Get cooking ›</p>
+        </Link>
       </div>
 
       {/* Personalise */}
