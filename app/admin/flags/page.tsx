@@ -28,7 +28,7 @@ export default async function Flags({ searchParams }: { searchParams: Promise<Re
                   <input type="hidden" name="key" value={f.key} />
                   <input type="hidden" name="enabled" value={String(!f.enabled)} />
                   {risky && !f.enabled && <input name="confirm" placeholder={`type ${f.key}`} className="min-h-tap w-36 rounded-2xl border border-stone bg-surface px-3 text-xs" />}
-                  <button className={`min-h-tap rounded-pill px-4 text-sm ${f.enabled ? 'bg-sage/20' : 'border border-stone'}`}>{f.enabled ? 'On · switch off' : 'Off · switch on'}</button>
+                  <button className={`min-h-tap rounded-pill px-4 text-sm ${f.enabled ? 'bg-white font-bold text-black' : 'border border-stone'}`}>{f.enabled ? '● On · switch off' : 'Off · switch on'}</button>
                 </form>
               </li>
             );
