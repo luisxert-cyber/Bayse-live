@@ -21,15 +21,15 @@ export default async function Home() {
       <main>
         {/* Hero: banner photo with boxed call to action, as on the studio site */}
         <section className="relative">
-          <img src="/images/studio-mat-core.webp" alt="" className="h-[300px] w-full object-cover opacity-70 sm:h-[380px]" style={{ objectPosition: '60% 35%' }} />
+          <img src="/images/studio-bird-dog.webp" alt="A BAYSE instructor demonstrating a bird dog on the mat in the studio" className="h-[300px] w-full object-cover opacity-75 sm:h-[440px]" style={{ objectPosition: '50% 40%' }} />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-black/50" />
-          <div className="absolute inset-x-0 top-8 mx-auto max-w-5xl px-4 sm:px-6">
+          <div className="absolute inset-x-0 bottom-8 mx-auto max-w-5xl px-4 sm:px-6">
             <Link href="/start/welcome" className="inline-block border-[3px] border-white bg-black/20 px-5 py-3 text-lg font-bold uppercase tracking-[0.01em] backdrop-blur-[1px] hover:bg-white hover:text-black sm:text-2xl">Start your 7-day free trial</Link>
           </div>
         </section>
 
         <section className="mx-auto grid max-w-5xl grid-cols-2 gap-4 px-4 py-10 sm:gap-6 sm:px-6">
-          <img src="/images/studio-movement.webp" alt="A BAYSE member moving through a mat Pilates sequence in the studio" className="aspect-square w-full object-cover" />
+          <img src="/images/studio-side-plank.webp" alt="A BAYSE instructor holding a side plank with arm reach" className="aspect-square w-full object-cover" />
           <img src="/images/studio-mat-core.webp" alt="A BAYSE instructor teaching a mat Pilates core exercise" className="aspect-square w-full object-cover" />
         </section>
 
@@ -77,7 +77,7 @@ export default async function Home() {
               ))}
             </ul>
           </div>
-            <LiveClassGraphic photo="/images/studio-mat-core.webp" />
+            <LiveClassGraphic photo="/images/studio-bird-dog.webp" />
           </div>
         <div className="mx-auto max-w-5xl px-4 pb-16 sm:px-6">
           <div className="flex items-baseline justify-between gap-4">
