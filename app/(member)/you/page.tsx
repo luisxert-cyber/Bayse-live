@@ -8,6 +8,7 @@ export const metadata = { title: 'You' };
 export const dynamic = 'force-dynamic';
 
 const ROWS = [
+  { href: '/live#bookings', label: 'My live class bookings' },
   { href: '/you/sessions', label: 'My 1-to-1 sessions' },
   { href: '/you/health', label: 'Health check and safety' },
   { href: '/you/devices', label: 'My devices' },

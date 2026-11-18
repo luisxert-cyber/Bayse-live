@@ -250,7 +250,7 @@ const FEATURES: { name: string; tag: string; body: string; visual: ReactNode }[]
   { name: 'BAYSE Together', tag: 'Real friendships, not just classes', body: 'Circles, padel, walks and coffee with members like you.', visual: <Together /> },
   { name: 'BAYSE Progress', tag: 'See how far you have come', body: 'Streaks and milestones. Never the scales.', visual: <ProgressShot /> },
   { name: 'BAYSE Nourish', tag: 'Food that fits real life', body: 'Simple recipes and a shopping list that fills itself.', visual: <Nourish /> },
-  { name: 'BAYSE Live Coach', tag: 'Two instructors in every live class', body: 'One instructor teaches, one watches your form.', visual: <LiveCoach /> },
+  { name: 'BAYSE Live Coach', tag: 'Live classes you book like a studio class', body: 'Book your place, see who else is coming and be coached live on Zoom.', visual: <LiveCoach /> },
   { name: 'BAYSE Rewards', tag: 'Showing up adds up', body: 'Unlock member rewards as your classes add up.', visual: <Rewards /> },
 ];
 

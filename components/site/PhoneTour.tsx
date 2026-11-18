@@ -126,7 +126,7 @@ export function PhoneTour({ photos }: { photos: TourPhotos }) {
                     </Card>
                   ))}
                 </div>
-                <p className="mt-3 text-black/50">Two instructors in every class: one teaches, one watches your form.</p>
+                <p className="mt-3 text-black/50">Book your place, see who else is coming, and join from 15 minutes before.</p>
               </Screen>
 
               {/* 5 In class */}
