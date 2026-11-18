@@ -1,15 +1,34 @@
 'use client';
-import { useActionState, useState } from 'react';
+import { useActionState, useEffect, useState, type FormEvent } from 'react';
 import { Field } from '@/components/ui/Field';
 import { buttonClass } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { signIn, sendMagicLink, sendReset, type AuthState } from '@/app/sign-in/actions';
+
+const REMEMBER_KEY = 'bayse_email';
 
 export function SignInForms({ next }: { next: string }) {
   const [mode, setMode] = useState<'password' | 'link' | 'reset'>('password');
   const [pwState, pwAction, pwPending] = useActionState<AuthState, FormData>(signIn, undefined);
   const [linkState, linkAction, linkPending] = useActionState<AuthState, FormData>(sendMagicLink, undefined);
   const [resetState, resetAction, resetPending] = useActionState<AuthState, FormData>(sendReset, undefined);
+
+  // "Remember me": the email is kept on this device and filled in next time. Passwords are never stored by BAYSE;
+  // the phone or browser's own password manager saves and fills those (the fields are labelled so it can).
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem(REMEMBER_KEY);
+      const el = document.getElementById('email') as HTMLInputElement | null;
+      if (saved && el && !el.value) el.value = saved;
+    } catch { /* private browsing: nothing to restore */ }
+  }, [mode]);
+  const remember = (e: FormEvent<HTMLFormElement>) => {
+    try {
+      const form = new FormData(e.currentTarget);
+      if (form.get('remember') === 'on') window.localStorage.setItem(REMEMBER_KEY, String(form.get('email') ?? '').trim());
+      else window.localStorage.removeItem(REMEMBER_KEY);
+    } catch { /* storage unavailable */ }
+  };
 
   if (mode === 'link') {
     return (
@@ -35,12 +54,13 @@ export function SignInForms({ next }: { next: string }) {
     );
   }
   return (
-    <form action={pwAction} className="space-y-4">
+    <form action={pwAction} onSubmit={remember} className="space-y-4">
       <input type="hidden" name="next" value={next} />
       {pwState?.error && <Notice tone="error">{pwState.error}</Notice>}
-      <Field id="email" name="email" type="email" label="Email" autoComplete="email" required />
+      <Field id="email" name="email" type="email" label="Email" autoComplete="username" required />
       <Field id="password" name="password" type="password" label="Password" autoComplete="current-password" required />
-      <button disabled={pwPending} className={buttonClass('primary', true)}>{pwPending ? 'Signing in…' : 'Sign in'}</button>
+      <label className="flex min-h-[44px] items-center gap-3 text-sm"><input type="checkbox" name="remember" defaultChecked className="h-5 w-5 accent-white" />Remember me on this device</label>
+      <button disabled={pwPending} className={buttonClass('solid', true)}>{pwPending ? 'Signing in…' : 'Sign in'}</button>
       <div className="flex justify-between text-sm">
         <button type="button" onClick={() => setMode('link')} className="py-2 text-muted hover:text-ink">Email me a link</button>
         <button type="button" onClick={() => setMode('reset')} className="py-2 text-muted hover:text-ink">Forgot password?</button>
