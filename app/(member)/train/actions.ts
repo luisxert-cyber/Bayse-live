@@ -1,4 +1,5 @@
 'use server';
+import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { workoutMinutes } from '@/lib/workouts/catalog';
 import { findAnyWorkout } from '@/lib/workouts/builder';
@@ -23,4 +24,17 @@ export async function recordCustom(minutes: number) {
   if (!user) return;
   const { error } = await supabase.from('workout_completions').insert({ user_id: user.id, workout_key: 'custom', minutes: m });
   if (error) console.error('[workout] could not record custom completion:', error.message);
+}
+
+/** Record a finished filmed class (counts towards the week like any other class). */
+export async function recordVideoCompletion(f: FormData) {
+  const slug = String(f.get('slug') ?? '').slice(0, 60);
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  const { data: v } = await supabase.from('video_classes').select('slug, minutes').eq('slug', slug).maybeSingle();
+  if (!v) return;
+  const { error } = await supabase.from('workout_completions').insert({ user_id: user.id, workout_key: `video:${v.slug}`.slice(0, 40), minutes: v.minutes });
+  if (error) console.error('[video] could not record completion:', error.message);
+  redirect('/today?done=1');
 }

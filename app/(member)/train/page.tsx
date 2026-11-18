@@ -3,6 +3,8 @@ import { requireUser } from '@/lib/auth/session';
 import { WORKOUTS, EXERCISES, AVAILABLE, workoutMinutes, type Style, type Workout } from '@/lib/workouts/catalog';
 import { READY, READY_STYLE, STYLES } from '@/lib/workouts/builder';
 import { MoveThumb } from '@/components/workout/MoveThumb';
+import { createClient } from '@/lib/supabase/server';
+import { VIDEO_STYLES, coverUrl } from '@/lib/video';
 
 export const metadata = { title: 'Train' };
 
@@ -22,6 +24,8 @@ function Row({ w }: { w: Workout }) {
 
 export default async function Train() {
   await requireUser('/train');
+  const supabase = await createClient();
+  const { data: videos } = await supabase.from('video_classes').select('slug, title, minutes, level, style, cover_path, free, instructors(display_name)').eq('status', 'published').order('sort').order('published_at', { ascending: false });
   const count = Object.keys(AVAILABLE).length;
   return (
     <main className="page space-y-6">
@@ -39,6 +43,23 @@ export default async function Train() {
           <span aria-hidden className="text-2xl">›</span>
         </Link>
       </div>
+      {(videos ?? []).length > 0 && (
+        <section>
+          <h2 className="text-sm font-bold uppercase tracking-[0.1em]">Filmed classes</h2>
+          <p className="mb-2 text-sm text-muted">Full classes with BAYSE instructors.</p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {(videos ?? []).map((v) => (
+              <Link key={v.slug} href={`/train/video/${v.slug}`} className="group block border border-stone hover:border-ink" data-video-class>
+                <div className="aspect-video bg-surface">{v.cover_path && <img src={coverUrl(v.cover_path)!} alt="" className="h-full w-full object-cover" />}</div>
+                <div className="p-3">
+                  <p className="font-display text-lg font-extrabold uppercase leading-tight">{v.title}</p>
+                  <p className="text-sm text-muted">{v.minutes} min · {v.level} · {VIDEO_STYLES[v.style]}{(v.instructors as unknown as { display_name: string } | null)?.display_name ? ` · ${(v.instructors as unknown as { display_name: string }).display_name}` : ''}{v.free ? ' · free' : ''}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
       {(Object.keys(STYLES) as Style[]).map((st) => (
         <section key={st}>
           <h2 className="text-sm font-bold uppercase tracking-[0.1em]">{STYLES[st].label}</h2>
@@ -50,7 +71,6 @@ export default async function Train() {
         <h2 className="mb-2 text-sm font-bold uppercase tracking-[0.1em]">Quick sessions</h2>
         <div className="grid gap-2">{WORKOUTS.map((w) => <Row key={w.key} w={w} />)}</div>
       </section>
-      <p className="text-xs text-muted">Filmed classes with BAYSE instructors are being added to the library.</p>
     </main>
   );
 }

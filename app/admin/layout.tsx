@@ -3,14 +3,15 @@ import { requireStaff, canUse, type StaffArea } from '@/lib/auth/session';
 import { Wordmark } from '@/components/ui';
 
 const NAV: { href: string; label: string; area: StaffArea }[] = [
-  { href: '/admin', label: 'Overview', area: 'overview' },
+  { href: '/admin', label: 'Dashboard', area: 'overview' },
   { href: '/admin/members', label: 'Members', area: 'members' },
   { href: '/admin/staff', label: 'Staff and instructors', area: 'staff' },
   { href: '/admin/classes', label: 'Live classes', area: 'classes' },
   { href: '/admin/sessions', label: '1-to-1 sessions', area: 'sessions' },
   { href: '/admin/pay', label: 'Instructor pay', area: 'pay' },
   { href: '/admin/plans', label: 'Plans and prices', area: 'plans' },
-  { href: '/admin/videos', label: 'Videos and voice', area: 'content' },
+  { href: '/admin/on-demand', label: 'On-demand classes', area: 'content' },
+  { href: '/admin/videos', label: 'Move clips and voice', area: 'content' },
   { href: '/admin/reports', label: 'Community reports', area: 'reports' },
   { href: '/admin/rewards', label: 'Rewards', area: 'rewards' },
   { href: '/admin/flags', label: 'Feature flags', area: 'flags' },
