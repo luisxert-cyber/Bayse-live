@@ -44,7 +44,7 @@ function say(text: string, on: boolean) {
   } catch { /* voice is optional */ }
 }
 
-export function WorkoutPlayer({ workout, onComplete, exitHref }: { workout: Workout; onComplete?: () => Promise<void> | void; exitHref: string }) {
+export function WorkoutPlayer({ workout, onComplete, exitHref, onExit }: { workout: Workout; onComplete?: () => Promise<void> | void; exitHref: string; onExit?: () => void }) {
   const steps = useMemo<Step[]>(() => workout.blocks.flatMap((b, i) => {
     const s: Step[] = [{ kind: 'work', ex: b.ex, seconds: b.seconds }];
     if (i < workout.blocks.length - 1 && workout.rest > 0) s.push({ kind: 'rest', ex: workout.blocks[i + 1].ex, seconds: workout.rest });
@@ -98,6 +98,9 @@ export function WorkoutPlayer({ workout, onComplete, exitHref }: { workout: Work
     return () => { lock?.release().catch(() => {}); };
   }, [started, done]);
 
+  // Stop talking if the player is closed mid-class.
+  useEffect(() => () => { try { window.speechSynthesis?.cancel(); } catch { /* optional */ } }, []);
+
   // Voices load asynchronously in some browsers.
   useEffect(() => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
@@ -124,7 +127,7 @@ export function WorkoutPlayer({ workout, onComplete, exitHref }: { workout: Work
         <p className="mt-2 text-muted">{workout.name} · {workoutMinutes(workout)} minutes{onComplete ? ' · added to your weekly progress' : ''}</p>
         <div className="mx-auto mt-4 max-w-[260px]"><Figure move="childs" /></div>
         <div className="mt-5 flex flex-wrap justify-center gap-3">
-          <Link href={exitHref} className={buttonClass('primary')}>Done</Link>
+          {onExit ? <button type="button" onClick={onExit} className={buttonClass('primary')}>Done</button> : <Link href={exitHref} className={buttonClass('primary')}>Done</Link>}
           <button type="button" onClick={() => { saved.current = false; setDone(false); setStarted(false); setI(0); setLeft(steps[0].seconds); }} className={buttonClass('secondary')}>Do it again</button>
         </div>
       </div>

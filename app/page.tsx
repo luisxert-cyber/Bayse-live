@@ -3,7 +3,11 @@ import { SiteHeader } from '@/components/site/SiteHeader';
 import { SiteFooter } from '@/components/site/SiteFooter';
 import { buttonClass } from '@/components/ui';
 import { getUser } from '@/lib/auth/session';
-import { LIVE_TIMETABLE, LIVE_CLASSES_PER_WEEK, LIVE_CLASS_MINUTES, PROGRAMMES, CLUBS, FAQS, TIERS, LIBRARY, OPENING_IN_STAGES } from '@/lib/site/offer';
+import { LIVE_TIMETABLE, LIVE_CLASSES_PER_WEEK, LIVE_CLASS_MINUTES, PROGRAMMES, CLUBS, FAQS, TIERS, OPENING_IN_STAGES } from '@/lib/site/offer';
+import { HeroInstructor } from '@/components/site/HeroInstructor';
+import { EXERCISES, WORKOUTS } from '@/lib/workouts/catalog';
+import { READY } from '@/lib/workouts/builder';
+import { recordCompletion } from '@/app/(member)/train/actions';
 import { PhoneTour } from '@/components/site/PhoneTour';
 import { ClassLibrary } from '@/components/site/ClassLibrary';
 import { Icon } from '@/components/site/Graphics';
@@ -20,6 +24,9 @@ const PHOTO = {
   sign: '/images/community-studio-sign.webp',
   friends: '/images/community-friends.webp',
 };
+
+const MOVE_COUNT = Object.keys(EXERCISES).length;
+const CLASS_COUNT = WORKOUTS.length + READY.length;
 
 const wrap = 'mx-auto max-w-6xl px-4 sm:px-6';
 const Eyebrow = ({ children }: { children: React.ReactNode }) => <p className="eyebrow">{children}</p>;
@@ -45,53 +52,47 @@ export default async function Home() {
     <>
       <SiteHeader signedIn={Boolean(user)} />
       <main>
-        {/* Hero */}
-        <section className={`${wrap} grid items-center gap-9 pb-10 pt-8 sm:pt-12 md:grid-cols-[1.1fr_0.9fr]`}>
+        {/* Hero (BAYSE On Demand) */}
+        <section className={`${wrap} grid items-center gap-9 pb-8 pt-8 sm:pt-12 md:grid-cols-[1.05fr_0.95fr]`}>
           <div>
             <Eyebrow>Your home for Pilates</Eyebrow>
-            <h1 className="mb-4 mt-3 text-[40px] sm:text-[60px]">Move well. Feel good. <span className="script">Find your people.</span></h1>
-            <p className="max-w-[46ch] text-lg text-muted">Live and on-demand Pilates from the instructors behind BAYSE, a plan made around you, and a community of women who keep you going.</p>
+            <h1 className="mb-4 mt-3 text-[40px] sm:text-[60px]">Your home for Pilates, <span className="script">wherever you are.</span></h1>
+            <p className="max-w-[46ch] text-lg text-muted">Expert-led Pilates from the instructors behind BAYSE Reformer Pilates. Classes you can play right now, live classes every week, a plan made around you and a community that keeps you going. No experience? No problem.</p>
             <div className="mb-3 mt-7 flex flex-wrap gap-3">
               <Link href="/start/welcome" className={buttonClass('primary')}>Start 7 days free</Link>
               <Link href="#classes" className={buttonClass('secondary')}>Browse classes</Link>
-              <Link href="/try" className={buttonClass('secondary')}>Try a free workout</Link>
+              <Link href="#play-wake-up-6" className={buttonClass('secondary')}>Play today&rsquo;s class</Link>
             </div>
-            <p className="text-sm text-muted">{LIVE_CLASSES_PER_WEEK} live classes a week · 10 to 45 minutes · Core · Strength · Mobility · No reformer needed</p>
+            <p className="text-sm text-muted">Today&rsquo;s class is free, no sign-up needed. All on the mat, no reformer needed.</p>
           </div>
-          <figure className="min-w-0 rounded-3xl border border-stone bg-surface p-3">
-            <img src={PHOTO.hero} alt="A BAYSE instructor mid-movement on the mat" className="aspect-[4/3] w-full rounded-2xl object-cover" style={{ objectPosition: '50% 35%' }} />
-            <figcaption className="flex justify-between gap-3 px-1 pt-2.5 text-[13px] text-muted"><span>Two instructors in every live class</span><span>Camera on or off</span></figcaption>
-          </figure>
+          <HeroInstructor />
         </section>
 
-        {/* More than a class */}
-        <section className={`${wrap} py-10`}>
-          <div className="grid gap-4 md:grid-cols-3">
+        {/* Numbers strip */}
+        <section className={`${wrap} pb-6`}>
+          <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {[
-              { img: PHOTO.plank, eyebrow: 'Move', title: 'Pilates that fits your life', body: `${LIVE_CLASSES_PER_WEEK} live classes a week, an on-demand library and a programme built from your answers.` },
-              { img: PHOTO.friends, eyebrow: 'Belong', title: 'Your Circle, your clubs, your people', body: 'Small groups who train at your times, plus padel, walks and coffee arranged by members near you.' },
-              { img: PHOTO.move, eyebrow: 'Thrive', title: 'Food, rest and every life stage', body: 'Simple recipes and meal ideas, plus private women’s wellness support. Never a crash diet.', soon: true },
-            ].map((c) => (
-              <article key={c.eyebrow} className="overflow-hidden rounded-card border border-stone bg-surface">
-                <img src={c.img} alt="" className="aspect-[4/3] w-full object-cover" style={{ objectPosition: '50% 35%' }} />
-                <div className="p-5">
-                  <div className="flex flex-wrap items-center gap-2"><Eyebrow>{c.eyebrow}</Eyebrow>{c.soon && <Chip />}</div>
-                  <h3 className="mt-2 text-xl uppercase">{c.title}</h3>
-                  <p className="mt-1.5 text-muted">{c.body}</p>
-                </div>
-              </article>
+              [`${MOVE_COUNT}`, 'illustrated moves'],
+              [`${CLASS_COUNT}`, 'classes to play now'],
+              [`${LIVE_CLASSES_PER_WEEK}`, 'live classes a week'],
+              ['6', 'class styles'],
+            ].map(([n, l]) => (
+              <div key={l} className="rounded-card border border-stone bg-surface px-4 py-3">
+                <dt className="sr-only">{l}</dt>
+                <dd><span className="block font-display text-[30px] font-extrabold leading-none">{n}</span><span className="text-sm text-muted">{l}</span></dd>
+              </div>
             ))}
-          </div>
+          </dl>
         </section>
 
         {/* Class library */}
         <section id="classes" className={`${wrap} scroll-mt-20 py-10`}>
-          <SecHead eyebrow="Class library" title="Find your class">Filter by focus, level and how long you have. Every class is on the mat, with options for every level.</SecHead>
-          <Link href="/try" className="mb-6 flex items-center justify-between gap-4 rounded-card bg-ink p-5 text-bg">
-            <span><span className="block font-display text-xl font-extrabold uppercase">Build a free workout</span><span className="text-sm opacity-80">Pick a class style, your areas and time from 200+ moves, then follow the BAYSE instructor. No sign-up.</span></span>
+          <SecHead eyebrow="Class library" title="Find your class">Filter by style, length and level. Tap a class to play it here, with the BAYSE instructor, a timer and voice cues.</SecHead>
+          <ClassLibrary signedIn={Boolean(user)} onRecord={user ? recordCompletion : undefined} />
+          <Link href="/try" className="mt-6 flex items-center justify-between gap-4 rounded-card bg-ink p-5 text-bg">
+            <span><span className="block font-display text-xl font-extrabold uppercase">Build your own workout</span><span className="text-sm opacity-80">Pick a style, the areas you want to work on and your time. We build it from {MOVE_COUNT} moves. No sign-up.</span></span>
             <span aria-hidden className="text-2xl">›</span>
           </Link>
-          <ClassLibrary classes={LIBRARY} />
         </section>
 
         {/* Plans */}
@@ -204,7 +205,14 @@ export default async function Home() {
                 );
               })}
             </div>
-            <div className="mt-6 rounded-card border border-stone p-5">
+            <div className="mt-6 grid gap-4 rounded-card border border-stone p-5 sm:grid-cols-[1fr_auto] sm:items-center sm:p-6">
+              <div>
+                <h3 className="text-xl uppercase">Create your account</h3>
+                <p className="mt-1 text-muted">Tell us your goals, get your plan, then choose a membership. About a minute, all on this site.</p>
+              </div>
+              <Link href="/start/welcome" className={buttonClass('primary')}>Continue</Link>
+            </div>
+            <div className="mt-4 rounded-card border border-stone p-5">
               <p className="font-bold uppercase">Have a BAYSE code?</p>
               <p className="mt-1 text-muted">Choose a plan, then tap &ldquo;Add promotion code&rdquo; on the payment page. A free-membership code means you are not charged.</p>
             </div>

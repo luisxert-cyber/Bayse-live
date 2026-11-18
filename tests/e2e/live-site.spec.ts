@@ -47,9 +47,20 @@ test('home: menu, phone tour and questions all respond', async ({ page }) => {
   const cards = page.locator('[data-class-card]');
   const all = await cards.count();
   expect(all).toBeGreaterThan(6);
-  await page.getByRole('button', { name: 'Core', exact: true }).click();
+  await page.getByRole('button', { name: 'Sculpt', exact: true }).click();
   await expect.poll(() => cards.count()).toBeLessThan(all);
   await page.getByRole('button', { name: 'All', exact: true }).first().click();
+  await expect.poll(() => cards.count()).toBe(all);
+  // The free class plays on the page; a members' class offers the free trial instead
+  await cards.filter({ hasText: 'Free class' }).first().click();
+  const dialog = page.getByRole('dialog');
+  await expect(dialog.getByRole('button', { name: 'Start workout' })).toBeVisible();
+  await dialog.getByRole('button', { name: 'Close' }).click();
+  await expect(dialog).toHaveCount(0);
+  await cards.filter({ hasText: 'Members' }).first().click();
+  await expect(dialog.getByRole('link', { name: 'Start 7 days free' })).toHaveAttribute('href', '/start/welcome');
+  await page.keyboard.press('Escape');
+  await expect(dialog).toHaveCount(0);
   // Phone tour: every dot changes the caption
   const caption = page.locator('[data-caption]');
   const dots = page.locator('[data-dot]');
@@ -65,7 +76,7 @@ test('home: menu, phone tour and questions all respond', async ({ page }) => {
   await first.locator('summary').click();
   await expect(first).toHaveAttribute('open', '');
   // Every call to action goes somewhere real
-  for (const name of ['Start 7 days free', 'Build my plan']) {
+  for (const name of ['Start 7 days free', 'Build my plan', 'Play today’s class']) {
     const href = await page.getByRole('link', { name }).first().getAttribute('href');
     expect(href, name).toBeTruthy();
   }
