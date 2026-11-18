@@ -34,7 +34,6 @@ export default async function You() {
           {ROWS.map((r) => (
             <li key={r.href}><Link href={r.href} className="flex min-h-[56px] items-center justify-between px-5 hover:bg-stone/30">{r.label}<span aria-hidden className="text-muted">›</span></Link></li>
           ))}
-          <li className="flex min-h-[56px] items-center justify-between px-5 text-muted">Progress, Coaching, Nutrition and Wellness <span className="text-xs">Coming soon</span></li>
         </ul>
       </Card>
       <form action="/auth/sign-out" method="post"><button className="w-full py-3 text-sm text-muted hover:text-ink">Sign out</button></form>
