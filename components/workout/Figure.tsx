@@ -9,6 +9,26 @@ const KIT = '#141414';
 const KIT_FAR = '#3A3A3A';
 const HAIR = '#4A2E22';
 
+type PropSpec = { prop?: 'weights' | 'band' | 'ball'; propAt?: 'hands' | 'knees' | 'ankles' | 'hands-feet' | 'hips' };
+
+function Prop({ p, prop, propAt }: { p: Required<Pose> } & PropSpec) {
+  if (!prop) return null;
+  const mid = (a: P, b: P): P => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+  if (prop === 'weights') {
+    const spots = propAt === 'ankles' ? [p.footN, p.footF] : propAt === 'knees' ? [p.kneeF] : [p.handN, p.handF];
+    return <g>{spots.map((h, i) => <g key={i} transform={`translate(${h[0]} ${h[1]})`}><rect x={-7} y={-2.5} width={14} height={5} rx={2} fill="#2B2B2B" /><rect x={-8.5} y={-5} width={4} height={10} rx={1.5} fill="#111" /><rect x={4.5} y={-5} width={4} height={10} rx={1.5} fill="#111" /></g>)}</g>;
+  }
+  if (prop === 'ball') {
+    const c = propAt === 'knees' ? mid(p.kneeN, p.kneeF) : propAt === 'ankles' ? mid(p.footN, p.footF) : propAt === 'hips' ? [p.hip[0], p.hip[1] + 10] as P : mid(p.handN, p.handF);
+    return <circle cx={c[0]} cy={c[1] - (propAt === 'hands' ? 8 : 0)} r={9} fill="#D9CFC0" stroke="#B8AC99" strokeWidth={1.5} />;
+  }
+  const BAND = '#C9826B';
+  if (propAt === 'hands-feet') return <g stroke={BAND} strokeWidth={2.5} fill="none" strokeLinecap="round"><path d={`M${p.handN[0]} ${p.handN[1]} L${p.footN[0]} ${p.footN[1]}`} /><path d={`M${p.handF[0]} ${p.handF[1]} L${p.footF[0]} ${p.footF[1]}`} /></g>;
+  const [a, b] = propAt === 'knees' ? [p.kneeN, p.kneeF] : propAt === 'ankles' ? [p.footN, p.footF] : [p.handN, p.handF];
+  const c = mid(a, b);
+  return <ellipse cx={c[0]} cy={c[1]} rx={Math.max(6, Math.hypot(a[0] - b[0], a[1] - b[1]) / 2 + 4)} ry={5} fill="none" stroke={BAND} strokeWidth={3} transform={`rotate(${(Math.atan2(b[1] - a[1], b[0] - a[0]) * 180) / Math.PI} ${c[0]} ${c[1]})`} />;
+}
+
 function Body({ p }: { p: Required<Pose> }) {
   const [sx, sy] = p.shoulder, [hx, hy] = p.hip;
   // Spine as a curve: control point pushed perpendicular to the torso by `bend`.
@@ -57,6 +77,7 @@ export function Figure({ move, playing = true, className = '' }: { move: keyof t
       <rect x="0" y="0" width="320" height="200" fill="transparent" />
       <rect x="30" y="171" width="260" height="7" rx="3.5" fill="#CFCFCC" />
       <Body p={mix(m.a, m.b, t)} />
+      <Prop p={mix(m.a, m.b, t)} prop={m.prop} propAt={m.propAt} />
     </svg>
   );
 }
@@ -68,6 +89,7 @@ export function FigureStill({ move, t = 0, className = '' }: { move: string; t?:
     <svg viewBox="0 0 320 200" className={className}>
       <rect x="30" y="171" width="260" height="7" rx="3.5" fill="#CFCFCC" />
       <Body p={mix(m.a, m.b, t)} />
+      <Prop p={mix(m.a, m.b, t)} prop={m.prop} propAt={m.propAt} />
     </svg>
   );
 }

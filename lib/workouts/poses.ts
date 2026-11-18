@@ -10,13 +10,15 @@ export type Pose = {
   /** Spine curve: positive sags (cow), negative rounds (cat). */
   bend?: number;
 };
-export type Move = { a: Pose; b: Pose; /** seconds for one full rep (a → b → a) */ tempo: number };
+export type Move = { a: Pose; b: Pose; /** seconds for one full rep (a → b → a) */ tempo: number; prop?: 'weights' | 'band' | 'ball'; propAt?: 'hands' | 'knees' | 'ankles' | 'hands-feet' | 'hips' };
 
 const far = (p: P, dx = 4, dy = 1): P => [p[0] + dx, p[1] + dy];
 
 const lying = { head: [214, 160] as P, shoulder: [196, 163] as P, hip: [132, 163] as P };
 
-export const MOVES: Record<string, Move> = {
+import { LIB_MOVES } from './library';
+
+const HAND_MOVES: Record<string, Move> = {
   bridge: {
     tempo: 4,
     a: { ...lying, elbowN: [170, 165], handN: [146, 166], kneeN: [108, 134], footN: [92, 166], kneeF: [113, 136], footF: [97, 166] },
@@ -73,6 +75,8 @@ export const MOVES: Record<string, Move> = {
     b: { hip: [100, 135], shoulder: [160, 153], head: [178, 158], elbowN: [192, 164], handN: [222, 166], elbowF: [194, 163], handF: [224, 165], kneeN: [126, 166], footN: [76, 166], kneeF: [130, 166], footF: [80, 166] },
   },
 };
+
+export const MOVES: Record<string, Move> = { ...HAND_MOVES, ...LIB_MOVES };
 
 /** Fill in far limbs that were not drawn explicitly. */
 export function complete(p: Pose): Required<Pose> {

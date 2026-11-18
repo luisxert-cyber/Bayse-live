@@ -88,7 +88,7 @@ export default async function Home() {
         <section id="classes" className={`${wrap} scroll-mt-20 py-10`}>
           <SecHead eyebrow="Class library" title="Find your class">Filter by focus, level and how long you have. Every class is on the mat, with options for every level.</SecHead>
           <Link href="/try" className="mb-6 flex items-center justify-between gap-4 rounded-card bg-ink p-5 text-bg">
-            <span><span className="block font-display text-xl font-extrabold uppercase">Build a free workout</span><span className="text-sm opacity-80">Pick your areas and time, then follow the BAYSE instructor with a guided timer. No sign-up.</span></span>
+            <span><span className="block font-display text-xl font-extrabold uppercase">Build a free workout</span><span className="text-sm opacity-80">Pick a class style, your areas and time from 200+ moves, then follow the BAYSE instructor. No sign-up.</span></span>
             <span aria-hidden className="text-2xl">›</span>
           </Link>
           <ClassLibrary classes={LIBRARY} />

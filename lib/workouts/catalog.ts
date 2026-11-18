@@ -1,12 +1,15 @@
 // Guided timer workouts with the illustrated instructor.
 // Mat-only, beginner-friendly cues with an easier option for every move.
 
-export type Area = 'core' | 'glutes' | 'back' | 'mobility' | 'full';
-export type Exercise = { key: string; move: string; name: string; cue: string; easier: string; areas: Area[]; level: 1 | 2 | 3; loads?: ('knees' | 'wrists')[]; role?: 'warmup' | 'cooldown' };
+export type Area = 'core' | 'glutes' | 'back' | 'mobility' | 'full' | 'upper';
+export type Style = 'mat' | 'sculpt' | 'standing' | 'cardio' | 'flow' | 'gentle';
+export type Exercise = { key: string; move: string; name: string; cue: string; easier: string; areas: Area[]; level: 1 | 2 | 3; loads?: ('knees' | 'wrists')[]; role?: 'warmup' | 'cooldown'; styles?: Style[]; prop?: 'weights' | 'band' | 'ball'; variantOf?: string };
 export type Block = { ex: string; seconds: number };
 export type Workout = { key: string; name: string; summary: string; level: 'Beginner' | 'All levels' | 'Intermediate'; focus: string; rest: number; blocks: Block[]; free?: boolean };
 
-export const EXERCISES: Record<string, Exercise> = {
+import { LIB_EXERCISES } from './library';
+
+const HAND: Record<string, Exercise> = {
   catcow: { key: 'catcow', move: 'catcow', name: 'Cat-cow', cue: 'Breathe in to lift your chest, breathe out to round your back. Move slowly.', easier: 'Make the movement smaller.', areas: ['back', 'mobility'], level: 1, loads: ['wrists'], role: 'warmup' },
   bridge: { key: 'bridge', move: 'bridge', name: 'Glute bridge', cue: 'Press through your heels, lift your hips, squeeze your glutes at the top. Lower with control.', easier: 'Lift halfway and hold for a breath.', areas: ['glutes', 'back'], level: 1 },
   deadbug: { key: 'deadbug', move: 'deadbug', name: 'Dead bug', cue: 'Keep your lower back heavy on the mat. Reach the opposite arm and leg away, then swap sides.', easier: 'Move only the legs, tapping a heel to the floor.', areas: ['core'], level: 2 },
@@ -19,6 +22,9 @@ export const EXERCISES: Record<string, Exercise> = {
   singleleg: { key: 'singleleg', move: 'singleleg', name: 'Single-leg stretch', cue: 'Head and shoulders lifted, hug one knee in and reach the other leg long. Switch smoothly.', easier: 'Keep your head down and the long leg higher.', areas: ['core'], level: 2 },
   childs: { key: 'childs', move: 'childs', name: "Child's pose", cue: 'Sit back towards your heels, arms long, forehead down. Breathe into your back.', easier: 'Widen your knees or rest on a pillow.', areas: ['mobility', 'back'], level: 1, loads: ['knees'], role: 'cooldown' },
 };
+for (const [k, st] of Object.entries({catcow: ['mat','flow','gentle'], bridge: ['mat','sculpt','gentle'], deadbug: ['mat'], birddog: ['mat','gentle'], plank: ['mat','sculpt','cardio'], hundred: ['mat'], spinestretch: ['mat','flow','gentle'], squat: ['standing','sculpt','cardio'], childs: ['flow','gentle','mat'], swimming: ['mat'], singleleg: ['mat']} as Record<string, Style[]>)) HAND[k].styles = st;
+
+export const EXERCISES: Record<string, Exercise> = { ...HAND, ...LIB_EXERCISES };
 
 export const WORKOUTS: Workout[] = [
   { key: 'wake-up-6', name: 'Wake-up Flow', summary: 'Six gentle minutes to loosen your spine and switch on your core.', level: 'All levels', focus: 'Mobility', rest: 10, free: true,

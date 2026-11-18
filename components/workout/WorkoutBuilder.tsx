@@ -2,8 +2,8 @@
 // Interactive workout builder: choose areas, time, level and joints to protect; see the workout
 // update instantly with the illustrated moves, shuffle it, then start it in the timer player.
 import { useMemo, useState } from 'react';
-import { buildWorkout, AREA_LABELS, LEVEL_LABELS, TIME_OPTIONS, type BuildChoices, type Level } from '@/lib/workouts/builder';
-import { EXERCISES, workoutMinutes, type Area } from '@/lib/workouts/catalog';
+import { buildWorkout, AREA_LABELS, LEVEL_LABELS, TIME_OPTIONS, STYLES, EQUIPMENT_LABELS, type BuildChoices, type Level, type Equipment } from '@/lib/workouts/builder';
+import { EXERCISES, workoutMinutes, type Area, type Style } from '@/lib/workouts/catalog';
 import { FigureStill } from './Figure';
 import { WorkoutPlayer } from './WorkoutPlayer';
 import { buttonClass } from '@/components/ui';
@@ -21,6 +21,7 @@ export function WorkoutBuilder({ initial, onComplete, exitHref }: { initial: Bui
   const workout = useMemo(() => buildWorkout(c), [c]);
   const set = (patch: Partial<BuildChoices>) => setC((x) => ({ ...x, ...patch }));
   const toggleArea = (a: Area) => set({ areas: c.areas.includes(a) ? c.areas.filter((x) => x !== a) : [...c.areas, a] });
+  const toggleEq = (q: Equipment) => { const eq = c.equipment ?? []; set({ equipment: eq.includes(q) ? eq.filter((x) => x !== q) : [...eq, q] }); };
   const toggleAvoid = (j: 'knees' | 'wrists') => set({ avoid: c.avoid.includes(j) ? c.avoid.filter((x) => x !== j) : [...c.avoid, j] });
 
   if (playing) {
@@ -34,6 +35,14 @@ export function WorkoutBuilder({ initial, onComplete, exitHref }: { initial: Bui
 
   return (
     <div className="space-y-6">
+      <section>
+        <h2 className="text-sm font-bold uppercase tracking-[0.1em]">Choose a class style</h2>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {(Object.keys(STYLES) as Style[]).map((st) => <Pill key={st} on={(c.style ?? 'mat') === st} onClick={() => set({ style: st })}>{STYLES[st].label}</Pill>)}
+        </div>
+        <p className="mt-2 text-xs text-muted">{STYLES[c.style ?? 'mat'].blurb}</p>
+      </section>
+
       <section>
         <h2 className="text-sm font-bold uppercase tracking-[0.1em]">What do you want to work on?</h2>
         <p className="mt-1 text-sm text-muted">Pick one or more.</p>
@@ -54,7 +63,15 @@ export function WorkoutBuilder({ initial, onComplete, exitHref }: { initial: Bui
         <div className="mt-3 flex flex-wrap gap-2">
           {([1, 2, 3] as Level[]).map((l) => <Pill key={l} on={c.level === l} onClick={() => set({ level: l })}>{LEVEL_LABELS[l]}</Pill>)}
         </div>
-        <p className="mt-2 text-xs text-muted">{c.level === 1 ? '30 seconds a move, longer rests.' : c.level === 2 ? '40 seconds a move.' : '45 seconds a move, shorter rests, harder moves.'}</p>
+        <p className="mt-2 text-xs text-muted">{`${STYLES[c.style ?? 'mat'].work[c.level]} seconds a move, ${STYLES[c.style ?? 'mat'].rest[c.level]} seconds rest${c.level === 3 ? ', harder moves' : ''}.`}</p>
+      </section>
+
+      <section>
+        <h2 className="text-sm font-bold uppercase tracking-[0.1em]">What do you have at home?</h2>
+        <p className="mt-1 text-sm text-muted">Just a mat is fine. Add anything you have and we will use it.</p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {(Object.keys(EQUIPMENT_LABELS) as Equipment[]).map((q) => <Pill key={q} on={(c.equipment ?? []).includes(q)} onClick={() => toggleEq(q)}>{EQUIPMENT_LABELS[q]}</Pill>)}
+        </div>
       </section>
 
       <section>

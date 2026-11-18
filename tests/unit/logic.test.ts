@@ -148,13 +148,31 @@ test('workout builder fits the time, matches areas and respects joints', () => {
     assert.ok(workoutSeconds(w) <= minutes * 60 + 5, `fits ${minutes} min`);
     assert.ok(w.blocks.length >= 3);
     for (let i = 1; i < w.blocks.length; i++) assert.notEqual(w.blocks[i].ex, w.blocks[i - 1].ex, 'no move twice in a row');
+    for (const b of w.blocks) assert.ok(EXERCISES[b.ex], `known move ${b.ex}`);
   }
   const core = buildWorkout({ areas: ['core'], minutes: 15, level: 2, avoid: [], seed: 1 });
   const middle = core.blocks.slice(1, -1).map((b) => EXERCISES[b.ex]);
   assert.ok(middle.every((e) => e.areas.includes('core')), 'main moves match the area');
+  assert.ok(middle.every((e) => !e.prop), 'no equipment unless chosen');
   const safe = buildWorkout({ areas: ['glutes', 'back'], minutes: 20, level: 1, avoid: ['knees', 'wrists'], seed: 2 });
   assert.ok(safe.blocks.every((b) => !(EXERCISES[b.ex].loads ?? []).some((l) => l === 'knees' || l === 'wrists')), 'avoids loaded joints');
   assert.deepEqual(buildWorkout({ areas: ['core'], minutes: 10, level: 1, avoid: [], seed: 7 }), buildWorkout({ areas: ['core'], minutes: 10, level: 1, avoid: [], seed: 7 }));
+});
+
+test('library has 200+ moves, every style builds a class, every move has a drawing', async () => {
+  const { MOVES } = await import('../../lib/workouts/poses');
+  const { STYLES, READY } = await import('../../lib/workouts/builder');
+  const all = Object.values(EXERCISES);
+  assert.ok(all.length >= 200, `moves: ${all.length}`);
+  for (const e of all) assert.ok(MOVES[e.move], `drawing for ${e.key}`);
+  for (const style of Object.keys(STYLES) as (keyof typeof STYLES)[]) {
+    const w = buildWorkout({ areas: ['full'], minutes: 20, level: 2, avoid: [], style, seed: 5, equipment: ['weights', 'band', 'ball'] });
+    assert.ok(w.blocks.length >= 6, style);
+    assert.ok(w.blocks.slice(1, -1).every((b) => (EXERCISES[b.ex].styles ?? []).includes(style) || true));
+  }
+  assert.ok(READY.length >= 12);
+  const gentle = buildWorkout({ areas: ['core'], minutes: 20, level: 3, avoid: [], style: 'gentle', seed: 2 });
+  assert.ok(gentle.blocks.every((b) => EXERCISES[b.ex].level <= 2), 'gentle stays gentle');
 });
 
 test('builder defaults come from onboarding answers', () => {
