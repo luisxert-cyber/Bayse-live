@@ -4,6 +4,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Figure } from './Figure';
+import { MoveMedia } from './MoveMedia';
 import { EXERCISES, workoutMinutes, type Workout } from '@/lib/workouts/catalog';
 import { buttonClass } from '@/components/ui';
 
@@ -143,7 +144,7 @@ export function WorkoutPlayer({ workout, onComplete, exitHref, onExit }: { worko
       <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-stone"><div className="h-full rounded-full bg-ink transition-[width]" style={{ width: `${((i + pct) / steps.length) * 100}%` }} /></div>
 
       <div className="relative mt-3 overflow-hidden rounded-2xl bg-bg">
-        <Figure move={step.kind === 'rest' ? 'childs' : ex.move} playing={started && !paused} className="block w-full" />
+        <MoveMedia move={step.kind === 'rest' ? 'childs' : ex.move} playing={started && !paused} className="block w-full" />
         {step.kind === 'rest' && <span className="absolute left-3 top-3 rounded-full bg-ink px-3 py-1 text-xs font-bold text-bg">Rest · next {ex.name}</span>}
       </div>
 

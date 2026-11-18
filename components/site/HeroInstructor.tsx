@@ -1,7 +1,7 @@
 'use client';
 // Hero art panel: the BAYSE instructor working through a few signature moves.
 import { useEffect, useState } from 'react';
-import { Figure } from '@/components/workout/Figure';
+import { MoveMedia } from '@/components/workout/MoveMedia';
 
 const SHOW = [
   { move: 'birddog', name: 'Bird dog' },
@@ -23,7 +23,7 @@ export function HeroInstructor() {
   return (
     <figure className="min-w-0 rounded-3xl border border-stone bg-surface p-3">
       <div className="relative overflow-hidden rounded-2xl bg-bg">
-        <Figure key={s.move} move={s.move} className="block w-full" />
+        <MoveMedia key={s.move} move={s.move} className="block w-full" />
         <span className="absolute left-3 top-3 rounded-full bg-ink px-3 py-1 text-xs font-bold text-bg" aria-live="polite">{s.name}</span>
       </div>
       <figcaption className="flex justify-between gap-3 px-1 pt-2.5 text-[13px] text-muted">

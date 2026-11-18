@@ -3,7 +3,8 @@
 import { useMemo, useState } from 'react';
 import { EXERCISES, type Area, type Style } from '@/lib/workouts/catalog';
 import { AREA_LABELS, STYLES, EQUIPMENT_LABELS, type Equipment } from '@/lib/workouts/builder';
-import { Figure, FigureStill } from './Figure';
+import { FigureStill } from './Figure';
+import { MoveMedia } from './MoveMedia';
 
 const LEVEL = ['', 'Beginner', 'Intermediate', 'Advanced'];
 const Chip = ({ on, onClick, children }: { on: boolean; onClick: () => void; children: React.ReactNode }) => (
@@ -38,7 +39,7 @@ export function MoveLibrary() {
             <div><p className="font-display text-xl font-extrabold uppercase leading-tight">{sel.name}</p><p className="text-sm text-muted">{LEVEL[sel.level]} · {sel.areas.map((a) => AREA_LABELS[a]).join(', ')}</p></div>
             <button type="button" onClick={() => setOpen(null)} aria-label="Close" className="grid h-9 w-9 place-items-center rounded-full border border-stone">✕</button>
           </div>
-          <div className="mt-3 rounded-2xl bg-bg"><Figure move={sel.move} className="block w-full" /></div>
+          <div className="mt-3 rounded-2xl bg-bg"><MoveMedia move={sel.move} className="block w-full" /></div>
           <p className="mt-3 text-sm">{sel.cue}</p>
           <p className="mt-1 text-xs text-muted">Easier: {sel.easier}</p>
         </div>
