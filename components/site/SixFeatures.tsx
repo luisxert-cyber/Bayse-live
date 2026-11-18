@@ -97,7 +97,7 @@ function Nourish() {
 function LiveCoach() {
   return (
     <div className="relative h-[300px] w-full overflow-hidden border border-stone md:h-[400px]">
-      <img src="/images/studio-side-plank.webp" alt="A BAYSE instructor teaching a side plank" className="h-full w-full object-cover" />
+      <img src="/images/studio-mat-core.webp" alt="A BAYSE instructor teaching core work" className="h-full w-full object-cover" />
       <span className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
       <span className="absolute left-4 top-4 flex items-center gap-1.5 bg-black/70 px-2.5 py-1 text-[11px] font-bold uppercase"><span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />Live</span>
       <div className="absolute inset-x-4 bottom-4 grid grid-cols-2 gap-2 text-[11px]">

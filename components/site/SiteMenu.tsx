@@ -21,7 +21,7 @@ export function SiteMenu({ items, signedIn }: { items: readonly (readonly [strin
   return (
     <>
       <button type="button" aria-label="Menu" aria-expanded={open} onClick={() => setOpen(true)}
-        className="absolute right-4 top-4 grid h-10 w-10 place-items-center sm:right-6">
+        className="absolute right-3 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center sm:right-5">
         <span className="block h-[2px] w-6 bg-ink shadow-[0_7px_0_rgb(255_255_255),0_-7px_0_rgb(255_255_255)]" />
       </button>
       {open && (

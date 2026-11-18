@@ -9,9 +9,8 @@ import { PhoneTour } from '@/components/site/PhoneTour';
 import { ClassLibrary } from '@/components/site/ClassLibrary';
 import { HeroInstructor } from '@/components/site/HeroInstructor';
 import { SixFeatures } from '@/components/site/SixFeatures';
+import { LiveTimetable } from '@/components/site/LiveTimetable';
 import { Icon } from '@/components/site/Graphics';
-import { WORKOUTS } from '@/lib/workouts/catalog';
-import { READY } from '@/lib/workouts/builder';
 import { recordCompletion } from '@/app/(member)/train/actions';
 
 // BAYSE website in the studio brand (black, white, square edges, outlined buttons), following the
@@ -22,12 +21,10 @@ const PHOTO = {
   hero: '/images/studio-bird-dog.webp',
   plank: '/images/studio-side-plank.webp',
   core: '/images/studio-mat-core.webp',
-  move: '/images/studio-movement.webp',
   selfie: '/images/community-selfie.webp',
   sign: '/images/community-studio-sign.webp',
   friends: '/images/community-friends.webp',
 };
-const CLASS_COUNT = WORKOUTS.length + READY.length;
 const wrap = 'mx-auto w-full max-w-5xl px-4 sm:px-6';
 const Tick = () => (
   <svg viewBox="0 0 16 16" aria-hidden className="mt-[3px] h-4 w-4 shrink-0"><circle cx="8" cy="8" r="8" fill="rgb(var(--muted))" /><path d="M4.5 8.2l2.2 2.2 4.8-4.8" fill="none" stroke="#000" strokeWidth="1.8" /></svg>
@@ -43,51 +40,60 @@ export default async function Home() {
     <>
       <SiteHeader signedIn={Boolean(user)} />
       <main>
-        {/* Hero: full-width studio photo with the outlined call to action */}
-        <section className="relative">
-          <img src={PHOTO.hero} alt="A BAYSE instructor holding a bird dog in the studio" className="h-[52vh] min-h-[320px] w-full object-cover sm:h-[62vh]" style={{ objectPosition: '50% 30%' }} />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
-          <div className={`${wrap} absolute inset-x-0 bottom-8`}>
-            <Link href="/start/welcome" className="inline-block border-2 border-white bg-black/30 px-4 py-2.5 font-display text-[24px] font-bold uppercase leading-tight backdrop-blur-[2px] hover:bg-white hover:text-black sm:text-[36px]">Start your 7-day free trial</Link>
+        {/* Hero: what BAYSE Online is, in one look */}
+        <section className="relative overflow-hidden">
+          <div className="relative h-[52vw] max-h-[420px] min-h-[240px] sm:absolute sm:inset-0 sm:h-auto sm:max-h-none">
+            <img src={PHOTO.hero} alt="A BAYSE instructor coaching a bird dog in the studio" className="h-full w-full object-cover" style={{ objectPosition: '60% 30%' }} />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent sm:bg-gradient-to-r sm:from-black sm:via-black/70 sm:to-black/0" />
+          </div>
+          <div className={`${wrap} relative flex flex-col pb-10 pt-2 sm:min-h-[640px] sm:justify-center sm:py-20`}>
+            <p className="eyebrow !text-white/80">BAYSE Online · Pilates coaching at home</p>
+            <h1 className="mt-4 max-w-[14ch] text-[42px] leading-[0.98] sm:text-[68px]">Online Pilates coaching from the BAYSE team</h1>
+            <p className="mt-5 max-w-[40ch] text-[17px] text-white/85 sm:text-lg">Your plan, your classes, your food and your people. All in one app.</p>
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+              <Link href="/start/welcome" className="inline-flex min-h-[52px] items-center justify-center bg-white px-7 text-[15px] font-bold uppercase tracking-[0.02em] text-black hover:opacity-90">Start my 7-day free trial</Link>
+              <Link href="#play-wake-up-6" className="inline-flex min-h-[52px] items-center justify-center border border-white/70 px-7 text-[15px] font-bold uppercase tracking-[0.02em] hover:bg-white hover:text-black">▶ Play a free class</Link>
+            </div>
+            <p className="mt-4 text-sm text-white/70">100% free for 7 days · Cancel any time · No reformer needed</p>
           </div>
         </section>
 
-        <section className={`${wrap} grid grid-cols-2 gap-3 pt-8 sm:gap-5`}>
-          <img src={PHOTO.plank} alt="Side plank on the mat in a BAYSE studio" className="aspect-[3/2] w-full object-cover" />
-          <img src={PHOTO.core} alt="Core work on the mat in a BAYSE studio" className="aspect-[3/2] w-full object-cover" />
+        {/* What you get, at a glance */}
+        <section className={wrap}>
+          <div className="grid grid-cols-2 gap-px border border-stone bg-stone lg:grid-cols-4">
+          {[
+            [Icon.live, 'Live coached classes', `${LIVE_CLASSES_PER_WEEK} a week, two instructors in every class`],
+            [Icon.plan, 'Your personal plan', '4 to 12 weeks, built from your answers'],
+            [Icon.play, 'On-demand library', 'Follow-along classes and a workout builder'],
+            [Icon.people, 'Community', 'Circles, Clubs and members near you'],
+          ].map(([icon, t, d]) => (
+            <div key={t as string} className="bg-bg px-4 py-5 sm:px-6">
+              <span className="block h-6 w-6">{icon}</span>
+              <p className="mt-3 font-bold leading-tight">{t}</p>
+              <p className="mt-1 text-sm text-muted">{d}</p>
+            </div>
+          ))}
+          </div>
         </section>
 
         {/* Your programme. Your coach. Your people. + app tour */}
         <section className={`${wrap} py-10`}>
           <div className="grid items-center gap-10 border-2 border-white p-6 sm:p-10 md:grid-cols-[1.15fr_auto]">
             <div>
-              <h1 className="text-[40px] leading-[1.02] sm:text-[56px]">Your programme. Your coach. Your people.</h1>
-              <p className="mt-4 font-display text-[22px] font-semibold uppercase italic sm:text-[26px]">Live and on-demand Pilates</p>
-              <p className="mt-4 max-w-[46ch] text-lg text-muted">From the instructors behind BAYSE studios: {LIVE_CLASSES_PER_WEEK} live classes a week, an on-demand library, a plan built around you and a community that keeps you going.</p>
+              <p className="eyebrow">One membership</p>
+              <h2 className="mt-3 text-[40px] leading-[1.0] sm:text-[56px]">We take care of everything</h2>
+              <ul className="mt-6 space-y-3 text-[17px]">
+                {['A plan built around you', 'Live and on-demand classes', 'Recipes and shopping lists', 'Progress, milestones and rewards', 'Circles, Clubs and new friends'].map((t) => <li key={t} className="flex gap-3"><Tick />{t}</li>)}
+              </ul>
               <div className="mt-7 flex flex-wrap gap-3">
-                <Link href="/start/welcome" className={buttonClass('primary')}>Build my plan</Link>
-                <Link href="#membership" className={buttonClass('solid')}>See membership</Link>
+                <Link href="/start/welcome" className={buttonClass('solid')}>Start my 7-day free trial</Link>
+                <Link href="#membership" className={buttonClass('primary')}>See membership</Link>
               </div>
-              <p className="mt-3 text-sm text-muted">Three minutes to build your plan. Cancel any time.</p>
+              <p className="mt-3 text-sm text-muted">100% free for 7 days. Cancel any time.</p>
             </div>
-            <div className="flex justify-center"><PhoneTour photos={{ hero: PHOTO.hero, a: PHOTO.core, b: PHOTO.plank, c: PHOTO.move, group: PHOTO.friends }} /></div>
+            <div className="flex justify-center"><PhoneTour photos={{ hero: PHOTO.hero, a: PHOTO.core, b: PHOTO.plank, c: PHOTO.plank, group: PHOTO.friends }} /></div>
           </div>
         </section>
-
-        {/* Numbers */}
-        <Rule />
-        <section className={`${wrap} grid grid-cols-2 gap-6 py-8 sm:grid-cols-5`}>
-          {[
-            [`${LIVE_CLASSES_PER_WEEK}`, 'live classes a week'],
-            ['2', 'instructors in every live class'],
-            [`${CLASS_COUNT}`, 'on-demand classes to play now'],
-            ['4–12', 'week personal programmes'],
-            ['7', 'day free trial'],
-          ].map(([n, l]) => (
-            <div key={l}><p className="font-display text-[40px] font-bold leading-none">{n}</p><p className="mt-1.5 text-sm text-muted">{l}</p></div>
-          ))}
-        </section>
-        <Rule />
 
         {/* Live classes */}
         <section id="live" className={`${wrap} scroll-mt-28 py-14`}>
@@ -95,36 +101,22 @@ export default async function Home() {
             <div>
               <Eyebrow>Live classes</Eyebrow>
               <h2 className="mt-3 text-[32px] sm:text-[40px]">Real instructors, live, with someone watching your form</h2>
-              <p className="mt-4 text-muted">Every live class has two BAYSE instructors. One teaches and motivates. The other watches the class, checks your technique, answers questions and makes sure everyone is safe.</p>
+              <p className="mt-4 text-muted">One instructor teaches. The other watches your form and coaches you by name.</p>
               <ul className="mt-5 space-y-2.5 text-[15px]">
-                {[`${LIVE_CLASSES_PER_WEEK} classes a week, every one ${LIVE_CLASS_MINUTES} minutes`, 'Early, mid-morning, lunchtime and evening slots', 'Join from your phone, tablet or laptop', 'Camera on for pointers, or off if you prefer', 'Mat-based: no reformer needed', 'Beginner and progression options in every class'].map((t) => <li key={t} className="flex gap-3"><Tick />{t}</li>)}
+                {[`${LIVE_CLASSES_PER_WEEK} classes a week, ${LIVE_CLASS_MINUTES} minutes each`, 'Mornings, lunchtimes and evenings', 'Camera on for feedback, or off', 'Just a mat: no reformer needed'].map((t) => <li key={t} className="flex gap-3"><Tick />{t}</li>)}
               </ul>
             </div>
             <figure className="border border-stone">
-              <img src={PHOTO.move} alt="A BAYSE instructor teaching on the mat" className="aspect-[4/3] w-full object-cover" />
+              <img src={PHOTO.plank} alt="A BAYSE instructor teaching a side plank" className="aspect-[4/3] w-full object-cover" style={{ objectPosition: '50% 40%' }} />
               <figcaption className="flex items-center justify-between gap-3 px-3 py-2 text-xs text-muted"><span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-white" />Live on Zoom, inside BAYSE</span><span>{LIVE_CLASS_MINUTES} min</span></figcaption>
             </figure>
           </div>
-          <div className="mt-12 flex items-end justify-between gap-4 border-b border-stone pb-3">
-            <p className="eyebrow">Weekly timetable · UK time</p>
-            <p className="text-sm text-muted">{LIVE_CLASSES_PER_WEEK} classes · all {LIVE_CLASS_MINUTES} min</p>
+          <div className="mt-12 mb-4 flex flex-wrap items-end justify-between gap-2">
+            <h3 className="text-2xl uppercase">This week&rsquo;s live classes</h3>
+            <p className="text-sm text-muted">{LIVE_CLASSES_PER_WEEK} classes · all {LIVE_CLASS_MINUTES} min · UK time</p>
           </div>
-          <div className="grid sm:grid-cols-7 sm:divide-x sm:divide-stone">
-            {LIVE_TIMETABLE.map((d) => (
-              <div key={d.day} className="flex gap-4 border-b border-stone py-3 sm:block sm:border-b-0 sm:px-3 sm:py-4">
-                <p className="w-12 shrink-0 text-sm font-bold uppercase sm:w-auto">{d.short}</p>
-                <ul className="flex-1 space-y-2 sm:mt-3 sm:space-y-4">
-                  {d.classes.map((c) => (
-                    <li key={c.time} className="flex items-baseline gap-3 sm:block">
-                      <span className="w-[52px] shrink-0 font-display text-lg font-bold sm:block sm:w-auto sm:text-[26px] sm:leading-none">{c.time}</span>
-                      <span className="text-sm text-muted sm:mt-1 sm:block">{c.name}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-          <p className="mt-3 border-t border-stone pt-3 text-xs text-muted">Classes may change from time to time; the timetable in the app is always up to date.</p>
+          <LiveTimetable days={LIVE_TIMETABLE} minutes={LIVE_CLASS_MINUTES} />
+          <p className="mt-3 text-xs text-muted">The app always shows the latest timetable. Join any class from your phone, tablet or laptop.</p>
         </section>
 
         {/* On demand: the real, playable library */}
@@ -133,7 +125,7 @@ export default async function Home() {
             <div>
               <Eyebrow>On demand</Eyebrow>
               <h2 className="mt-3 text-[32px] sm:text-[40px]">Train whenever suits you</h2>
-              <p className="mt-4 max-w-[52ch] text-muted">A growing library of BAYSE classes you can do at home or away. Filter by style, length, level or kit, tap a class and follow along with a timer and voice cues. Today&rsquo;s class is free.</p>
+              <p className="mt-4 max-w-[52ch] text-muted">Follow-along classes with a timer and voice cues, whenever suits you. Today&rsquo;s class is free.</p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Link href="#play-wake-up-6" className={buttonClass('primary')}>Play today&rsquo;s class</Link>
                 <Link href={member ? '/train/build' : '/try'} className={buttonClass('secondary')}>{member ? 'Build your own workout' : 'See how the workout builder works'}</Link>
