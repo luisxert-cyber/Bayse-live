@@ -17,7 +17,7 @@ const GROUPS: { id: string; title: string; plan: string; items: [string, string]
     ['Move library', 'Every move with a demo and coaching cues, so you know you are doing it right.'],
   ] },
   { id: 'live', title: 'Live and 1-to-1', plan: 'Inner Circle and Black', items: [
-    ['Live Zoom classes', `${LIVE_CLASSES_PER_WEEK} classes a week, 45 minutes each, with a lead instructor and a second instructor watching form.`],
+    ['Live Zoom classes', `${LIVE_CLASSES_PER_WEEK} classes a week, 45 minutes each, with an instructor who can watch your form.`],
     ['Private 1-to-1s', `45 minutes on Zoom with the instructor you choose. One every 28 days with Black, or ${PRIVATE_SESSION_PRICE} each on any plan.`],
     ['Meet the instructors', 'Every instructor has a page with photos, what they specialise in and the times you can book them.'],
   ] },

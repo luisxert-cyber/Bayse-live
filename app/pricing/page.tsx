@@ -13,7 +13,7 @@ const ROWS: [string, boolean, boolean, boolean][] = [
   ['Recipes, shopping lists and allergy filters', true, true, true],
   ['Progress, milestones and member rewards', true, true, true],
   ['Community, Circles, Clubs and chat rooms', true, true, true],
-  [`${LIVE_CLASSES_PER_WEEK} live Zoom classes a week, two instructors in each`, false, true, true],
+  [`${LIVE_CLASSES_PER_WEEK} live Zoom classes a week`, false, true, true],
   ['Monthly challenges', false, true, true],
   ['One 45-minute private Zoom session every 28 days', false, false, true],
   [`Book extra 1-to-1s (${PRIVATE_SESSION_PRICE} each)`, true, true, true],

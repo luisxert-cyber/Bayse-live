@@ -38,6 +38,7 @@ export async function saveSettings(f: FormData) {
     booking_window_days: int(f.get('booking_window_days'), 1, 180, 28),
     credit_valid_months: int(f.get('credit_valid_months'), 1, 12, 2),
     instructor_rate_pence: pence(f.get('instructor_rate')),
+    ...(f.get('live_class_rate') != null ? { live_class_rate_pence: pence(f.get('live_class_rate')) } : {}),
     pay_late_cancellations: f.get('pay_late_cancellations') === 'on',
     pay_cycle_anchor: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).parse(f.get('pay_cycle_anchor')),
     updated_at: new Date().toISOString(),
