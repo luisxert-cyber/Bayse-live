@@ -154,12 +154,11 @@ export async function createAccount(_prev: StepState, form: FormData): Promise<S
   if (hasAccount(user)) redirect('/start/membership');
   const base = await siteUrl();
   const opts = { emailRedirectTo: `${base}/auth/callback?next=/start/membership` };
-  let { error } = await supabase.auth.updateUser({ email: parsed.data.email, password: parsed.data.password }, opts);
-  // Some Supabase settings refuse a password until the email is confirmed. Save the email now;
-  // the confirmation link signs them in, and they can set a password from "Forgot password".
-  if (error && !/already/i.test(error.message)) {
-    console.warn('[account] email+password update failed, retrying with email only:', error.message);
-    ({ error } = await supabase.auth.updateUser({ email: parsed.data.email }, opts));
+  // Supabase links an email to an onboarding session first, then accepts a password.
+  const { error } = await supabase.auth.updateUser({ email: parsed.data.email }, opts);
+  if (!error) {
+    const pw = await supabase.auth.updateUser({ password: parsed.data.password });
+    if (pw.error) console.warn('[account] password not set yet (they can set it from Forgot password):', pw.error.message);
   }
   if (error) {
     console.warn('[account] create failed:', error.message);
