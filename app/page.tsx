@@ -172,9 +172,13 @@ export default async function Home() {
         <Rule />
         <section id="different" className={`${wrap} scroll-mt-28 py-14`}>
           <Eyebrow>More than a Pilates subscription</Eyebrow>
-          <h2 className="mt-3 max-w-[20ch] text-[32px] sm:text-[40px]">Six things that make BAYSE different</h2>
+          <h2 className="mt-3 max-w-[20ch] text-[32px] sm:text-[40px]">Everything you need, in one app</h2>
+          <p className="mt-2 text-sm text-muted sm:hidden">Swipe to see all six →</p>
           <SixFeatures />
-          <p className="mt-14 border-t border-stone pt-4 text-sm text-muted">All six are included with membership and the free trial. Coaching check-ins and women&rsquo;s wellness guidance open in stages after launch.</p>
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
+            <p className="text-sm text-muted">All six included in your 7-day free trial.</p>
+            <Link href="/start/welcome" className={buttonClass('solid')}>Start my 7-day free trial</Link>
+          </div>
         </section>
         <Rule />
 
