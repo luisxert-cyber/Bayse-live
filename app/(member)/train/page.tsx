@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { requireUser } from '@/lib/auth/session';
-import { WORKOUTS, EXERCISES, workoutMinutes, type Style, type Workout } from '@/lib/workouts/catalog';
+import { WORKOUTS, EXERCISES, AVAILABLE, workoutMinutes, type Style, type Workout } from '@/lib/workouts/catalog';
 import { READY, READY_STYLE, STYLES } from '@/lib/workouts/builder';
 import { MoveThumb } from '@/components/workout/MoveThumb';
 
@@ -22,7 +22,7 @@ function Row({ w }: { w: Workout }) {
 
 export default async function Train() {
   await requireUser('/train');
-  const count = Object.keys(EXERCISES).length;
+  const count = Object.keys(AVAILABLE).length;
   return (
     <main className="page space-y-6">
       <div>

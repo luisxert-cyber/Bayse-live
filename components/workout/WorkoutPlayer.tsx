@@ -3,7 +3,6 @@
 // optional voice cues (speech synthesis) and beeps for the last three seconds.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import { Figure } from './Figure';
 import { MoveMedia } from './MoveMedia';
 import { EXERCISES, workoutMinutes, type Workout } from '@/lib/workouts/catalog';
 import { buttonClass } from '@/components/ui';
@@ -126,7 +125,7 @@ export function WorkoutPlayer({ workout, onComplete, exitHref, onExit }: { worko
         <p className="eyebrow">Workout complete</p>
         <h2 className="mt-2 text-[32px]">Well done!</h2>
         <p className="mt-2 text-muted">{workout.name} · {workoutMinutes(workout)} minutes{onComplete ? ' · added to your weekly progress' : ''}</p>
-        <div className="mx-auto mt-4 max-w-[260px]"><Figure move="childs" /></div>
+        <div className="mx-auto mt-4 max-w-[320px] overflow-hidden rounded-2xl"><MoveMedia move="childs" /></div>
         <div className="mt-5 flex flex-wrap justify-center gap-3">
           {onExit ? <button type="button" onClick={onExit} className={buttonClass('primary')}>Done</button> : <Link href={exitHref} className={buttonClass('primary')}>Done</Link>}
           <button type="button" onClick={() => { saved.current = false; setDone(false); setStarted(false); setI(0); setLeft(steps[0].seconds); }} className={buttonClass('secondary')}>Do it again</button>

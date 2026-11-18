@@ -7,14 +7,14 @@ import { PROGRAMMES, TIERS } from '@/lib/site/offer';
 import { HeroInstructor } from '@/components/site/HeroInstructor';
 import { ClassLibrary } from '@/components/site/ClassLibrary';
 import { SignupForm } from '@/components/site/SignupForm';
-import { EXERCISES, WORKOUTS } from '@/lib/workouts/catalog';
+import { AVAILABLE, WORKOUTS } from '@/lib/workouts/catalog';
 import { READY } from '@/lib/workouts/builder';
 import { recordCompletion } from '@/app/(member)/train/actions';
 
 // The BAYSE On Demand website: hero, class library, plans, memberships and create-your-account.
 // Live classes, community and questions are on /live-and-community.
 
-const MOVE_COUNT = Object.keys(EXERCISES).length;
+const MOVE_COUNT = Object.keys(AVAILABLE).length;
 const CLASS_COUNT = WORKOUTS.length + READY.length;
 const wrap = 'mx-auto max-w-6xl px-4 sm:px-6';
 const Tick = () => <span aria-hidden className="mt-[3px] grid h-4 w-4 shrink-0 place-items-center rounded-full bg-ink text-[9px] font-bold text-bg">✓</span>;

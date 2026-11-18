@@ -1,7 +1,7 @@
 // Build a guided timer workout from a member's choices: areas, time, level and joints to protect.
 // Shape: warm-up → main moves that match the chosen areas → cool-down. Deterministic for a given seed,
 // so "Shuffle" gives a fresh order and the same choices + seed always give the same workout.
-import { EXERCISES, WORKOUTS, type Area, type Exercise, type Style, type Workout } from './catalog';
+import { AVAILABLE, EXERCISES, WORKOUTS, type Area, type Exercise, type Style, type Workout } from './catalog';
 
 export type Level = 1 | 2 | 3;
 export type Equipment = 'weights' | 'band' | 'ball';
@@ -38,7 +38,7 @@ export function buildWorkout(c: BuildChoices): Workout {
   const equipment = c.equipment ?? [];
   const rand = rng(c.seed ?? 1);
   const ok = (e: Exercise) => !(e.loads ?? []).some((l) => c.avoid.includes(l)) && (!e.prop || equipment.includes(e.prop));
-  const all = Object.values(EXERCISES).filter(ok);
+  const all = Object.values(AVAILABLE).filter(ok);
   const inStyle = (e: Exercise) => (e.styles ?? []).includes(style);
   const lvlOk = (e: Exercise) => e.level <= level + (level === 3 ? 1 : 0);
 

@@ -1,7 +1,7 @@
 'use client';
 // Browse every move: search, filter by style, area and equipment, tap to see it animated with cues.
 import { useMemo, useState } from 'react';
-import { EXERCISES, type Area, type Style } from '@/lib/workouts/catalog';
+import { AVAILABLE as EXERCISES, type Area, type Style } from '@/lib/workouts/catalog';
 import { AREA_LABELS, STYLES, EQUIPMENT_LABELS, type Equipment } from '@/lib/workouts/builder';
 import { MoveThumb } from './MoveThumb';
 import { MoveMedia } from './MoveMedia';

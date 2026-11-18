@@ -175,6 +175,17 @@ test('library has 200+ moves, every style builds a class, every move has a drawi
   assert.ok(gentle.blocks.every((b) => EXERCISES[b.ex].level <= 2), 'gentle stays gentle');
 });
 
+test('for now, classes only use moves that have a demo clip', async () => {
+  const { AVAILABLE, WORKOUTS } = await import('../../lib/workouts/catalog');
+  const { READY } = await import('../../lib/workouts/builder');
+  assert.ok(Object.keys(AVAILABLE).length >= 20);
+  for (const w of [...WORKOUTS, ...READY]) for (const b of w.blocks) assert.ok(AVAILABLE[b.ex], `${w.name}: ${b.ex} has a clip`);
+  for (const style of ['mat', 'sculpt', 'standing', 'cardio', 'flow', 'gentle'] as const) {
+    const w = buildWorkout({ areas: ['core', 'glutes'], minutes: 15, level: 2, avoid: [], style, seed: 4 });
+    assert.ok(w.blocks.every((b) => AVAILABLE[b.ex]), style);
+  }
+});
+
 test('builder defaults come from onboarding answers', () => {
   const d = defaultsFromAnswers(['core', 'posture'], 'intermediate', '20-30');
   assert.deepEqual(d.areas, ['core', 'back']);

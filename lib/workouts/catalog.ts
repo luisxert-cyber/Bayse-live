@@ -8,6 +8,7 @@ export type Block = { ex: string; seconds: number };
 export type Workout = { key: string; name: string; summary: string; level: 'Beginner' | 'All levels' | 'Intermediate'; focus: string; rest: number; blocks: Block[]; free?: boolean };
 
 import { LIB_EXERCISES } from './library';
+import { previewClip } from './preview-clips';
 
 const HAND: Record<string, Exercise> = {
   catcow: { key: 'catcow', move: 'catcow', name: 'Cat-cow', cue: 'Breathe in to lift your chest, breathe out to round your back. Move slowly.', easier: 'Make the movement smaller.', areas: ['back', 'mobility'], level: 1, loads: ['wrists'], role: 'warmup' },
@@ -26,11 +27,14 @@ for (const [k, st] of Object.entries({catcow: ['mat','flow','gentle'], bridge: [
 
 export const EXERCISES: Record<string, Exercise> = { ...HAND, ...LIB_EXERCISES };
 
+/** Moves members can be given right now: only those with a demo clip, until the drawn figure is retired or filmed clips arrive. */
+export const AVAILABLE: Record<string, Exercise> = Object.fromEntries(Object.entries(EXERCISES).filter(([, e]) => previewClip(e.move) !== null));
+
 export const WORKOUTS: Workout[] = [
   { key: 'wake-up-6', name: 'Wake-up Flow', summary: 'Six gentle minutes to loosen your spine and switch on your core.', level: 'All levels', focus: 'Mobility', rest: 10, free: true,
     blocks: [{ ex: 'catcow', seconds: 45 }, { ex: 'spinestretch', seconds: 40 }, { ex: 'bridge', seconds: 40 }, { ex: 'birddog', seconds: 45 }, { ex: 'deadbug', seconds: 40 }, { ex: 'childs', seconds: 45 }] },
   { key: 'core-10', name: 'Core Express', summary: 'Ten minutes of deep core work, the BAYSE way.', level: 'Intermediate', focus: 'Core', rest: 15,
-    blocks: [{ ex: 'catcow', seconds: 40 }, { ex: 'hundred', seconds: 50 }, { ex: 'deadbug', seconds: 45 }, { ex: 'birddog', seconds: 45 }, { ex: 'plank', seconds: 30 }, { ex: 'hundred', seconds: 40 }, { ex: 'deadbug', seconds: 40 }, { ex: 'plank', seconds: 30 }, { ex: 'childs', seconds: 45 }] },
+    blocks: [{ ex: 'catcow', seconds: 40 }, { ex: 'singleleg', seconds: 50 }, { ex: 'deadbug', seconds: 45 }, { ex: 'birddog', seconds: 45 }, { ex: 'plank', seconds: 30 }, { ex: 'roll-back', seconds: 40 }, { ex: 'deadbug', seconds: 40 }, { ex: 'plank', seconds: 30 }, { ex: 'childs', seconds: 45 }] },
   { key: 'glutes-12', name: 'Glutes & Legs', summary: 'Twelve minutes for strong glutes and steady legs. No equipment.', level: 'All levels', focus: 'Glutes & legs', rest: 15,
     blocks: [{ ex: 'catcow', seconds: 40 }, { ex: 'squat', seconds: 45 }, { ex: 'bridge', seconds: 50 }, { ex: 'birddog', seconds: 45 }, { ex: 'squat', seconds: 45 }, { ex: 'bridge', seconds: 50 }, { ex: 'plank', seconds: 30 }, { ex: 'squat', seconds: 40 }, { ex: 'spinestretch', seconds: 40 }, { ex: 'childs', seconds: 45 }] },
   { key: 'wind-down-8', name: 'Evening Wind-down', summary: 'Eight slow minutes to release your back and hips before bed.', level: 'Beginner', focus: 'Stretch', rest: 10,
