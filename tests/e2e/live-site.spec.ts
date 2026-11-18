@@ -41,8 +41,15 @@ test('home: menu, class library, player and favourites respond', async ({ page }
   await page.goto('/');
   // Menu
   const menu = page.locator('summary[aria-label="Menu"]');
-  if (await menu.isVisible()) await menu.click();
-  await page.locator('header a[href="/#membership"]:visible').first().click();
+  if (await menu.isVisible()) {
+    await expect(async () => {
+      if (!(await page.locator('header details[open]').count())) await menu.click();
+      await expect(page.locator('header details[open] a[href="/#membership"]')).toBeVisible({ timeout: 2000 });
+    }).toPass({ timeout: 15000 });
+    await page.locator('header details[open] a[href="/#membership"]').click();
+  } else {
+    await page.locator('header nav > a[href="/#membership"]').click();
+  }
   await expect(page).toHaveURL(/#membership/);
   // Class library filters narrow the list
   const cards = page.locator('[data-class-card]');
