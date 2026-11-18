@@ -4,9 +4,7 @@ import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
-import { createAdminClient } from '@/lib/supabase/admin';
 import { STEPS, nextStepId, validateAnswer, PERSONALISE_PATH } from '@/lib/onboarding/steps';
-import { getStripe } from '@/lib/billing/stripe';
 import { publicEnv } from '@/lib/env';
 import { isUuid } from '@/lib/billing/stripe-map';
 import { hasAccount } from '@/lib/auth/account';
@@ -139,7 +137,7 @@ export async function acceptProgramme(form: FormData) {
   }
   await markStep(supabase, user.id, 'health');
   const { data: done } = await supabase.rpc('has_health_declaration');
-  redirect(done ? (hasAccount(user) ? '/start/membership' : '/start/account') : '/start/health');
+  redirect(done ? (hasAccount(user) ? '/join' : '/start/account') : '/start/health');
 }
 
 const AccountSchema = z.object({
@@ -153,9 +151,9 @@ export async function createAccount(_prev: StepState, form: FormData): Promise<S
   if (!parsed.success) return { error: parsed.error.issues[0].message };
   if (form.get('terms') !== 'on') return { error: 'Please agree to the terms and privacy notice.' };
   const { supabase, user } = await requireSession();
-  if (hasAccount(user)) redirect('/start/membership');
+  if (hasAccount(user)) redirect('/join');
   const base = await siteUrl();
-  const opts = { emailRedirectTo: `${base}/auth/callback?next=/start/membership` };
+  const opts = { emailRedirectTo: `${base}/auth/callback?next=/join` };
   // Supabase links an email to an onboarding session first, then accepts a password.
   const { error } = await supabase.auth.updateUser({ email: parsed.data.email }, opts);
   if (!error) {
@@ -173,49 +171,9 @@ export async function createAccount(_prev: StepState, form: FormData): Promise<S
   if (form.get('marketing') === 'on') {
     await supabase.from('consent_records').insert({ user_id: user.id, purpose: 'marketing_email', version: CONSENT_VERSION, granted: true });
   }
-  await markStep(supabase, user.id, 'membership');
-  redirect('/start/membership?check_email=1');
-}
-
-/** Starts Stripe Checkout (test mode until launch) for the chosen price. */
-export async function startCheckout(form: FormData) {
-  const { supabase, user } = await requireSession();
-  if (!hasAccount(user)) redirect('/start/account');
-  const priceId = String(form.get('price_id') ?? '');
-  if (!isUuid(priceId)) redirect('/start/membership?error=price');
-
-  const { data: price } = await supabase.from('prices').select('id, stripe_price_id, trial_days, plan_id').eq('id', priceId).eq('active', true).maybeSingle();
-  if (!price?.stripe_price_id) redirect('/start/membership?error=not_connected');
-
-  const admin = createAdminClient();
-  const { data: existing } = await admin.from('stripe_customers').select('stripe_customer_id').eq('user_id', user.id).maybeSingle();
-  const { data: active } = await admin.from('subscriptions').select('id').eq('user_id', user.id).in('status', ['trialing', 'active', 'past_due']).limit(1);
-  if (active?.length) redirect('/you/membership?already=1');
-
-  let url: string | null = null;
-  try {
-    const stripe = await getStripe();
-    const base = await siteUrl();
-    const session = await stripe.checkout.sessions.create({
-      mode: 'subscription',
-      line_items: [{ price: price.stripe_price_id, quantity: 1 }],
-      client_reference_id: user.id,
-      ...(existing ? { customer: existing.stripe_customer_id } : { customer_email: user.email ?? undefined }),
-      subscription_data: {
-        ...(price.trial_days > 0 ? { trial_period_days: price.trial_days } : {}),
-        metadata: { bayse_user_id: user.id },
-      },
-      metadata: { bayse_user_id: user.id },
-      allow_promotion_codes: true,
-      success_url: `${base}/start/done?checkout=success`,
-      cancel_url: `${base}/start/membership?checkout=cancelled`,
-    });
-    url = session.url;
-  } catch (e) {
-    console.error('[checkout] failed', e instanceof Error ? e.message : e);
-    redirect('/start/membership?error=checkout');
-  }
-  redirect(url ?? '/start/membership?error=checkout');
+  // Next: choose a membership and add a card to start the 7-day free trial, inside the app.
+  await markStep(supabase, user.id, 'done');
+  redirect('/join?welcome=1');
 }
 
 export async function finishOnboarding() {

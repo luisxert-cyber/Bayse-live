@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/server';
 import { hasAccount } from '@/lib/auth/account';
 import { loadOnboarding } from '@/lib/data/onboarding';
 import { buildRecommendation } from '@/lib/data/recommendation';
-import { Progress, Notice, Card, buttonClass } from '@/components/ui';
+import { Progress, Notice, buttonClass } from '@/components/ui';
 import { StepShell } from '@/components/onboarding/StepShell';
 import { QuestionForm } from '@/components/onboarding/QuestionForm';
 import { NameForm } from '@/components/onboarding/NameForm';
@@ -18,9 +18,8 @@ import { HealthForm } from '@/components/health/HealthForm';
 import { saveHealthOnboarding } from '@/lib/health/actions';
 import {
   startOnboarding, saveQuestion, saveName, saveDietary, saveWellness,
-  acceptProgramme, createAccount, startCheckout, finishOnboarding,
+  acceptProgramme, createAccount, finishOnboarding,
 } from '../actions';
-import { formatPence, type Plan, type Price } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
 
@@ -30,12 +29,6 @@ export async function generateMetadata({ params }: Props) {
   const { step } = await params;
   return { title: STEPS.find((s) => s.id === step)?.title ?? 'Build my plan' };
 }
-
-const MEMBERSHIP_ERRORS: Record<string, string> = {
-  not_connected: 'Payments are not connected yet for this plan. You can continue and choose a membership later.',
-  checkout: 'We could not open checkout. Nothing has been charged. Please try again.',
-  price: 'Please choose a membership.',
-};
 
 export default async function StepPage({ params, searchParams }: Props) {
   const { step: stepId } = await params;
@@ -133,63 +126,27 @@ export default async function StepPage({ params, searchParams }: Props) {
       break;
 
     case 'account':
-      if (hasAccount(user)) redirect('/start/membership');
+      if (hasAccount(user)) redirect('/join');
       body = <><AccountForm action={createAccount} /><Prefill fields={{ email: 'email' }} /></>;
       break;
 
-    case 'membership': {
-      if (!hasAccount(user)) redirect('/start/account');
-      const [{ data: plans }, { data: prices }] = await Promise.all([
-        supabase.from('plans').select('id, key, name, description, sort, is_hypothesis').order('sort'),
-        supabase.from('prices').select('id, plan_id, stripe_price_id, billing_interval, amount_pence, currency, trial_days').in('billing_interval', ['month', '28_days']),
-      ]);
-      const anyHypothesis = (plans ?? []).some((p) => p.is_hypothesis);
-      body = (
-        <div className="space-y-4">
-          {sp.check_email && <Notice tone="success" title="Account created">We have sent a link to confirm your email. You can carry on now.</Notice>}
-          {sp.checkout === 'cancelled' && <Notice title="Checkout cancelled">Nothing was charged.</Notice>}
-          {sp.error && <Notice tone="error">{MEMBERSHIP_ERRORS[sp.error] ?? 'Something went wrong.'}</Notice>}
-          {anyHypothesis && <Notice tone="warning" title="Test prices">These prices are still being finalised. Checkout runs in Stripe test mode, so no real payment is taken.</Notice>}
-          {(plans as Plan[] | null)?.map((plan) => {
-            const price = (prices as Price[] | null)?.find((p) => p.plan_id === plan.id);
-            return (
-              <Card key={plan.id}>
-                <div className="flex items-baseline justify-between gap-3">
-                  <h2 className="text-lg font-semibold">{plan.name}</h2>
-                  {price && <p className="text-sm"><span className="font-serif text-xl">{formatPence(price.amount_pence, price.currency)}</span> <span className="text-muted">every 28 days</span></p>}
-                </div>
-                <p className="mt-1 text-sm text-muted">{plan.description}</p>
-                {price && (
-                  <form action={startCheckout} className="mt-4">
-                    <input type="hidden" name="price_id" value={price.id} />
-                    <button className={buttonClass(plan.key === 'club' ? 'primary' : 'secondary', true)} disabled={!price.stripe_price_id}>
-                      {price.trial_days ? `Start ${price.trial_days}-day free trial` : 'Choose'}
-                    </button>
-                  </form>
-                )}
-              </Card>
-            );
-          })}
-          <Notice title="Have a BAYSE code?">Choose a plan, then tap <strong>Add promotion code</strong> on the payment page. A free-membership code means you are not charged.</Notice>
-          <p className="text-xs text-muted">Cancel any time from your account.</p>
-          <form action={finishOnboarding}><button className="block w-full py-2 text-center text-sm text-muted hover:text-ink">Decide later</button></form>
-        </div>
-      );
-      break;
-    }
-
+    // Choosing a membership and adding a card happen on the in-app payment screen (/join).
+    // Old links to these steps still land in the right place.
+    case 'membership':
     case 'payment':
-      redirect('/start/membership');
+      redirect(hasAccount(user) ? '/join' : '/start/account');
 
-    case 'done':
+    case 'done': {
+      if (!hasAccount(user)) redirect('/start/account');
       body = (
         <div className="space-y-5">
-          {sp.checkout === 'success' && <Notice tone="success" title="You are in">Your membership is being set up. It can take a few seconds to appear.</Notice>}
+          {sp.check_email && <Notice tone="success" title="Account created">We have sent a link to confirm your email. You can carry on now.</Notice>}
           <p className="text-muted">Your plan is saved. Next: open your Today screen to see your programme and what is coming up.</p>
           <form action={finishOnboarding}><button className={buttonClass('primary', true)}>Go to Today</button></form>
         </div>
       );
       break;
+    }
   }
 
   return (

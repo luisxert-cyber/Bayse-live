@@ -38,7 +38,7 @@ export async function saveHealthOnboarding(_prev: State, form: FormData): Promis
   if (r.error) return { error: r.error };
   const supabase = await createClient();
   await supabase.from('onboarding_answers').upsert({ user_id: r.userId, current_step: 'account' }, { onConflict: 'user_id' });
-  redirect(r.isAccount ? '/start/membership' : '/start/account');
+  redirect(r.isAccount ? '/join' : '/start/account');
 }
 
 /** From My BAYSE, or when a class asks for it first. */

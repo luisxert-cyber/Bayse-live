@@ -180,7 +180,7 @@ export function CodesSection() {
           <div className="border-2 border-white p-6 sm:p-10">
             <Eyebrow>Have a BAYSE code?</Eyebrow>
             <h2 className="mt-3 max-w-[18ch] text-[30px] sm:text-[40px]">Got a code from your studio or the BAYSE team?</h2>
-            <p className="mt-4 max-w-[56ch] text-muted">Choose any plan and enter your code on the payment page. A free-membership code means you are not charged.</p>
+            <p className="mt-4 max-w-[56ch] text-muted">Choose any membership in the app and enter your code on the payment step. A free-membership code means you are not charged.</p>
             <Link href="/start/welcome" className={`${buttonClass('primary')} mt-6`}>Build my plan</Link>
           </div>
         </section>
