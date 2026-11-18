@@ -3,6 +3,8 @@ import { requireUser } from '@/lib/auth/session';
 import { loadMember, greeting, fmtDate } from '@/lib/data/member';
 import { currentProgramme } from '@/lib/data/recommendation';
 import { Card, Notice, buttonClass, Wordmark } from '@/components/ui';
+import { createClient } from '@/lib/supabase/server';
+import { WORKOUTS, workoutMinutes } from '@/lib/workouts/catalog';
 
 export const metadata = { title: 'Today' };
 export const dynamic = 'force-dynamic';
@@ -18,6 +20,16 @@ export default async function Today({ searchParams }: { searchParams: Promise<Re
   const name = m.profile?.first_name;
   const isStaff = m.roles.length > 0;
   const goal = programme?.sessions_per_week ?? 3;
+
+  // This week's finished workouts (Monday to Sunday, UK time) fill the progress circles.
+  const ukDay = (d: Date) => ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].indexOf(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', weekday: 'short' }).format(d));
+  const todayIdx = ukDay(new Date());
+  const since = new Date(Date.now() - (todayIdx + 1) * 86400000).toISOString();
+  const supabase = await createClient();
+  const { data: done } = await supabase.from('workout_completions').select('completed_at, minutes').eq('user_id', user.id).gte('completed_at', since);
+  const doneDays = new Set((done ?? []).filter((r) => Date.now() - new Date(r.completed_at).getTime() < (todayIdx + 1) * 86400000).map((r) => ukDay(new Date(r.completed_at))).filter((d) => d <= todayIdx));
+  const sessions = doneDays.size;
+  const suggested = WORKOUTS.find((w) => w.key === (todayIdx >= 5 ? 'wind-down-8' : sessions % 2 ? 'glutes-12' : 'core-10')) ?? WORKOUTS[0];
 
   return (
     <main className="page space-y-4">
@@ -62,12 +74,13 @@ export default async function Today({ searchParams }: { searchParams: Promise<Re
         <div className="mt-4 flex gap-2">
           {Array.from({ length: 7 }, (_, i) => (
             <div key={i} className="flex-1 text-center">
-              <div className={`mx-auto mb-1 h-8 w-8 rounded-full ${i < goal ? 'border-2 border-dashed border-ink/35' : 'bg-ink/[0.05]'}`} />
-              <span className="text-xs text-muted">{['M', 'T', 'W', 'T', 'F', 'S', 'S'][i]}</span>
+              <div className={`mx-auto mb-1 grid h-8 w-8 place-items-center rounded-full text-xs font-bold ${doneDays.has(i) ? 'bg-ink text-bg' : i === todayIdx ? 'border-2 border-ink' : 'bg-ink/[0.05]'}`}>{doneDays.has(i) ? '✓' : ''}</div>
+              <span className={`text-xs ${i === todayIdx ? 'font-bold text-ink' : 'text-muted'}`}>{['M', 'T', 'W', 'T', 'F', 'S', 'S'][i]}</span>
             </div>
           ))}
         </div>
-        <p className="mt-3 text-sm text-muted">Each session you finish fills a circle. Counting starts when classes open.</p>
+        <p className="mt-3 text-sm text-muted">{sessions >= goal ? `${sessions} of ${goal} this week. Goal reached, brilliant.` : `${sessions} of ${goal} this week. Each workout you finish fills a circle.`}</p>
+        <Link href={`/train/${suggested.key}`} className={`${buttonClass('primary', true)} mt-4`}>Start {suggested.name} · {workoutMinutes(suggested)} min</Link>
       </Card>
 
       {/* Your Circle and clubs */}

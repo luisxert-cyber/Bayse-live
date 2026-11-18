@@ -54,7 +54,7 @@ export default async function Home() {
             <div className="mb-3 mt-7 flex flex-wrap gap-3">
               <Link href="/start/welcome" className={buttonClass('primary')}>Start 7 days free</Link>
               <Link href="#classes" className={buttonClass('secondary')}>Browse classes</Link>
-              <Link href="#live" className={buttonClass('secondary')}>Live timetable</Link>
+              <Link href="/try" className={buttonClass('secondary')}>Try a free workout</Link>
             </div>
             <p className="text-sm text-muted">{LIVE_CLASSES_PER_WEEK} live classes a week · 10 to 45 minutes · Core · Strength · Mobility · No reformer needed</p>
           </div>
@@ -87,6 +87,10 @@ export default async function Home() {
         {/* Class library */}
         <section id="classes" className={`${wrap} scroll-mt-20 py-10`}>
           <SecHead eyebrow="Class library" title="Find your class">Filter by focus, level and how long you have. Every class is on the mat, with options for every level.</SecHead>
+          <Link href="/try" className="mb-6 flex items-center justify-between gap-4 rounded-card bg-ink p-5 text-bg">
+            <span><span className="block font-display text-xl font-extrabold uppercase">Try a free 6-minute workout</span><span className="text-sm opacity-80">Follow the BAYSE instructor with a guided timer. No sign-up needed.</span></span>
+            <span aria-hidden className="text-2xl">›</span>
+          </Link>
           <ClassLibrary classes={LIBRARY} />
         </section>
 
