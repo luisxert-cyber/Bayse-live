@@ -15,9 +15,33 @@ function beep(ctx: AudioContext | null, high = false) {
   o.frequency.value = high ? 880 : 520; g.gain.value = 0.08;
   o.connect(g).connect(ctx.destination); o.start(); o.stop(ctx.currentTime + (high ? 0.35 : 0.12));
 }
+// Prefer a natural British woman's voice; fall back to any English female-sounding voice, then any English voice.
+const FEMALE = /(female|woman|serena|kate|stephanie|martha|sonia|libby|hazel|susan|fiona|moira|tessa|karen|samantha|victoria|allison|ava|zira|amy|emma|olivia)/i;
+const MALE = /(male|daniel|arthur|oliver|george|ryan|thomas|alex|fred|rishi|aaron|guy|david|mark|james)/i;
+let chosen: SpeechSynthesisVoice | null | undefined;
+function pickVoice(): SpeechSynthesisVoice | null {
+  if (chosen !== undefined && chosen !== null) return chosen;
+  const vs = window.speechSynthesis.getVoices();
+  if (!vs.length) return null;
+  const en = vs.filter((v) => /^en/i.test(v.lang));
+  const gb = en.filter((v) => /en[-_]GB/i.test(v.lang));
+  chosen = gb.find((v) => FEMALE.test(v.name) && !/\bmale\b/i.test(v.name.replace(/female/i, '')))
+    ?? en.find((v) => FEMALE.test(v.name))
+    ?? gb.find((v) => !MALE.test(v.name))
+    ?? en.find((v) => !MALE.test(v.name))
+    ?? en[0] ?? null;
+  return chosen;
+}
 function say(text: string, on: boolean) {
   if (!on || typeof window === 'undefined' || !('speechSynthesis' in window)) return;
-  try { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = 'en-GB'; u.rate = 1; window.speechSynthesis.speak(u); } catch { /* voice is optional */ }
+  try {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    const v = pickVoice();
+    if (v) { u.voice = v; u.lang = v.lang; } else u.lang = 'en-GB';
+    u.rate = 0.98; u.pitch = 1.08;
+    window.speechSynthesis.speak(u);
+  } catch { /* voice is optional */ }
 }
 
 export function WorkoutPlayer({ workout, onComplete, exitHref }: { workout: Workout; onComplete?: () => Promise<void> | void; exitHref: string }) {
@@ -73,6 +97,15 @@ export function WorkoutPlayer({ workout, onComplete, exitHref }: { workout: Work
     (navigator as Navigator & { wakeLock?: { request: (t: 'screen') => Promise<{ release: () => Promise<void> }> } }).wakeLock?.request('screen').then((l) => { lock = l; }).catch(() => {});
     return () => { lock?.release().catch(() => {}); };
   }, [started, done]);
+
+  // Voices load asynchronously in some browsers.
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    const load = () => { chosen = undefined; pickVoice(); };
+    window.speechSynthesis.addEventListener?.('voiceschanged', load);
+    load();
+    return () => window.speechSynthesis.removeEventListener?.('voiceschanged', load);
+  }, []);
 
   const begin = () => {
     try { audio.current = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)(); } catch { audio.current = null; }

@@ -3,11 +3,19 @@
 import { useEffect, useRef, useState } from 'react';
 import { MOVES, mix, type P, type Pose } from '@/lib/workouts/poses';
 
-const SKIN = '#E7B99A';
-const SKIN_FAR = '#D9A786';
-const KIT = '#141414';
-const KIT_FAR = '#3A3A3A';
-const HAIR = '#4A2E22';
+// Styled on the BAYSE instructor look: charcoal long-sleeve zip top and leggings, white grip socks,
+// long blonde balayage hair with darker roots and a black headband.
+const SKIN = '#EBC3A6';
+const TOP = '#3B3B42';
+const TOP_FAR = '#55555D';
+const LEGS = '#2C2C32';
+const LEGS_FAR = '#46464D';
+const SOCK = '#F2F2F0';
+const HAIR = '#E2C38F';
+const HAIR_LIGHT = '#F1DDB5';
+const ROOTS = '#8C6B4A';
+const BAND = '#111111';
+const FLOOR = 171;
 
 type PropSpec = { prop?: 'weights' | 'band' | 'ball'; propAt?: 'hands' | 'knees' | 'ankles' | 'hands-feet' | 'hips' };
 
@@ -33,25 +41,52 @@ function Body({ p }: { p: Required<Pose> }) {
   const [sx, sy] = p.shoulder, [hx, hy] = p.hip;
   // Spine as a curve: control point pushed perpendicular to the torso by `bend`.
   const mx = (sx + hx) / 2, my = (sy + hy) / 2, len = Math.hypot(sx - hx, sy - hy) || 1;
-  const px = -(sy - hy) / len, py = (sx - hx) / len; // perpendicular, 'below' a head-right torso
+  const px = -(sy - hy) / len, py = (sx - hx) / len;
   const cx = mx + px * p.bend, cy = my + py * p.bend;
-  const limb = (a: P, b: P, c: P, color: string, w: number) => (
+  const seg = (a: P, b: P, c: P, color: string, w: number) => (
     <path d={`M${a[0]} ${a[1]} L${b[0]} ${b[1]} L${c[0]} ${c[1]}`} stroke={color} strokeWidth={w} fill="none" strokeLinecap="round" strokeLinejoin="round" />
   );
-  // Head faces along the neck direction; ponytail trails behind it.
+  // Head orientation along the neck; hair hangs from the back of the head with gravity, resting on the mat.
   const hdx = p.head[0] - sx, hdy = p.head[1] - sy, hl = Math.hypot(hdx, hdy) || 1;
-  const back: P = [p.head[0] - (hdx / hl) * 9 - (hdy / hl) * 3, p.head[1] - (hdy / hl) * 9 + (hdx / hl) * 3];
+  const ux = hdx / hl, uy = hdy / hl;
+  // Face direction: forward when upright, up when lying on the back.
+  const fx = -uy, fy = -ux;
+  const back: P = [p.head[0] - fx * 6, p.head[1] - fy * 6];
+  // Long hair hangs from the back of the head, down the back (or onto the mat), with a little gravity.
+  const tip: P = [back[0] - ux * 22, Math.min(back[1] - uy * 22 + 9, FLOOR - 3)];
+  const ctrl: P = [back[0] - ux * 8 - fx * 4, back[1] - uy * 8 - fy * 4 + 4];
+  const ang = (Math.atan2(hdy, hdx) * 180) / Math.PI + 90;
+  const hand = (h: P, far = false) => <circle cx={h[0]} cy={h[1]} r={far ? 3.4 : 3.8} fill={SKIN} />;
+  const sock = (f: P, far = false) => <circle cx={f[0]} cy={f[1]} r={far ? 4.6 : 5.2} fill={SOCK} stroke="#D6D6D3" strokeWidth={0.8} />;
   return (
     <g>
-      {limb(p.hip, p.kneeF, p.footF, KIT_FAR, 10)}
-      {limb(p.shoulder, p.elbowF, p.handF, SKIN_FAR, 7.5)}
-      <path d={`M${sx} ${sy} Q${cx} ${cy} ${hx} ${hy}`} stroke={KIT} strokeWidth={19} fill="none" strokeLinecap="round" />
-      {limb(p.hip, p.kneeN, p.footN, KIT, 11)}
-      <path d={`M${sx} ${sy} L${p.head[0] - (hdx / hl) * 9} ${p.head[1] - (hdy / hl) * 9}`} stroke={SKIN} strokeWidth={7} strokeLinecap="round" />
-      <circle cx={back[0]} cy={back[1]} r={5.5} fill={HAIR} />
+      {/* far side */}
+      {seg(p.hip, p.kneeF, p.footF, LEGS_FAR, 10)}
+      {sock(p.footF, true)}
+      {seg(p.shoulder, p.elbowF, p.handF, TOP_FAR, 7.5)}
+      {hand(p.handF, true)}
+      {/* torso and near leg */}
+      <path d={`M${sx} ${sy} Q${cx} ${cy} ${hx} ${hy}`} stroke={TOP} strokeWidth={19} fill="none" strokeLinecap="round" />
+      <path d={`M${(sx * 3 + hx) / 4} ${(sy * 3 + hy) / 4} L${(sx + hx * 3) / 4} ${(sy + hy * 3) / 4}`} stroke="#5A5A62" strokeWidth={1.2} strokeLinecap="round" opacity={0.7} />
+      <circle cx={hx} cy={hy} r={9.5} fill={LEGS} />
+      {seg(p.hip, p.kneeN, p.footN, LEGS, 11)}
+      {sock(p.footN)}
+      {/* long hair */}
+      <path d={`M${back[0]} ${back[1]} Q${ctrl[0]} ${ctrl[1]} ${tip[0]} ${tip[1]}`} stroke={HAIR} strokeWidth={13} fill="none" strokeLinecap="round" />
+      <path d={`M${back[0] + 1} ${back[1] + 2} Q${ctrl[0] + 2} ${ctrl[1] + 2} ${tip[0] + 2} ${tip[1] - 2}`} stroke={HAIR_LIGHT} strokeWidth={4} fill="none" strokeLinecap="round" opacity={0.8} />
+      {/* neck and head */}
+      <path d={`M${sx} ${sy} L${p.head[0] - ux * 9} ${p.head[1] - uy * 9}`} stroke={SKIN} strokeWidth={7} strokeLinecap="round" />
       <circle cx={p.head[0]} cy={p.head[1]} r={10.5} fill={SKIN} />
-      <path d={`M${p.head[0] - 10.5} ${p.head[1]} a10.5 10.5 0 0 1 21 0 q-4 -6 -10.5 -6 q-6.5 0 -10.5 6z`} fill={HAIR} transform={`rotate(${(Math.atan2(hdy, hdx) * 180) / Math.PI + 90} ${p.head[0]} ${p.head[1]})`} />
-      {limb(p.shoulder, p.elbowN, p.handN, SKIN, 8)}
+      <circle cx={p.head[0] - fx * 4.5} cy={p.head[1] - fy * 4.5} r={8.6} fill={HAIR} />
+      <g transform={`rotate(${ang} ${p.head[0]} ${p.head[1]})`}>
+        {/* hair cap: darker roots fading to blonde, then the headband */}
+        <path d={`M${p.head[0] - 11} ${p.head[1] + 1} a11 11 0 0 1 22 0 q-4 -4 -11 -4.5 q-7 0.5 -11 4.5z`} fill={HAIR} />
+        <path d={`M${p.head[0] - 8} ${p.head[1] - 6} a9 6 0 0 1 16 0 q-3.5 -2 -8 -2.2 q-4.5 0.2 -8 2.2z`} fill={ROOTS} opacity={0.85} />
+        <path d={`M${p.head[0] - 10.2} ${p.head[1] - 3.2} Q${p.head[0]} ${p.head[1] - 9.5} ${p.head[0] + 10.2} ${p.head[1] - 3.2}`} stroke={BAND} strokeWidth={2.6} fill="none" strokeLinecap="round" />
+      </g>
+      {/* near arm in front */}
+      {seg(p.shoulder, p.elbowN, p.handN, TOP, 8)}
+      {hand(p.handN)}
     </g>
   );
 }
