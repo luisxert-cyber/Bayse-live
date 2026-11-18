@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from 'next';
-import { Cormorant_Garamond, Inter } from 'next/font/google';
+import { Montserrat } from 'next/font/google';
 import './globals.css';
 
-const serif = Cormorant_Garamond({ subsets: ['latin'], weight: ['500', '600'], variable: '--font-serif', display: 'swap' });
-const sans = Inter({ subsets: ['latin'], variable: '--font-sans', display: 'swap' });
+// Montserrat matches the BAYSE logo and studio website. One family, several weights.
+const sans = Montserrat({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--font-brand', display: 'swap' });
 
 export const metadata: Metadata = {
   title: { default: 'BAYSE: your programme, your coach, your people', template: '%s · BAYSE' },
@@ -17,14 +17,13 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: 'cover',
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#F7F3EC' },
-    { media: '(prefers-color-scheme: dark)', color: '#161412' },
+    { color: '#0A0A0A' },
   ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-GB" className={`${serif.variable} ${sans.variable}`}>
+    <html lang="en-GB" className={sans.variable}>
       <body>{children}</body>
     </html>
   );

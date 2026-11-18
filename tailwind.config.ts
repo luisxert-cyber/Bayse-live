@@ -20,8 +20,9 @@ const config: Config = {
         clay: 'rgb(var(--clay) / <alpha-value>)',
       },
       fontFamily: {
-        serif: ['var(--font-serif)', 'Cormorant Garamond', 'Georgia', 'serif'],
-        sans: ['var(--font-sans)', 'Inter', 'system-ui', 'sans-serif'],
+        // "serif" is kept as the display style name; it uses Montserrat bold like the brand.
+        serif: ['var(--font-brand)', 'Montserrat', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-brand)', 'Montserrat', 'system-ui', 'sans-serif'],
       },
       fontSize: {
         xs: ['12px', '16px'],
@@ -32,7 +33,7 @@ const config: Config = {
         '2xl': ['40px', '44px'],
       },
       borderRadius: { card: '20px', pill: '999px' },
-      boxShadow: { card: '0 1px 2px rgb(31 28 25 / 0.04), 0 8px 24px rgb(31 28 25 / 0.06)' },
+      boxShadow: { card: '0 1px 2px rgb(0 0 0 / 0.2)' },
       transitionDuration: { DEFAULT: '200ms' },
       minHeight: { tap: '44px' },
     },

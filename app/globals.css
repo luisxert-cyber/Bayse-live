@@ -2,48 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 
-/* BAYSE tokens: space-separated RGB so Tailwind can apply opacity. */
+/* BAYSE tokens: space-separated RGB so Tailwind can apply opacity.
+   Brand default is the black BAYSE look (matches baysereformerpilates.com and the logo).
+   A light ivory theme is kept for anyone who sets data-theme="light". */
 :root {
-  --bg: 247 243 236;        /* ivory   #F7F3EC */
-  --surface: 255 253 249;   /* cream   #FFFDF9 */
-  --stone: 228 220 207;     /* stone   #E4DCCF */
-  --ink: 31 28 25;          /* charcoal #1F1C19 */
-  --muted: 110 102 92;      /* #6E665C */
-  --accent: 156 128 100;    /* taupe   #9C8064 */
+  --bg: 10 10 10;           /* #0A0A0A */
+  --surface: 21 21 21;      /* #151515 */
+  --stone: 42 42 42;        /* #2A2A2A lines */
+  --ink: 245 245 244;       /* #F5F5F4 text */
+  --muted: 154 154 151;     /* #9A9A97 */
+  --accent: 255 255 255;    /* white */
+  --accent-ink: 10 10 10;
+  --sage: 185 243 201;      /* #B9F3C9 */
+  --ochre: 233 196 120;
+  --clay: 240 128 108;
+  color-scheme: dark;
+}
+:root[data-theme='light'] {
+  --bg: 247 243 236;
+  --surface: 255 253 249;
+  --stone: 228 220 207;
+  --ink: 31 28 25;
+  --muted: 110 102 92;
+  --accent: 31 28 25;
   --accent-ink: 255 253 249;
   --sage: 111 138 106;
   --ochre: 184 138 62;
   --clay: 169 84 63;
   color-scheme: light;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --bg: 22 20 18;
-    --surface: 33 30 27;
-    --stone: 52 48 43;
-    --ink: 242 236 227;
-    --muted: 168 159 147;
-    --accent: 196 168 138;
-    --accent-ink: 22 20 18;
-    --sage: 143 170 138;
-    --ochre: 214 172 98;
-    --clay: 206 120 98;
-    color-scheme: dark;
-  }
-}
-:root[data-theme='dark'] {
-  --bg: 22 20 18;
-  --surface: 33 30 27;
-  --stone: 52 48 43;
-  --ink: 242 236 227;
-  --muted: 168 159 147;
-  --accent: 196 168 138;
-  --accent-ink: 22 20 18;
-  --sage: 143 170 138;
-  --ochre: 214 172 98;
-  --clay: 206 120 98;
-  color-scheme: dark;
 }
 
 @layer base {
@@ -52,12 +38,14 @@
     @apply bg-bg text-ink font-sans antialiased;
     min-height: 100dvh;
   }
-  h1, h2, h3 { @apply font-serif; text-wrap: balance; letter-spacing: -0.01em; }
+  h1, h2 { font-family: var(--font-brand), Montserrat, system-ui, sans-serif; font-weight: 800; text-transform: uppercase; letter-spacing: -0.02em; line-height: 1.02; text-wrap: balance; }
+  h3 { font-family: var(--font-brand), Montserrat, system-ui, sans-serif; font-weight: 700; letter-spacing: -0.01em; text-wrap: balance; }
   :focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 2px; }
   ::selection { background: rgb(var(--accent) / 0.25); }
 }
 
 @layer components {
+  .font-serif { font-weight: 700; letter-spacing: -0.01em; }
   .eyebrow { @apply text-xs font-medium uppercase text-muted; letter-spacing: 0.14em; }
   .page { @apply mx-auto w-full max-w-xl px-4 pb-28 pt-6 sm:px-6; }
   .page-wide { @apply mx-auto w-full max-w-5xl px-4 pb-16 pt-6 sm:px-6; }
@@ -67,11 +55,8 @@
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 
-/* Logo swap: dark logo on light theme, light logo on dark theme. */
-.logo-for-dark { display: none; }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) .logo-for-light { display: none; }
-  :root:not([data-theme='light']) .logo-for-dark { display: block; }
-}
-:root[data-theme='dark'] .logo-for-light { display: none; }
-:root[data-theme='dark'] .logo-for-dark { display: block; }
+/* Logo swap: white logo on the black brand theme, dark logo on the light theme. */
+.logo-for-light { display: none; }
+.logo-for-dark { display: block; }
+:root[data-theme='light'] .logo-for-light { display: block; }
+:root[data-theme='light'] .logo-for-dark { display: none; }

@@ -149,11 +149,11 @@ export default async function Home() {
 
         {/* Studio members */}
         <section className="mx-auto max-w-5xl px-4 pb-16 sm:px-6">
-          <div className="rounded-[28px] bg-ink px-6 py-12 text-bg sm:px-12">
-            <Eyebrow light>Already a BAYSE studio member?</Eyebrow>
+          <div className="rounded-[28px] border border-stone bg-surface px-6 py-12 sm:px-12">
+            <Eyebrow>Already a BAYSE studio member?</Eyebrow>
             <h2 className="mt-3 max-w-lg text-xl font-semibold sm:text-2xl">£99 and £148 members get BAYSE online included</h2>
-            <p className="mt-3 max-w-lg text-bg/70">Keep your routine going at home or away. Choose your studio when you sign up; once your studio confirms your membership, everything switches on. No second payment.</p>
-            <Link href="/start/welcome" className="mt-6 inline-flex min-h-tap items-center rounded-pill bg-bg px-6 text-sm font-medium text-ink">Link my studio membership</Link>
+            <p className="mt-3 max-w-lg text-muted">Keep your routine going at home or away. Choose your studio when you sign up; once your studio confirms your membership, everything switches on. No second payment.</p>
+            <Link href="/start/welcome" className={`${buttonClass('primary')} mt-6`}>Link my studio membership</Link>
           </div>
         </section>
 
