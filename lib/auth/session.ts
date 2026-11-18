@@ -2,7 +2,7 @@ import 'server-only';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 
-export type Role = 'instructor' | 'moderator' | 'studio_manager' | 'admin' | 'super_admin';
+export type Role = 'instructor' | 'moderator' | 'studio_manager' | 'virtual_assistant' | 'admin' | 'super_admin';
 export type RoleRow = { role: Role; studio_id: string | null };
 
 /** The signed-in user, verified with Supabase Auth (not just read from the cookie). */
@@ -42,20 +42,22 @@ export async function requireAdmin() {
 export type StaffArea = 'overview' | 'members' | 'plans' | 'content' | 'reports' | 'rewards' | 'flags' | 'audit' | 'staff' | 'classes' | 'sessions' | 'pay';
 const AREA_ROLES: Record<StaffArea, Role[]> = {
   overview: ['admin', 'super_admin'],
-  members: ['admin', 'super_admin'],
+  members: ['admin', 'super_admin', 'virtual_assistant'],
   plans: ['admin', 'super_admin'],
-  content: ['admin', 'super_admin', 'instructor'],
-  reports: ['admin', 'super_admin', 'moderator'],
+  content: ['admin', 'super_admin', 'instructor', 'virtual_assistant'],
+  reports: ['admin', 'super_admin', 'moderator', 'virtual_assistant'],
   rewards: ['admin', 'super_admin'],
   flags: ['admin', 'super_admin'],
   audit: ['admin', 'super_admin'],
   staff: ['admin', 'super_admin'],
-  classes: ['admin', 'super_admin'],
+  classes: ['admin', 'super_admin', 'virtual_assistant'],
   sessions: ['admin', 'super_admin'],
   pay: ['admin', 'super_admin'],
 };
 export const canUse = (roles: RoleRow[], area: StaffArea) => roles.some((r) => AREA_ROLES[area].includes(r.role));
-export const isStaff = (roles: RoleRow[]) => roles.some((r) => ['admin', 'super_admin', 'instructor', 'moderator'].includes(r.role));
+export const isStaff = (roles: RoleRow[]) => roles.some((r) => ['admin', 'super_admin', 'instructor', 'moderator', 'virtual_assistant'].includes(r.role));
+/** Virtual assistants help run the platform: members, classes, the video library and community. No health, pay or staff access. */
+export const isAssistantRole = (roles: RoleRow[]) => roles.some((r) => r.role === 'virtual_assistant');
 
 /** Page guard for the staff back end. Signed-out people go to the staff sign-in; members without a staff role are turned away. */
 export async function requireStaff(area?: StaffArea) {
@@ -63,8 +65,8 @@ export async function requireStaff(area?: StaffArea) {
   if (!user) redirect('/staff');
   const roles = await getRoles();
   if (!isStaff(roles)) redirect('/staff?denied=1');
-  if (area && !canUse(roles, area)) redirect(roles.some((r) => r.role === 'instructor') ? '/teach' : canUse(roles, 'reports') ? '/admin/reports' : '/staff?denied=1');
-  return { user, roles, isAdmin: isAdminRole(roles), isSuper: isSuperAdminRole(roles) };
+  if (area && !canUse(roles, area)) redirect(canUse(roles, 'members') ? '/admin/members' : roles.some((r) => r.role === 'instructor') ? '/teach' : canUse(roles, 'reports') ? '/admin/reports' : '/staff?denied=1');
+  return { user, roles, isAdmin: isAdminRole(roles), isSuper: isSuperAdminRole(roles), canPublish: isAdminRole(roles) || isAssistantRole(roles) };
 }
 
 /** Page guard for the instructor portal (/teach). Admins can look in too. */

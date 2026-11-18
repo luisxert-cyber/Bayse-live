@@ -20,7 +20,7 @@ export default async function Plans({ searchParams }: { searchParams: Promise<Re
   return (
     <div className="space-y-5">
       <h1 className="text-xl font-semibold">Plans and prices</h1>
-      <Notice tone="warning" title="Prices are hypotheses">£19.99, £39.99 and £79.99 are for testing. Paste a Stripe TEST price id for each to enable checkout.</Notice>
+      <Notice tone="success" title="Prices are confirmed">£19.99, £39.99 and £79.99, each billed every 28 days after a 7-day free trial. Each plan needs its Stripe price id below for checkout to work.</Notice>
       {sp.ok && <Notice tone="success">Saved.</Notice>}
       {sp.error && <Notice tone="error">That was not saved. Price ids look like price_123.</Notice>}
       {plans?.map((plan) => (
@@ -29,7 +29,7 @@ export default async function Plans({ searchParams }: { searchParams: Promise<Re
           <p className="mt-1 text-sm text-muted">Includes: {(map ?? []).filter((m) => m.plan_id === plan.id).map((m) => m.entitlement_key.replace(/_/g, ' ')).join(', ')}</p>
           {(prices ?? []).filter((p) => p.plan_id === plan.id).map((p) => (
             <form key={p.id} action={setStripePrice} className="mt-3 flex flex-wrap items-center gap-2 text-sm">
-              <span className="w-40">{formatPence(p.amount_pence, p.currency)} / {p.billing_interval} · {p.trial_days}-day trial</span>
+              <span className="w-40">{formatPence(p.amount_pence, p.currency)} {p.billing_interval === '28_days' ? 'every 28 days' : p.billing_interval === 'year' ? 'a year' : 'a month'} · {p.trial_days}-day trial</span>
               <input type="hidden" name="price_id" value={p.id} />
               <input name="stripe_price_id" defaultValue={p.stripe_price_id ?? ''} placeholder="price_…" className="min-h-tap flex-1 rounded-2xl border border-stone bg-surface px-3 font-mono text-xs" />
               <button className={buttonClass('secondary')}>Save</button>

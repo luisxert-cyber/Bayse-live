@@ -18,7 +18,7 @@ export default async function Staff({ searchParams }: { searchParams: Promise<{ 
       <Wordmark className="h-7" />
       <p className="eyebrow mt-6">BAYSE staff</p>
       <h1 className="mt-2 text-[30px]">Back office sign in</h1>
-      <p className="mt-1 text-sm text-muted">For BAYSE admins, instructors and moderators. Members sign in on the main website.</p>
+      <p className="mt-1 text-sm text-muted">For BAYSE admins, assistants, instructors and moderators. Members sign in on the main website.</p>
       {user && !user.is_anonymous ? (
         <div className="mt-5 space-y-3">
           <Notice tone="warning" title="This account has no staff access">You are signed in as {user.email}. Sign out, then sign in with your staff email below.</Notice>

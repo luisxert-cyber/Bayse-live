@@ -32,7 +32,7 @@ export default async function Staff({ searchParams }: { searchParams: Promise<Re
     <div className="space-y-6">
       <div>
         <h1 className="text-xl font-semibold">Staff and instructors</h1>
-        <p className="mt-1 max-w-[70ch] text-sm text-muted">Add staff by email. They get a sign-in link straight away and can set a password with “Forgot password”. Instructors get their own portal to manage classes, 1-to-1s, their profile and pay. Profiles only appear on the website after you approve them.</p>
+        <p className="mt-1 max-w-[70ch] text-sm text-muted">Add staff by email. They get a sign-in link straight away and can set a password with “Forgot password”. Admins can use everything. Virtual assistants can help with members, live classes, on-demand classes and community reports, but cannot see health information, pay or staff. Instructors get their own portal to manage classes, 1-to-1s, their profile and pay. Profiles only appear on the website after you approve them.</p>
       </div>
       {sp.ok && <Notice tone="success">{OK[sp.ok] ?? 'Saved.'}{sp.email ? ` (${sp.email})` : ''}</Notice>}
       {sp.error && <Notice tone="error">{sp.error === 'admin' ? 'Only the owner account can add admins.' : sp.error === 'invalid' ? 'Check the email and role.' : 'That was not allowed.'}</Notice>}
@@ -41,9 +41,10 @@ export default async function Staff({ searchParams }: { searchParams: Promise<Re
         <label className="grid gap-1 text-sm">Email<input name="email" type="email" required placeholder="name@example.com" className={input} /></label>
         <label className="grid gap-1 text-sm">Role
           <select name="role" className={input} defaultValue="instructor">
+            {isSuper && <option value="admin">Admin</option>}
+            <option value="virtual_assistant">Virtual assistant</option>
             <option value="instructor">Instructor</option>
             <option value="moderator">Community moderator</option>
-            {isSuper && <option value="admin">Admin</option>}
           </select>
         </label>
         <button className={btnSolid}>Add and send link</button>

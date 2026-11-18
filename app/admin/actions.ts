@@ -8,7 +8,7 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 
-const ROLE = z.enum(['instructor', 'moderator', 'studio_manager', 'admin', 'super_admin']);
+const ROLE = z.enum(['instructor', 'moderator', 'studio_manager', 'virtual_assistant', 'admin', 'super_admin']);
 const uuid = z.string().uuid();
 
 async function client() {

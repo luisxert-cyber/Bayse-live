@@ -9,7 +9,7 @@ const s = (f: FormData, k: string, max: number) => String(f.get(k) ?? '').trim()
 const slugify = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'class';
 
 export async function saveVideoClass(f: FormData): Promise<{ error?: string; ok?: boolean }> {
-  const { isAdmin } = await requireStaff('content');
+  const { canPublish: isAdmin } = await requireStaff('content');
   const supabase = await createClient();
   const id = z.string().uuid().safeParse(f.get('id'));
   const videoPath = s(f, 'video_path', 200);

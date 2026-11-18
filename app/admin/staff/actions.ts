@@ -6,7 +6,7 @@ import { requireStaff } from '@/lib/auth/session';
 import { createClient } from '@/lib/supabase/server';
 import { linkClient, siteOrigin } from '@/lib/supabase/link';
 
-const ROLE = z.enum(['instructor', 'moderator', 'studio_manager', 'admin']);
+const ROLE = z.enum(['instructor', 'moderator', 'studio_manager', 'virtual_assistant', 'admin']);
 const s = (f: FormData, k: string, max: number) => String(f.get(k) ?? '').trim().slice(0, max);
 
 // Add a member of staff. The database grants the role (now, or when their account is created),

@@ -1,18 +1,18 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
-import { requireAdmin } from '@/lib/auth/session';
+import { requireStaff } from '@/lib/auth/session';
 import { Card, Notice, buttonClass } from '@/components/ui';
 import { grantRole, revokeRole } from '../../actions';
 
 export const dynamic = 'force-dynamic';
 
-const ROLE_LABEL: Record<string, string> = { instructor: 'Instructor', moderator: 'Community moderator', studio_manager: 'Studio manager', admin: 'Administrator', super_admin: 'Super administrator' };
+const ROLE_LABEL: Record<string, string> = { instructor: 'Instructor', moderator: 'Community moderator', studio_manager: 'Studio manager', virtual_assistant: 'Virtual assistant', admin: 'Administrator', super_admin: 'Super administrator' };
 
 export default async function Member({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<Record<string, string | undefined>> }) {
   const { id } = await params;
   const sp = await searchParams;
-  const { isSuper } = await requireAdmin();
+  const { isSuper, isAdmin } = await requireStaff('members');
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
   const supabase = await createClient();
   const [{ data: p }, { data: roles }, { data: links }, { data: subs }, { data: ents }, { data: studios }, { data: health }] = await Promise.all([
@@ -25,7 +25,7 @@ export default async function Member({ params, searchParams }: { params: Promise
     supabase.from('health_declarations').select('created_at, expires_at, any_yes, signed_name, agreement_version').eq('user_id', id).order('created_at', { ascending: false }).limit(1).maybeSingle(),
   ]);
   if (!p) notFound();
-  const grantable = isSuper ? Object.keys(ROLE_LABEL) : ['instructor', 'moderator', 'studio_manager'];
+  const grantable = isSuper ? Object.keys(ROLE_LABEL) : ['instructor', 'moderator', 'studio_manager', 'virtual_assistant'];
   return (
     <div className="space-y-5">
       <Link href="/admin/members" className="text-sm text-muted hover:text-ink">← Members</Link>
@@ -38,7 +38,7 @@ export default async function Member({ params, searchParams }: { params: Promise
           <div><dt className="text-muted">Display name</dt><dd>{p.display_name ?? '—'}</dd></div>
           <div><dt className="text-muted">Home studio</dt><dd>{(p as any).studios?.name ?? '—'}</dd></div>{/* eslint-disable-line @typescript-eslint/no-explicit-any */}
           <div><dt className="text-muted">Joined</dt><dd>{new Date(p.created_at).toLocaleDateString('en-GB')}</dd></div>
-          <div className="sm:col-span-2"><dt className="text-muted">Health check and safety agreement</dt><dd>{health ? `Signed by “${health.signed_name}” on ${new Date(health.created_at).toLocaleDateString('en-GB')} (${health.agreement_version})${new Date(health.expires_at) < new Date() ? ' · expired' : ''}${health.any_yes ? ' · told us about a health condition and confirmed medical advice' : ' · no health conditions declared'}` : 'Not completed yet'}</dd></div>
+          {isAdmin && <div className="sm:col-span-2"><dt className="text-muted">Health check and safety agreement</dt><dd>{health ? `Signed by “${health.signed_name}” on ${new Date(health.created_at).toLocaleDateString('en-GB')} (${health.agreement_version})${new Date(health.expires_at) < new Date() ? ' · expired' : ''}${health.any_yes ? ' · told us about a health condition and confirmed medical advice' : ' · no health conditions declared'}` : 'Not completed yet'}</dd></div>}
         </dl>
         <p className="mt-4 text-xs text-muted">Wellness and allergy information is private to the member and is not shown here.</p>
       </Card>
@@ -51,7 +51,7 @@ export default async function Member({ params, searchParams }: { params: Promise
         </ul>
         <p className="mt-3 text-sm text-muted">Access: {ents?.length ? [...new Set(ents.map((e) => e.entitlement_key))].join(', ') : 'none'}</p>
       </Card>
-      <Card>
+      {isAdmin && <Card>
         <p className="eyebrow">Roles</p>
         <ul className="mt-2 divide-y divide-stone">
           {(roles ?? []).map((r: any) => ( // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -68,7 +68,7 @@ export default async function Member({ params, searchParams }: { params: Promise
           <select name="studio_id" className="min-h-tap rounded-2xl border border-stone bg-surface px-3 text-sm"><option value="">All studios</option>{(studios ?? []).map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}</select>
           <button className={buttonClass('secondary')}>Add role</button>
         </form>
-      </Card>
+      </Card>}
     </div>
   );
 }
