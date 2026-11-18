@@ -9,18 +9,21 @@ const MEMBER_PATHS = ['/today', '/train', '/live', '/community', '/you', '/teach
 // A random id per browser, so a membership can be limited to a set number of devices.
 // It identifies the device only, never the person, and is not used for tracking or ads.
 const DEVICE_COOKIE = 'bayse_device';
-const withDevice = (res: NextResponse, id: string | null) => {
-  if (id) res.cookies.set(DEVICE_COOKIE, id, { httpOnly: true, secure: true, sameSite: 'lax', path: '/', maxAge: 60 * 60 * 24 * 400 });
+// The id only counts as a device once the browser sends it back (see lib/devices.ts), so a browser that
+// has not stored it yet, or several page requests arriving at once, can never be counted as extra devices.
+const withDevice = (res: NextResponse, id: string | null, secure: boolean) => {
+  if (id) res.cookies.set(DEVICE_COOKIE, id, { httpOnly: true, secure, sameSite: 'lax', path: '/', maxAge: 60 * 60 * 24 * 400 });
   return res;
 };
 
 export async function middleware(request: NextRequest) {
   const newDevice = request.cookies.get(DEVICE_COOKIE)?.value ? null : crypto.randomUUID();
-  if (newDevice) request.cookies.set(DEVICE_COOKIE, newDevice);
+  // A "secure" cookie is thrown away by the browser on a plain http address, so only mark it secure on https.
+  const secure = (request.headers.get('x-forwarded-proto') ?? request.nextUrl.protocol).startsWith('https');
   let response = NextResponse.next({ request });
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !key) return withDevice(response, newDevice);
+  if (!url || !key) return withDevice(response, newDevice, secure);
 
   const supabase = createServerClient(url, key, {
     cookies: {
@@ -39,9 +42,9 @@ export async function middleware(request: NextRequest) {
     const to = request.nextUrl.clone();
     to.pathname = '/sign-in';
     to.searchParams.set('next', path);
-    return withDevice(NextResponse.redirect(to), newDevice);
+    return withDevice(NextResponse.redirect(to), newDevice, secure);
   }
-  return withDevice(response, newDevice);
+  return withDevice(response, newDevice, secure);
 }
 
 export const config = {
