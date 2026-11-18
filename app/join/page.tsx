@@ -11,7 +11,7 @@ import { TIERS } from '@/lib/site/offer';
 import { Card, Notice, buttonClass } from '@/components/ui';
 import { EmbeddedCheckout } from '@/components/billing/EmbeddedCheckout';
 import { formatPence, type Plan, type Price } from '@/lib/types';
-import { TEST_MODE_BYPASS, TEST_MODE_DAYS } from '@/lib/billing/test-mode';
+import { TEST_MODE_FLAG, TEST_MODE_DAYS } from '@/lib/billing/test-mode';
 import { enterTestMode } from './actions';
 
 export const metadata = { title: 'Choose your membership' };
@@ -30,10 +30,11 @@ export default async function Join({ searchParams }: { searchParams: Promise<Rec
   if (!hasAccount(user)) redirect('/start/account');
 
   const supabase = await createClient();
-  const [billing, { data: planRows }, { data: priceRows }] = await Promise.all([
+  const [billing, { data: planRows }, { data: priceRows }, { data: testFlag }] = await Promise.all([
     loadBilling(supabase, user.id),
     supabase.from('plans').select('id, key, name, description, sort, is_hypothesis').eq('active', true).order('sort'),
     supabase.from('prices').select('id, plan_id, stripe_price_id, billing_interval, amount_pence, currency, trial_days').eq('active', true).order('amount_pence'),
+    supabase.from('feature_flags').select('enabled').eq('key', TEST_MODE_FLAG).maybeSingle(),
   ]);
   if (billing.subscribed) redirect('/you/membership?already=1');
 
@@ -114,8 +115,8 @@ export default async function Join({ searchParams }: { searchParams: Promise<Rec
               );
             })}
             <p className="text-xs text-muted">Pay in the app with Apple Pay, Google Pay or a card. Have a BAYSE code? Choose a membership, then tap <strong>Add promotion code</strong> on the payment step. Cancel any time from your account.</p>
-            {TEST_MODE_BYPASS && (
-              // TEMPORARY: skip payment while the platform is being tested. Switch off in lib/billing/test-mode.ts.
+            {testFlag?.enabled === true && (
+              // TEMPORARY: skip payment while the platform is being tested. Switch off the test_mode flag in Admin → Feature flags.
               <form action={enterTestMode} className="space-y-2 border-t border-stone pt-5">
                 {sp.test === 'failed' && <Notice tone="warning" title="Test mode did not start">Access could not be given. Please try again.</Notice>}
                 <button type="submit" className={buttonClass('secondary', true)}>Test mode · skip payment</button>

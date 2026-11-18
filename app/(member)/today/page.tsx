@@ -54,10 +54,11 @@ export default async function Today({ searchParams }: { searchParams: Promise<Re
 
       {/* BAYSE Daily: the one next best thing to do today */}
       <Link href={next.href} className="group block border border-stone">
-        <div className="relative overflow-hidden bg-surface">
-          <MoveThumb move={cover ?? 'birddog'} className="block h-[200px] w-full object-cover" />
-          <span aria-hidden className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
-          <div className="absolute inset-x-4 bottom-4">
+        {/* The picture fills the box and the words set its height, so a long title is never cut off at the top. */}
+        <div className="relative flex min-h-[200px] flex-col justify-end overflow-hidden bg-surface">
+          <MoveThumb move={cover ?? 'birddog'} className="absolute inset-0 block h-full w-full object-cover" />
+          <span aria-hidden className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/10" />
+          <div className="relative px-4 pb-4 pt-10">
             <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/75">BAYSE Daily · your next best move</p>
             <p className="mt-1 text-2xl font-bold uppercase leading-tight text-white">{next.title}</p>
             <p className="text-sm text-white/80">{next.minutes} min{next.kind === 'live' ? ' · live on Zoom' : ''}</p>
