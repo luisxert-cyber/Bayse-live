@@ -4,9 +4,18 @@ import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
+import { createClient as createLinkClient } from '@supabase/supabase-js';
+import { publicEnv } from '@/lib/env';
 import { safeNext } from '@/lib/auth/session';
 
 export type AuthState = { error?: string; sent?: boolean } | undefined;
+
+// Email links (password reset, sign-in link) must work in whichever browser opens them,
+// e.g. the Gmail app's own browser. The default PKCE flow only works in the browser that asked,
+// so these emails use the implicit flow: the session arrives in the link and /auth/link picks it up.
+function linkClient() {
+  return createLinkClient(publicEnv.supabaseUrl, publicEnv.supabaseAnonKey, { auth: { flowType: 'implicit', persistSession: false, autoRefreshToken: false } });
+}
 
 const Creds = z.object({ email: z.string().trim().toLowerCase().email(), password: z.string().min(1).max(128) });
 
@@ -29,17 +38,15 @@ export async function signIn(_prev: AuthState, form: FormData): Promise<AuthStat
 export async function sendMagicLink(_prev: AuthState, form: FormData): Promise<AuthState> {
   const email = z.string().trim().toLowerCase().email().safeParse(form.get('email'));
   if (!email.success) return { error: 'Please enter a valid email address.' };
-  const supabase = await createClient();
   const next = safeNext(String(form.get('next') ?? ''));
-  await supabase.auth.signInWithOtp({ email: email.data, options: { shouldCreateUser: false, emailRedirectTo: `${await origin()}/auth/callback?next=${encodeURIComponent(next)}` } });
+  await linkClient().auth.signInWithOtp({ email: email.data, options: { shouldCreateUser: false, emailRedirectTo: `${await origin()}/auth/callback?next=${encodeURIComponent(next)}` } });
   return { sent: true };
 }
 
 export async function sendReset(_prev: AuthState, form: FormData): Promise<AuthState> {
   const email = z.string().trim().toLowerCase().email().safeParse(form.get('email'));
   if (!email.success) return { error: 'Please enter a valid email address.' };
-  const supabase = await createClient();
-  await supabase.auth.resetPasswordForEmail(email.data, { redirectTo: `${await origin()}/auth/callback?next=/auth/reset` });
+  await linkClient().auth.resetPasswordForEmail(email.data, { redirectTo: `${await origin()}/auth/callback?next=/auth/reset` });
   return { sent: true };
 }
 

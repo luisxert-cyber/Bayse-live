@@ -12,5 +12,8 @@ export async function GET(request: NextRequest) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) return NextResponse.redirect(new URL(next, url.origin));
   }
+  // No code: an implicit-flow link carries the session in the #fragment, which only the browser can read.
+  // Browsers keep the fragment across this redirect, so /auth/link can finish signing in.
+  if (!code) return NextResponse.redirect(new URL(`/auth/link?next=${encodeURIComponent(next)}`, url.origin));
   return NextResponse.redirect(new URL('/sign-in?error=link', url.origin));
 }
