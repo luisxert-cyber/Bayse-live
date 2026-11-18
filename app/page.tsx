@@ -4,7 +4,8 @@ import { SiteFooter } from '@/components/site/SiteFooter';
 import { buttonClass } from '@/components/ui';
 import { getUser } from '@/lib/auth/session';
 import { LIVE_TIMETABLE, LIVE_CLASSES_PER_WEEK, LIVE_CLASS_MINUTES, ON_DEMAND, PROGRAMMES, CLUBS, FAQS } from '@/lib/site/offer';
-import { Icon, IconBadge, TodayPhone, LiveClassGraphic, CoachGraphic, NutritionGraphic, WellnessGraphic, ActivityGraphic, ProgrammeGraphic } from '@/components/site/Graphics';
+import { PhoneTour } from '@/components/site/PhoneTour';
+import { Icon, IconBadge, LiveClassGraphic, CoachGraphic, NutritionGraphic, WellnessGraphic, ActivityGraphic, ProgrammeGraphic } from '@/components/site/Graphics';
 
 const Eyebrow = ({ children, light }: { children: React.ReactNode; light?: boolean }) => (
   <p className={`eyebrow ${light ? '!text-bg/60' : ''}`}>{children}</p>
@@ -45,7 +46,7 @@ export default async function Home() {
               </div>
               <p className="mt-4 text-sm text-muted">Three minutes to build your plan. Cancel any time.</p>
             </div>
-            <div className="flex justify-center"><TodayPhone /></div>
+            <div className="flex justify-center"><PhoneTour photos={{ live: '/images/studio-bird-dog.webp', a: '/images/studio-side-plank.webp', b: '/images/studio-mat-core.webp', c: '/images/studio-bird-dog.webp' }} /></div>
           </div>
         </section>
 
