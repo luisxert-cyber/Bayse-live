@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { communityStatus, eventTime } from '@/lib/community/data';
 import { CommunityShell, Gate } from '@/components/community/Shell';
 import { buttonClass } from '@/components/ui';
-import { CLUB, LEVEL } from '@/lib/community/clubs';
+import { CLUB, LEVEL, TEMPLATES } from '@/lib/community/clubs';
 
 export const metadata = { title: 'Clubs' };
 export const dynamic = 'force-dynamic';
@@ -30,6 +30,7 @@ export default async function Clubs({ searchParams }: { searchParams: Promise<{ 
   const myStatus = new Map(((mine ?? []) as { activity_id: string; status: string }[]).map((r) => [r.activity_id, r.status]));
   return (
     <CommunityShell active="/community/clubs" title="Clubs" intro="Padel games, walks and socials, arranged by members for members. Always meet in public places." e={sp.e}>
+      <img src="/images/community-studio-sign.webp" alt="BAYSE members together" className="aspect-[16/7] w-full rounded-card object-cover" style={{ objectPosition: '50% 35%' }} />
       <div className="flex flex-wrap items-center gap-2">
         <Link href="/community/clubs" aria-current={!kind ? 'true' : undefined} className="rounded-full border border-stone bg-surface px-3.5 py-1.5 text-sm aria-[current=true]:border-ink aria-[current=true]:font-bold">All</Link>
         {Object.entries(CLUB).map(([k, c]) => (
@@ -37,6 +38,20 @@ export default async function Clubs({ searchParams }: { searchParams: Promise<{ 
         ))}
         <Link href="/community/clubs/new" className={`${buttonClass('primary')} !min-h-[36px] !px-4 ml-auto text-sm`}>+ Start one</Link>
       </div>
+      <section className="space-y-2">
+        <h2 className="text-sm font-bold uppercase tracking-[0.1em]">Start something in one tap</h2>
+        <div className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-1">
+          {TEMPLATES.filter((t) => !kind || t.kind === kind).map((t) => (
+            <Link key={t.key} href={`/community/clubs/new?t=${t.key}`} className="w-56 shrink-0 snap-start rounded-card border border-stone bg-surface p-4 hover:border-ink">
+              <p className="text-xs font-bold uppercase tracking-[0.1em] text-muted">{CLUB[t.kind].icon} {CLUB[t.kind].label}</p>
+              <p className="mt-1 font-semibold">{t.title}</p>
+              <p className="mt-1 line-clamp-2 text-sm text-muted">{t.description}</p>
+              <p className="mt-2 text-sm font-semibold">Host this →</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+      <h2 className="text-sm font-bold uppercase tracking-[0.1em]">Coming up</h2>
       {(acts ?? []).length ? (
         <ul className="space-y-3">
           {(acts ?? []).map((a) => {
@@ -63,7 +78,7 @@ export default async function Clubs({ searchParams }: { searchParams: Promise<{ 
         </ul>
       ) : (
         <div className="rounded-card border border-dashed border-stone px-4 py-8 text-center text-muted">
-          Nothing planned yet{kind ? ` in ${CLUB[kind].label}` : ''}. <Link href="/community/clubs/new" className="font-semibold text-ink underline">Start the first one</Link>.
+          Nothing planned yet{kind ? ` in ${CLUB[kind].label}` : ''}. Pick an idea above and you&rsquo;ll be the first host.
         </div>
       )}
     </CommunityShell>

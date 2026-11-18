@@ -51,10 +51,22 @@ export function Gate({ status }: { status: Status }) {
           <Link href={href} className={`${buttonClass('primary')} mt-2`}>{cta}</Link>
         </div>
       </div>
+      <section className="space-y-2">
+        <h2 className="text-sm font-bold uppercase tracking-[0.1em]">Circles waiting for you</h2>
+        <div className="flex flex-wrap gap-2">
+          {['Early Birds', 'Beginners Together', 'Lunchtime Movers', 'Evening Unwind', 'Strong & Sculpt Squad', 'Mums on the Move'].map((c) => (
+            <span key={c} className="rounded-full border border-stone bg-surface px-3.5 py-1.5 text-sm">{c}</span>
+          ))}
+        </div>
+      </section>
+      <div className="grid grid-cols-2 gap-2">
+        <img src="/images/community-studio-sign.webp" alt="BAYSE members in front of the BAYSE sign" className="aspect-square w-full rounded-card object-cover" style={{ objectPosition: '50% 35%' }} />
+        <img src="/images/community-friends.webp" alt="BAYSE members together in the studio" className="aspect-square w-full rounded-card object-cover" />
+      </div>
       <ul className="grid gap-2 text-sm text-muted">
-        <li>• A feed for all members: wins, questions, recipes and encouragement.</li>
-        <li>• Circles: small groups of up to 12 who keep each other going.</li>
-        <li>• Clubs: padel games, walks and socials, arranged by members.</li>
+        <li>🗣️ <span className="font-semibold text-ink">The feed</span>: wins, questions, recipes and encouragement, with the BAYSE team.</li>
+        <li>👯 <span className="font-semibold text-ink">Circles</span>: small groups who train at similar times and keep each other going.</li>
+        <li>🎾 <span className="font-semibold text-ink">Clubs</span>: padel games, walks and socials, arranged by members near you.</li>
       </ul>
     </main>
   );

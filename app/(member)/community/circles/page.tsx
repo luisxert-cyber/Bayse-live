@@ -8,7 +8,7 @@ import { createCircle, joinCircle } from '../actions';
 export const metadata = { title: 'Circles' };
 export const dynamic = 'force-dynamic';
 
-type Circle = { id: string; name: string; description: string | null; max_members: number; member_count: number; is_member: boolean };
+type Circle = { id: string; name: string; description: string | null; max_members: number; member_count: number; is_member: boolean; official: boolean };
 
 export default async function Circles({ searchParams }: { searchParams: Promise<{ e?: string }> }) {
   await requireUser('/community/circles');
@@ -22,9 +22,9 @@ export default async function Circles({ searchParams }: { searchParams: Promise<
   const Row = ({ c }: { c: Circle }) => (
     <li className="flex items-center justify-between gap-3 rounded-card border border-stone bg-surface p-4">
       <div className="min-w-0">
-        <p className="font-semibold">{c.name}</p>
+        <p className="font-semibold">{c.name}{c.official && <span className="ml-2 rounded-full border border-ink px-2 py-0.5 align-middle text-[10px] font-bold uppercase tracking-wide">BAYSE Circle</span>}</p>
         {c.description && <p className="mt-0.5 line-clamp-2 text-sm text-muted">{c.description}</p>}
-        <p className="mt-1 text-xs text-muted">{c.member_count} of {c.max_members} members</p>
+        <p className="mt-1 text-xs text-muted">{c.member_count ? `${c.member_count} of ${c.max_members} members` : `Open · up to ${c.max_members} members · be one of the first`}</p>
       </div>
       {c.is_member
         ? <Link href={`/community/circles/${c.id}`} className="shrink-0 rounded-full bg-ink px-4 py-2 text-sm font-bold text-bg">Open</Link>
@@ -34,7 +34,8 @@ export default async function Circles({ searchParams }: { searchParams: Promise<
     </li>
   );
   return (
-    <CommunityShell active="/community/circles" title="Circles" intro="Small groups of up to 12 who train at similar times, share wins and keep each other going." e={sp.e}>
+    <CommunityShell active="/community/circles" title="Circles" intro="Small groups who train at similar times, share wins and keep each other going." e={sp.e}>
+      <img src="/images/community-friends.webp" alt="BAYSE members together" className="aspect-[16/7] w-full rounded-card object-cover" />
       {mine.length > 0 && <section className="space-y-2"><h2 className="text-sm font-bold uppercase tracking-[0.1em]">Your Circles</h2><ul className="space-y-2">{mine.map((c) => <Row key={c.id} c={c} />)}</ul></section>}
       <section className="space-y-2">
         <h2 className="text-sm font-bold uppercase tracking-[0.1em]">Find a Circle</h2>

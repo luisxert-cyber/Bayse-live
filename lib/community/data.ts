@@ -18,10 +18,36 @@ export async function namesFor(ids: string[]) {
   return new Map(((data ?? []) as { id: string; display_name: string }[]).map((r) => [r.id, r.display_name]));
 }
 
+/** Which of these people are BAYSE staff, for the "BAYSE team" badge. */
+export async function staffIds(ids: string[]) {
+  const unique = [...new Set(ids)].filter(Boolean);
+  if (!unique.length) return new Set<string>();
+  const supabase = await createClient();
+  const { data } = await supabase.rpc('staff_ids', { p_ids: unique });
+  return new Set(((data ?? []) as unknown[]).map((r) => (typeof r === 'string' ? r : (r as { staff_ids: string }).staff_ids)));
+}
+
+export type Pin = { id: string; label: string; title: string; body: string };
+export async function loadPins(groupId: string): Promise<Pin[]> {
+  const supabase = await createClient();
+  const { data } = await supabase.from('community_pins').select('id, label, title, body').eq('group_id', groupId).order('position');
+  return (data ?? []) as Pin[];
+}
+
+/** Real numbers for the community header. */
+export async function communityPulse() {
+  const supabase = await createClient();
+  const [{ data: circles }, { count: upcoming }] = await Promise.all([
+    supabase.rpc('list_circles'),
+    supabase.from('activities').select('id', { count: 'exact', head: true }).eq('status', 'open').gt('starts_at', new Date().toISOString()),
+  ]);
+  return { circles: ((circles ?? []) as unknown[]).length, upcoming: upcoming ?? 0 };
+}
+
 export type FeedPost = {
-  id: string; author: string; authorId: string; mine: boolean; body: string; created_at: string; hidden: boolean;
+  id: string; author: string; authorId: string; mine: boolean; staff: boolean; body: string; created_at: string; hidden: boolean;
   claps: number; clapped: boolean;
-  comments: { id: string; author: string; authorId: string; mine: boolean; body: string; created_at: string }[];
+  comments: { id: string; author: string; authorId: string; mine: boolean; staff: boolean; body: string; created_at: string }[];
 };
 
 export async function loadFeed(groupId: string, me: string): Promise<FeedPost[]> {
@@ -34,13 +60,14 @@ export async function loadFeed(groupId: string, me: string): Promise<FeedPost[]>
     supabase.from('comments').select('id, post_id, author_id, body, created_at').in('post_id', ids).is('hidden_at', null).order('created_at').limit(400),
     supabase.from('reactions').select('post_id, user_id').in('post_id', ids),
   ]);
-  const names = await namesFor([...(posts ?? []).map((p) => p.author_id as string), ...(comments ?? []).map((c) => c.author_id as string)]);
+  const people = [...(posts ?? []).map((p) => p.author_id as string), ...(comments ?? []).map((c) => c.author_id as string)];
+  const [names, staff] = await Promise.all([namesFor(people), staffIds(people)]);
   const nm = (id: string) => (id === me ? 'You' : names.get(id) ?? 'BAYSE member');
   return (posts ?? []).map((p) => ({
-    id: p.id, authorId: p.author_id, author: nm(p.author_id), mine: p.author_id === me, body: p.body, created_at: p.created_at, hidden: Boolean(p.hidden_at),
+    id: p.id, authorId: p.author_id, author: nm(p.author_id), mine: p.author_id === me, staff: staff.has(p.author_id), body: p.body, created_at: p.created_at, hidden: Boolean(p.hidden_at),
     claps: (reactions ?? []).filter((r) => r.post_id === p.id).length,
     clapped: (reactions ?? []).some((r) => r.post_id === p.id && r.user_id === me),
-    comments: (comments ?? []).filter((c) => c.post_id === p.id).map((c) => ({ id: c.id, authorId: c.author_id, author: nm(c.author_id), mine: c.author_id === me, body: c.body, created_at: c.created_at })),
+    comments: (comments ?? []).filter((c) => c.post_id === p.id).map((c) => ({ id: c.id, authorId: c.author_id, author: nm(c.author_id), mine: c.author_id === me, staff: staff.has(c.author_id), body: c.body, created_at: c.created_at })),
   }));
 }
 

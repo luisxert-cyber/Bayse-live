@@ -1,7 +1,25 @@
 import { Card } from '@/components/ui';
-import { when, type FeedPost } from '@/lib/community/data';
+import { when, type FeedPost, type Pin } from '@/lib/community/data';
 import { createPost, deletePost, toggleClap, addComment, deleteComment } from '@/app/(member)/community/actions';
 import { ReportBlock } from './ReportBlock';
+
+const Badge = () => <span className="ml-1.5 rounded-full bg-ink px-2 py-0.5 align-middle text-[10px] font-bold uppercase tracking-wide text-bg">BAYSE team</span>;
+
+/** Pinned notes and prompts from the BAYSE team. */
+export function Pins({ pins }: { pins: Pin[] }) {
+  if (!pins.length) return null;
+  return (
+    <ul className="space-y-3">
+      {pins.map((p, i) => (
+        <li key={p.id} className={`rounded-card p-4 ${i === 0 ? 'bg-ink text-bg' : 'border border-stone bg-surface'}`}>
+          <p className={`text-[11px] font-bold uppercase tracking-[0.12em] ${i === 0 ? 'opacity-70' : 'text-muted'}`}>📌 {p.label}</p>
+          <p className="mt-1 font-display text-lg font-extrabold uppercase leading-tight">{p.title}</p>
+          <p className={`mt-1.5 text-sm ${i === 0 ? 'opacity-90' : 'text-muted'}`}>{p.body}</p>
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 const input = 'w-full rounded-[10px] border border-stone bg-bg px-3 py-2 text-base';
 
@@ -20,14 +38,14 @@ export function Composer({ groupId, back, placeholder }: { groupId: string; back
 }
 
 export function Feed({ posts, back }: { posts: FeedPost[]; back: string }) {
-  if (!posts.length) return <p className="rounded-card border border-dashed border-stone px-4 py-8 text-center text-muted">No posts yet. Be the first to say hello.</p>;
+  if (!posts.length) return <p className="rounded-card border border-dashed border-stone px-4 py-6 text-center text-muted">Be one of the first to post here. Say hello and give the next person someone to reply to.</p>;
   return (
     <ul className="space-y-3">
       {posts.map((p) => (
         <li key={p.id}>
           <Card className="!p-4">
             <div className="flex items-start justify-between gap-3">
-              <p className="text-sm"><span className="font-semibold">{p.author}</span> <span className="text-muted">· {when(p.created_at)}</span></p>
+              <p className="text-sm"><span className="font-semibold">{p.author}</span>{p.staff && <Badge />} <span className="text-muted">· {when(p.created_at)}</span></p>
               {p.mine
                 ? <form action={deletePost}><input type="hidden" name="id" value={p.id} /><input type="hidden" name="back" value={back} /><button className="text-xs text-muted underline">Delete</button></form>
                 : <ReportBlock targetType="post" targetId={p.id} userId={p.authorId} name={p.author} back={back} />}
@@ -47,7 +65,7 @@ export function Feed({ posts, back }: { posts: FeedPost[]; back: string }) {
                 {p.comments.map((c) => (
                   <li key={c.id} className="rounded-xl bg-bg px-3 py-2 text-sm">
                     <div className="flex items-start justify-between gap-2">
-                      <p><span className="font-semibold">{c.author}</span> <span className="text-muted">· {when(c.created_at)}</span></p>
+                      <p><span className="font-semibold">{c.author}</span>{c.staff && <Badge />} <span className="text-muted">· {when(c.created_at)}</span></p>
                       {c.mine
                         ? <form action={deleteComment}><input type="hidden" name="id" value={c.id} /><input type="hidden" name="back" value={back} /><button className="text-xs text-muted underline">Delete</button></form>
                         : <ReportBlock targetType="comment" targetId={c.id} userId={c.authorId} name={c.author} back={back} />}
