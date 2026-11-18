@@ -24,6 +24,8 @@ export async function cancelBooking(f: FormData) {
   const supabase = await createClient();
   const { error } = await supabase.rpc('cancel_live_booking', args(f));
   revalidatePath('/live');
+  revalidatePath('/you');
+  if (f.get('back') === '/you') redirect(error ? `/you?error=${encodeURIComponent(error.message.slice(0, 120))}` : '/you?cancelled=class');
   redirect(error ? fail(error.message) : '/live?ok=cancelled');
 }
 
