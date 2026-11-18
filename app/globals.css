@@ -6,17 +6,18 @@
    Brand default is the black BAYSE look (matches baysereformerpilates.com and the logo).
    A light ivory theme is kept for anyone who sets data-theme="light". */
 :root {
-  --bg: 0 0 0;              /* pure black, as baysereformerpilates.com */
-  --surface: 0 0 0;         /* panels are outlined, not filled */
-  --stone: 77 77 77;        /* #4D4D4D thin dividing lines */
-  --ink: 255 255 255;       /* white text */
-  --muted: 200 200 200;     /* #C8C8C8 grey, readable on black */
-  --accent: 255 255 255;    /* white */
-  --accent-ink: 10 10 10;
-  --sage: 230 230 230;      /* brand is black, white and grey only */
-  --ochre: 200 200 200;
-  --clay: 255 255 255;
-  color-scheme: dark;
+  /* BAYSE On Demand style: white, near-black type, soft grey cards, black bands. */
+  --bg: 255 255 255;
+  --surface: 244 244 243;   /* #F4F4F3 cards */
+  --stone: 220 220 218;     /* #DCDCDA lines */
+  --ink: 10 10 10;          /* #0A0A0A */
+  --muted: 92 92 92;        /* #5C5C5C */
+  --accent: 10 10 10;
+  --accent-ink: 255 255 255;
+  --sage: 60 60 60;
+  --ochre: 90 90 90;
+  --clay: 10 10 10;
+  color-scheme: light;
 }
 :root[data-theme='light'] {
   --bg: 247 243 236;
@@ -40,8 +41,9 @@
     min-height: 100dvh;
   }
   h1, h2, h3 { color: rgb(var(--ink)); }
-  h1, h2 { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: -0.01em; line-height: 1.05; text-wrap: balance; }
-  h3 { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; letter-spacing: -0.01em; text-wrap: balance; }
+  body { font-family: var(--font-body), 'Segoe UI', system-ui, sans-serif; }
+  h1, h2 { font-family: var(--font-display), 'Arial Narrow', Arial, sans-serif; font-weight: 800; text-transform: uppercase; letter-spacing: 0.01em; line-height: 1.02; text-wrap: balance; }
+  h3 { font-family: var(--font-display), 'Arial Narrow', Arial, sans-serif; font-weight: 800; letter-spacing: 0.02em; text-wrap: balance; }
   :focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 2px; }
   ::selection { background: rgb(var(--accent) / 0.25); }
 }
@@ -49,8 +51,8 @@
 @layer components {
   .font-serif { font-weight: 700; letter-spacing: -0.01em; }
   .subhead { font-style: italic; font-weight: 600; text-transform: uppercase; letter-spacing: -0.01em; }
-  .panel { border: 3px solid rgb(var(--ink)); }
-  .eyebrow { @apply text-xs font-medium uppercase text-muted; letter-spacing: 0.14em; }
+  .panel { border: 1px solid rgb(var(--stone)); border-radius: 22px; }
+  .eyebrow { @apply text-xs font-bold uppercase text-ink; letter-spacing: 0.12em; }
   .page { @apply mx-auto w-full max-w-xl px-4 pb-28 pt-6 sm:px-6; }
   .page-wide { @apply mx-auto w-full max-w-5xl px-4 pb-16 pt-6 sm:px-6; }
 }
@@ -60,16 +62,18 @@
 }
 
 /* Logo swap: white logo on the black brand theme, dark logo on the light theme. */
-.logo-for-light { display: none; }
-.logo-for-dark { display: block; }
+.logo-for-light { display: block; }
+.logo-for-dark { display: none; }
+.band .logo-for-light, .ink-panel .logo-for-light { display: none; }
+.band .logo-for-dark, .ink-panel .logo-for-dark { display: block; }
 :root[data-theme='light'] .logo-for-light { display: block; }
 :root[data-theme='light'] .logo-for-dark { display: none; }
 
 /* Silver: the one brand highlight, used sparingly (key numbers, featured plan, icons). */
 :root { --silver: linear-gradient(135deg, #f4f4f4 0%, #c9cacb 28%, #8f9193 52%, #e3e4e5 74%, #a9abad 100%); --silver-solid: 192 193 194; }
-.silver-text { background: var(--silver); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.silver-text { color: rgb(var(--ink)); }
 .silver-border { border: 1px solid transparent; background: linear-gradient(rgb(var(--surface)), rgb(var(--surface))) padding-box, var(--silver) border-box; }
-.silver-fill { background: var(--silver); color: #0a0a0a; }
+.silver-fill { background: rgb(var(--ink)); color: rgb(var(--bg)); }
 .text-silver { color: rgb(var(--silver-solid)); }
 
 /* ---------- Lifestyle layer (the 30%) ----------
@@ -77,14 +81,8 @@
    so every component inside (buttons, cards, text) follows without extra classes.
    Black stays the BAYSE signature: hero, header, footer and key moments. */
 .warm {
-  --bg: 243 238 231;        /* #F3EEE7 linen */
-  --surface: 252 250 247;   /* #FCFAF7 warm white cards */
-  --stone: 224 215 203;     /* #E0D7CB soft dividers */
-  --ink: 26 23 20;          /* #1A1714 warm black */
-  --muted: 104 96 87;       /* #686057 readable warm grey (6:1 on linen) */
-  --accent: 26 23 20;
-  --accent-ink: 252 250 247;
-  --sage: 60 60 60; --ochre: 90 90 90; --clay: 26 23 20;
+  --bg: 255 255 255; --surface: 244 244 243; --stone: 220 220 218; --ink: 10 10 10; --muted: 92 92 92;
+  --accent: 10 10 10; --accent-ink: 255 255 255; --sage: 60 60 60; --ochre: 90 90 90; --clay: 10 10 10;
   color-scheme: light;
   background-color: rgb(var(--bg));
   color: rgb(var(--ink));
@@ -94,21 +92,22 @@
 .warm .silver-fill { background: rgb(var(--ink)); color: rgb(var(--surface)); }
 .warm .text-silver { color: rgb(var(--muted)); }
 .warm .silver-border { border: 1px solid rgb(var(--stone)); background: rgb(var(--surface)); }
-.warm .shadow-card { box-shadow: 0 1px 2px rgb(26 23 20 / 0.04), 0 8px 24px -12px rgb(26 23 20 / 0.12); }
+.warm .shadow-card { box-shadow: none; }
 
 /* An editorial italic for the emotional line in a heading: the feminine counterpoint to bold Helvetica. */
-.script { font-family: 'Didot', 'Bodoni 72', 'Bodoni MT', 'Playfair Display', Georgia, 'Times New Roman', serif; font-style: italic; font-weight: 400; text-transform: none; letter-spacing: -0.01em; }
+.script { font-family: inherit; font-style: normal; font-weight: inherit; text-transform: inherit; letter-spacing: inherit; color: rgb(var(--muted)); }
 
 /* Small status chip for parts of BAYSE that open in stages. */
-.chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid currentColor; padding: 2px 8px; font-size: 11px; line-height: 16px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.8; }
+.chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid currentColor; border-radius: 999px; padding: 2px 10px; font-size: 11px; line-height: 16px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.8; }
 
 /* A black card inside a warm section (featured plan, signature moments). */
-.ink-panel {
-  --bg: 0 0 0; --surface: 26 23 20; --stone: 77 77 77; --ink: 255 255 255; --muted: 205 200 194;
-  --accent: 255 255 255; --accent-ink: 10 10 10;
-  color-scheme: dark; background-color: rgb(26 23 20); color: rgb(var(--ink));
+.band, .ink-panel {
+  --bg: 0 0 0; --surface: 19 19 19; --stone: 48 48 48; --ink: 255 255 255; --muted: 169 169 169;
+  --accent: 255 255 255; --accent-ink: 0 0 0;
+  color-scheme: dark; background-color: rgb(0 0 0); color: rgb(var(--ink));
 }
-.ink-panel h1, .ink-panel h2, .ink-panel h3 { color: rgb(var(--ink)); }
+.ink-panel { border-radius: 14px; }
+.band h1, .band h2, .band h3, .ink-panel h1, .ink-panel h2, .ink-panel h3 { color: rgb(var(--ink)); }
 .warm .logo-for-dark { display: none; }
 .warm .logo-for-light { display: block; }
 .warm .ink-panel .logo-for-dark { display: block; }

@@ -1,5 +1,9 @@
 import type { Metadata, Viewport } from 'next';
+import { Archivo, DM_Sans } from 'next/font/google';
 import './globals.css';
+
+const display = Archivo({ subsets: ['latin'], weight: ['700', '800'], variable: '--font-display', display: 'swap' });
+const body = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '700'], variable: '--font-body', display: 'swap' });
 
 
 export const metadata: Metadata = {
@@ -14,13 +18,13 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: 'cover',
   themeColor: [
-    { color: '#000000' },
+    { color: '#ffffff' },
   ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-GB">
+    <html lang="en-GB" className={`${display.variable} ${body.variable}`}>
       <body>{children}</body>
     </html>
   );

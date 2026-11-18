@@ -41,7 +41,7 @@ export default async function Pricing() {
                   {price?.trial_days ? <p className="text-sm text-muted">{price.trial_days}-day free trial</p> : null}
                   {tier && <p className="mt-3 text-sm text-muted">{tier.bestFor}</p>}
                   <ul className="mt-4 flex-1 space-y-2 text-sm">{(tier?.items ?? []).map((i) => <li key={i} className="flex gap-2"><span aria-hidden>✓</span>{i}</li>)}</ul>
-                  <Link href="/start/welcome" className={`${buttonClass(featured ? 'secondary' : 'primary', true)} mt-6`}>Build my plan</Link>
+                  <Link href="/start/welcome" className={`${buttonClass(featured ? 'primary' : 'secondary', true)} mt-6`}>Build my plan</Link>
                 </Card>
               );
             })}

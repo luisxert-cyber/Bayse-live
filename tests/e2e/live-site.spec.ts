@@ -39,10 +39,17 @@ for (const path of PUBLIC) {
 test('home: menu, phone tour and questions all respond', async ({ page }) => {
   await page.goto('/');
   // Menu
-  await page.locator('summary[aria-label="Menu"]').click();
-  await expect(page.getByRole('link', { name: 'How it works' })).toBeVisible();
-  await page.getByRole('link', { name: 'How it works' }).click();
-  await expect(page).toHaveURL(/#how/);
+  const menu = page.locator('summary[aria-label="Menu"]');
+  if (await menu.isVisible()) await menu.click();
+  await page.getByRole('banner').getByRole('link', { name: 'Community' }).locator('visible=true').first().click();
+  await expect(page).toHaveURL(/#community/);
+  // Class library filters narrow the list
+  const cards = page.locator('[data-class-card]');
+  const all = await cards.count();
+  expect(all).toBeGreaterThan(6);
+  await page.getByRole('button', { name: 'Core', exact: true }).click();
+  await expect.poll(() => cards.count()).toBeLessThan(all);
+  await page.getByRole('button', { name: 'All', exact: true }).first().click();
   // Phone tour: every dot changes the caption
   const caption = page.locator('[data-caption]');
   const dots = page.locator('[data-dot]');
@@ -58,7 +65,7 @@ test('home: menu, phone tour and questions all respond', async ({ page }) => {
   await first.locator('summary').click();
   await expect(first).toHaveAttribute('open', '');
   // Every call to action goes somewhere real
-  for (const name of ['Start 7 days free', 'Build my plan', 'Link my studio membership']) {
+  for (const name of ['Start 7 days free', 'Build my plan']) {
     const href = await page.getByRole('link', { name }).first().getAttribute('href');
     expect(href, name).toBeTruthy();
   }
@@ -73,8 +80,8 @@ test('signed-out visitors are sent to sign in from member areas', async ({ page 
 
 test('sign in: wrong password shows a friendly error', async ({ page }) => {
   await page.goto('/sign-in');
-  await page.getByLabel('Email').fill('nobody@bayse-test.invalid');
-  await page.getByLabel('Password').fill('wrong-password-123');
+  await page.getByLabel('Email', { exact: true }).fill('nobody@bayse-test.invalid');
+  await page.getByLabel('Password', { exact: true }).fill('wrong-password-123');
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   await expect(page.getByRole('alert').or(page.getByText(/not right|incorrect|could not|invalid/i)).first()).toBeVisible({ timeout: 10000 });
 });
@@ -111,8 +118,8 @@ test('full journey: build my plan → account → Today → Personalise', async 
   await expect(page).toHaveURL(/\/start\/account/);
 
   const email = `bayse.e2e+${Date.now()}@example.com`;
-  await page.getByLabel('Email').fill(email);
-  await page.getByLabel('Password').fill('TestPassword-2026!');
+  await page.getByLabel('Email', { exact: true }).fill(email);
+  await page.getByLabel('Password', { exact: true }).fill('TestPassword-2026!');
   await page.locator('input[name="terms"]').check();
   await page.getByRole('button', { name: 'Create my account' }).click();
   await expect(page, 'account creation should move on to membership').toHaveURL(/\/start\/membership/, { timeout: 15000 });

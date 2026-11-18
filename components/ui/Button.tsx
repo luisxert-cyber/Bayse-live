@@ -4,15 +4,15 @@ import { cx } from './cx';
 type Variant = 'primary' | 'secondary' | 'quiet' | 'danger';
 
 const styles: Record<Variant, string> = {
-  primary: 'border-[3px] border-ink bg-transparent text-ink hover:bg-ink hover:text-bg',
-  secondary: 'border-[3px] border-ink bg-ink text-bg hover:bg-transparent hover:text-ink',
+  primary: 'border-[1.5px] border-ink bg-ink text-bg hover:opacity-90',
+  secondary: 'border-[1.5px] border-stone bg-transparent text-ink hover:border-ink',
   quiet: 'bg-transparent text-ink hover:bg-stone/50',
-  danger: 'border-[3px] border-ink bg-transparent text-ink hover:bg-ink hover:text-bg',
+  danger: 'border-[1.5px] border-clay bg-transparent text-clay hover:bg-clay hover:text-bg',
 };
 
 export function buttonClass(variant: Variant = 'primary', full = false) {
   return cx(
-    'inline-flex min-h-[48px] items-center justify-center gap-2 px-6 text-[15px] font-bold uppercase tracking-[0.02em] transition-colors',
+    'inline-flex min-h-[46px] items-center justify-center gap-2 rounded-full px-6 text-[15px] font-bold transition',
     'disabled:cursor-not-allowed disabled:opacity-50',
     styles[variant],
     full && 'w-full',

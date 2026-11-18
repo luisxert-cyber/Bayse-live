@@ -37,7 +37,7 @@ export default async function Today({ searchParams }: { searchParams: Promise<Re
 
       {/* Your next session */}
       {programme?.programmes ? (
-        <div className="relative overflow-hidden">
+        <div className="relative overflow-hidden rounded-card">
           <img src="/images/studio-mat-core.webp" alt="" className="h-[220px] w-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
           <div className="absolute inset-x-5 bottom-5 text-white">
@@ -52,7 +52,7 @@ export default async function Today({ searchParams }: { searchParams: Promise<Re
           <p className="eyebrow">Your plan</p>
           <h2 className="mt-2 text-xl">No programme yet</h2>
           <p className="mt-1 text-sm text-muted">A few quick questions and we will recommend one.</p>
-          <Link href="/start/goals" className={`${buttonClass('secondary')} mt-4`}>Build my plan</Link>
+          <Link href="/start/goals" className={`${buttonClass('primary')} mt-4`}>Build my plan</Link>
         </Card>
       )}
 

@@ -34,12 +34,36 @@ export const ON_DEMAND = [
 ];
 
 export const PROGRAMMES = [
-  { name: 'Pilates Foundations', weeks: '4, 6 or 8 weeks', for: 'New to Pilates? Learn breath, alignment and control.' },
-  { name: 'Strong & Sculpt', weeks: '4 to 12 weeks', for: 'Pilates and strength for tone and full-body strength.' },
-  { name: 'Core & Posture', weeks: '4, 6 or 8 weeks', for: 'A stronger centre and a taller, easier posture.' },
-  { name: 'Mobility & Restore', weeks: '4, 6 or 8 weeks', for: 'Ease stiffness and recover well.' },
-  { name: 'Healthy Habits', weeks: '6 to 12 weeks', for: 'Movement, simple nutrition and habits that last.' },
-  { name: 'Move More', weeks: '4, 6 or 8 weeks', for: 'Gentle movement and walking, no equipment.' },
+  { name: 'Pilates Foundations', weeks: '4, 6 or 8 weeks', for: 'New to Pilates? Learn breath, alignment and control.', level: 'Beginner',
+    sessions: [['Breath & Alignment', 15], ['Mat Fundamentals', 25], ['Core Ignition', 15], ['Gentle Full Body', 25], ['Sunrise Stretch', 10]] },
+  { name: 'Strong & Sculpt', weeks: '4 to 12 weeks', for: 'Pilates and strength for tone and full-body strength.', level: 'Intermediate',
+    sessions: [['Full Body Sculpt', 30], ['Glute Burn', 25], ['Long Lean Arms', 20], ['Signature Sculpt', 45], ['Core Burner', 15]] },
+  { name: 'Core & Posture', weeks: '4, 6 or 8 weeks', for: 'A stronger centre and a taller, easier posture.', level: 'All levels',
+    sessions: [['Deep Core', 20], ['Desk Release', 12], ['Spine Mobility', 15], ['Core & Glutes', 25]] },
+  { name: 'Mobility & Restore', weeks: '4, 6 or 8 weeks', for: 'Ease stiffness and recover well.', level: 'All levels',
+    sessions: [['Slow Flow', 30], ['Hip Opener', 15], ['Stretch & Restore', 20], ['Wind-down', 10]] },
+  { name: 'Healthy Habits', weeks: '6 to 12 weeks', for: 'Movement, simple nutrition and habits that last.', level: 'All levels',
+    sessions: [['Express Full Body', 15], ['Walk & Talk', 30], ['Core Burner', 15], ['Slow Flow', 30]] },
+  { name: 'Move More', weeks: '4, 6 or 8 weeks', for: 'Gentle movement and walking, no equipment.', level: 'Beginner',
+    sessions: [['Wake-up Flow', 10], ['Gentle Full Body', 25], ['Walk & Talk', 30], ['Wind-down', 10]] },
+] as const;
+
+// A taste of the on-demand library planned for launch (mat-based, no reformer needed).
+// Shown as a preview on the website: classes are not playable until the library opens.
+export type LibraryClass = { id: number; name: string; minutes: number; focus: 'Full body' | 'Core' | 'Glutes & legs' | 'Upper body' | 'Stretch'; level: 1 | 2 | 3; kit: 'Mat' | 'Mat + weights' | 'Mat + band' };
+export const LIBRARY: LibraryClass[] = [
+  { id: 1, name: 'Mat Fundamentals', minutes: 25, focus: 'Full body', level: 1, kit: 'Mat' },
+  { id: 2, name: 'Signature Sculpt', minutes: 45, focus: 'Full body', level: 2, kit: 'Mat + weights' },
+  { id: 3, name: 'Core Burner', minutes: 15, focus: 'Core', level: 2, kit: 'Mat' },
+  { id: 4, name: 'Glute Burn', minutes: 25, focus: 'Glutes & legs', level: 2, kit: 'Mat + band' },
+  { id: 5, name: 'Sunrise Stretch', minutes: 10, focus: 'Stretch', level: 1, kit: 'Mat' },
+  { id: 6, name: 'Long Lean Arms', minutes: 20, focus: 'Upper body', level: 2, kit: 'Mat + weights' },
+  { id: 7, name: 'Deep Core', minutes: 20, focus: 'Core', level: 1, kit: 'Mat' },
+  { id: 8, name: 'Advanced Flow', minutes: 45, focus: 'Full body', level: 3, kit: 'Mat' },
+  { id: 9, name: 'Desk Release', minutes: 12, focus: 'Stretch', level: 1, kit: 'Mat' },
+  { id: 10, name: 'Standing Legs', minutes: 30, focus: 'Glutes & legs', level: 2, kit: 'Mat + weights' },
+  { id: 11, name: 'Teaser Series', minutes: 15, focus: 'Core', level: 3, kit: 'Mat' },
+  { id: 12, name: 'Slow Flow', minutes: 30, focus: 'Stretch', level: 1, kit: 'Mat' },
 ];
 
 export const CLUBS = [
