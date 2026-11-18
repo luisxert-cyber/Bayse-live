@@ -33,8 +33,9 @@ const config: Config = {
         xl: ['28px', '34px'],
         '2xl': ['40px', '44px'],
       },
-      borderRadius: { none: '0px', sm: '4px', DEFAULT: '6px', md: '8px', lg: '10px', xl: '12px', '2xl': '16px', '3xl': '22px', card: '14px', pill: '9999px', full: '9999px' },
-      boxShadow: { card: '0 1px 2px rgb(0 0 0 / 0.2)' },
+      // Studio brand: square edges everywhere except true circles (avatars, dots) and small pills.
+      borderRadius: { none: '0px', sm: '0px', DEFAULT: '0px', md: '0px', lg: '0px', xl: '0px', '2xl': '0px', '3xl': '0px', card: '0px', pill: '9999px', full: '9999px' },
+      boxShadow: { card: 'none' },
       transitionDuration: { DEFAULT: '200ms' },
       minHeight: { tap: '44px' },
     },

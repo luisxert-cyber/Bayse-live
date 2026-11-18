@@ -21,8 +21,8 @@ export default async function Pricing() {
       <main className="warm">
         <div className="mx-auto max-w-5xl px-4 py-14 sm:px-6 sm:py-20">
           <p className="eyebrow">Membership</p>
-          <h1 className="mt-3 text-[34px] sm:text-[48px]">Find your fit. <span className="script">7 days free.</span></h1>
-          <p className="mt-3 max-w-xl text-lg text-muted">Every plan starts with a free trial. Cancel any time.</p>
+          <h1 className="mt-3 text-[34px] sm:text-[48px]">Choose how you train with BAYSE</h1>
+          <p className="mt-3 max-w-xl text-lg text-muted">Every plan starts with a free trial. Cancel any time. Have a BAYSE code? Enter it at checkout.</p>
           <div className="ink-panel mt-8 p-6">
             <p className="text-sm font-bold uppercase tracking-[0.06em]">Have a BAYSE code?</p>
             <p className="mt-1 text-muted">Choose a plan, then tap &ldquo;Add promotion code&rdquo; on the payment page. A free-membership code means you are not charged.</p>
@@ -34,14 +34,14 @@ export default async function Pricing() {
               const tier = TIERS.find((t) => t.key === plan.key);
               const featured = plan.key === 'club';
               return (
-                <Card key={plan.id} className={`flex flex-col ${featured ? 'ink-panel !border-transparent' : ''}`}>
-                  {tier && <p className="script text-[26px] leading-none">{tier.tagline}</p>}
-                  <h2 className="mt-4 text-sm font-bold uppercase tracking-[0.06em]">{plan.name}{featured && <span className="ml-2 font-normal text-muted">· Most popular</span>}</h2>
+                <Card key={plan.id} className={`flex flex-col ${featured ? '!border-2 !border-white' : ''}`}>
+                  {featured && <p className="text-xs font-bold uppercase tracking-[0.08em]">Most popular</p>}
+                  <h2 className="mt-1 text-lg font-bold uppercase tracking-[0.02em]">{plan.name}</h2>
                   {price && <p className="mt-1"><span className="text-[34px] font-extrabold leading-none">{formatPence(price.amount_pence, price.currency)}</span> <span className="text-sm text-muted">/ month</span></p>}
                   {price?.trial_days ? <p className="text-sm text-muted">{price.trial_days}-day free trial</p> : null}
                   {tier && <p className="mt-3 text-sm text-muted">{tier.bestFor}</p>}
                   <ul className="mt-4 flex-1 space-y-2 text-sm">{(tier?.items ?? []).map((i) => <li key={i} className="flex gap-2"><span aria-hidden>✓</span>{i}</li>)}</ul>
-                  <Link href="/start/welcome" className={`${buttonClass(featured ? 'primary' : 'secondary', true)} mt-6`}>Build my plan</Link>
+                  <Link href="/start/welcome" className={`${buttonClass(featured ? 'primary' : 'solid', true)} mt-6`}>Build my plan</Link>
                 </Card>
               );
             })}

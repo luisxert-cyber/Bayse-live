@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from 'next';
-import { Archivo, DM_Sans } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import './globals.css';
 
-const display = Archivo({ subsets: ['latin'], weight: ['700', '800'], variable: '--font-display', display: 'swap' });
-const body = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '700'], variable: '--font-body', display: 'swap' });
+// One family, like the studio brand: Inter for headings (bold, uppercase) and text.
+const inter = Inter({ subsets: ['latin'], variable: '--font-body', display: 'swap' });
 
 
 export const metadata: Metadata = {
@@ -18,13 +18,13 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: 'cover',
   themeColor: [
-    { color: '#ffffff' },
+    { color: '#000000' },
   ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-GB" className={`${display.variable} ${body.variable}`}>
+    <html lang="en-GB" className={inter.variable}>
       <body>{children}</body>
     </html>
   );

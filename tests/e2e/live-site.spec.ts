@@ -75,14 +75,14 @@ test('home: menu, class library, player and favourites respond', async ({ page }
   await expect.poll(() => cards.count()).toBe(1);
   await page.getByRole('button', { name: 'Saved only' }).click();
   // Every call to action goes somewhere real
-  for (const name of ['Get your first class free', 'Play today’s class', 'Start free trial']) {
+  for (const name of ['Start your 7-day free trial', 'Play today’s class', 'Start free trial', 'See membership']) {
     const href = await page.getByRole('link', { name }).first().getAttribute('href');
     expect(href, name).toBeTruthy();
   }
 });
 
-test('live & community: phone tour and questions respond', async ({ page }) => {
-  await page.goto('/live-and-community');
+test('home: phone tour and questions respond', async ({ page }) => {
+  await page.goto('/');
   // Phone tour: every dot changes the caption
   const caption = page.locator('[data-caption]');
   const dots = page.locator('[data-dot]');
@@ -97,7 +97,7 @@ test('live & community: phone tour and questions respond', async ({ page }) => {
   const first = page.locator('#faq details').first();
   await first.locator('summary').click();
   await expect(first).toHaveAttribute('open', '');
-  for (const name of ['Build my plan', 'Start 7 days free']) {
+  for (const name of ['Build my plan', 'Start your 7-day free trial']) {
     const href = await page.getByRole('link', { name }).first().getAttribute('href');
     expect(href, name).toBeTruthy();
   }
