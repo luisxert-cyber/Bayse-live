@@ -41,7 +41,7 @@ test('home: menu, phone tour and questions all respond', async ({ page }) => {
   // Menu
   const menu = page.locator('summary[aria-label="Menu"]');
   if (await menu.isVisible()) await menu.click();
-  await page.getByRole('banner').getByRole('link', { name: 'Community' }).locator('visible=true').first().click();
+  await page.locator('header a[href="/#community"]:visible').first().click();
   await expect(page).toHaveURL(/#community/);
   // Class library filters narrow the list
   const cards = page.locator('[data-class-card]');
@@ -80,8 +80,8 @@ test('signed-out visitors are sent to sign in from member areas', async ({ page 
 
 test('sign in: wrong password shows a friendly error', async ({ page }) => {
   await page.goto('/sign-in');
-  await page.getByLabel('Email', { exact: true }).fill('nobody@bayse-test.invalid');
-  await page.getByLabel('Password', { exact: true }).fill('wrong-password-123');
+  await page.locator('#email').fill('nobody@bayse-test.invalid');
+  await page.locator('#password').fill('wrong-password-123');
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   await expect(page.getByRole('alert').or(page.getByText(/not right|incorrect|could not|invalid/i)).first()).toBeVisible({ timeout: 10000 });
 });
@@ -118,8 +118,8 @@ test('full journey: build my plan → account → Today → Personalise', async 
   await expect(page).toHaveURL(/\/start\/account/);
 
   const email = `bayse.e2e+${Date.now()}@example.com`;
-  await page.getByLabel('Email', { exact: true }).fill(email);
-  await page.getByLabel('Password', { exact: true }).fill('TestPassword-2026!');
+  await page.locator('#email').fill(email);
+  await page.locator('#password').fill('TestPassword-2026!');
   await page.locator('input[name="terms"]').check();
   await page.getByRole('button', { name: 'Create my account' }).click();
   await expect(page, 'account creation should move on to membership').toHaveURL(/\/start\/membership/, { timeout: 15000 });
