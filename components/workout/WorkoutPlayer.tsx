@@ -128,7 +128,7 @@ export function WorkoutPlayer({ workout, onComplete, exitHref }: { workout: Work
 
       <div className="mt-5 flex flex-wrap items-center gap-2">
         {!started
-          ? <button type="button" onClick={begin} className={`${buttonClass('primary')} flex-1`}>Start workout</button>
+          ? <button type="button" onClick={begin} className={`${buttonClass("primary")} flex-1 whitespace-nowrap`}>Start workout</button>
           : <button type="button" onClick={() => { setPaused((p) => !p); if (!paused) window.speechSynthesis?.cancel(); }} className={`${buttonClass('primary')} flex-1`}>{paused ? 'Resume' : 'Pause'}</button>}
         <button type="button" onClick={() => go(i - 1)} disabled={!started || i === 0} className={buttonClass('secondary')} aria-label="Previous">‹ Back</button>
         <button type="button" onClick={() => go(i + 1)} disabled={!started} className={buttonClass('secondary')} aria-label="Skip">Skip ›</button>
