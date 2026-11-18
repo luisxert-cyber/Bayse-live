@@ -1,3 +1,4 @@
+import { requireStaff } from '@/lib/auth/session';
 import { createClient } from '@/lib/supabase/server';
 import { resolveReport } from './actions';
 
@@ -7,6 +8,7 @@ export const dynamic = 'force-dynamic';
 const TABLE: Record<string, [string, string]> = { post: ['posts', 'body'], comment: ['comments', 'body'], activity_message: ['activity_messages', 'body'], activity: ['activities', 'title'] };
 
 export default async function Reports() {
+  await requireStaff('reports');
   const supabase = await createClient();
   const { data: reports } = await supabase.from('reports').select('*').eq('status', 'open').order('created_at').limit(100);
   const preview = new Map<string, string>();

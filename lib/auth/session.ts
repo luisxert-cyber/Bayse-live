@@ -31,10 +31,36 @@ export const managedStudios = (roles: RoleRow[]) =>
 
 /** Page guard for /admin. The database enforces the same rule on every query. */
 export async function requireAdmin() {
-  const user = await requireUser('/admin');
+  const user = await getUser();
+  if (!user) redirect('/staff');
   const roles = await getRoles();
-  if (!isAdminRole(roles)) redirect('/today?denied=admin');
+  if (!isAdminRole(roles)) redirect(isStaff(roles) ? '/admin/videos' : '/staff?denied=1');
   return { user, roles, isSuper: isSuperAdminRole(roles) };
+}
+
+/** Staff areas of the back end, and which roles can use each. Admins can use everything. */
+export type StaffArea = 'overview' | 'members' | 'plans' | 'content' | 'reports' | 'rewards' | 'flags' | 'audit';
+const AREA_ROLES: Record<StaffArea, Role[]> = {
+  overview: ['admin', 'super_admin'],
+  members: ['admin', 'super_admin'],
+  plans: ['admin', 'super_admin'],
+  content: ['admin', 'super_admin', 'instructor'],
+  reports: ['admin', 'super_admin', 'moderator'],
+  rewards: ['admin', 'super_admin'],
+  flags: ['admin', 'super_admin'],
+  audit: ['admin', 'super_admin'],
+};
+export const canUse = (roles: RoleRow[], area: StaffArea) => roles.some((r) => AREA_ROLES[area].includes(r.role));
+export const isStaff = (roles: RoleRow[]) => roles.some((r) => ['admin', 'super_admin', 'instructor', 'moderator'].includes(r.role));
+
+/** Page guard for the staff back end. Signed-out people go to the staff sign-in; members without a staff role are turned away. */
+export async function requireStaff(area?: StaffArea) {
+  const user = await getUser();
+  if (!user) redirect('/staff');
+  const roles = await getRoles();
+  if (!isStaff(roles)) redirect('/staff?denied=1');
+  if (area && !canUse(roles, area)) redirect(canUse(roles, 'content') ? '/admin/videos' : canUse(roles, 'reports') ? '/admin/reports' : '/staff?denied=1');
+  return { user, roles, isAdmin: isAdminRole(roles), isSuper: isSuperAdminRole(roles) };
 }
 
 /** Page guard for /studio. */

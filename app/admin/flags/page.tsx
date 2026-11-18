@@ -1,3 +1,4 @@
+import { requireStaff } from '@/lib/auth/session';
 import { createClient } from '@/lib/supabase/server';
 import { Card, Notice } from '@/components/ui';
 import { setFlag } from '../actions';
@@ -6,6 +7,7 @@ export const metadata = { title: 'Feature flags' };
 export const dynamic = 'force-dynamic';
 
 export default async function Flags({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
+  await requireStaff('flags');
   const sp = await searchParams;
   const supabase = await createClient();
   const { data } = await supabase.from('feature_flags').select('key, enabled, description').order('key');

@@ -25,6 +25,7 @@ export function SiteFooter() {
           <Link href="/privacy" className="block hover:text-ink">Privacy</Link>
           <Link href="/terms" className="block hover:text-ink">Terms</Link>
           <Link href="/community-guidelines" className="block hover:text-ink">Community guidelines</Link>
+          <Link href="/staff" className="block hover:text-ink">Staff sign in</Link>
         </div>
       </div>
     </footer>

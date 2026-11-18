@@ -1,13 +1,13 @@
 'use server';
 import { revalidatePath } from 'next/cache';
-import { requireAdmin } from '@/lib/auth/session';
+import { requireStaff } from '@/lib/auth/session';
 import { createClient } from '@/lib/supabase/server';
 
 const TABLE: Record<string, string> = { post: 'posts', comment: 'comments', activity_message: 'activity_messages' };
 
 /** Hide the reported content (where it can be hidden) and close the report. RLS: moderators only. */
 export async function resolveReport(f: FormData) {
-  await requireAdmin();
+  await requireStaff('reports');
   const supabase = await createClient();
   const id = String(f.get('id')), action = String(f.get('action')), type = String(f.get('target_type')), target = String(f.get('target_id'));
   if (action === 'hide') {

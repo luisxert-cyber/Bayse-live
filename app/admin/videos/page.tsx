@@ -1,9 +1,11 @@
+import { requireStaff } from '@/lib/auth/session';
 import { ClipManager } from '@/components/admin/ClipManager';
 import { VoiceManager } from '@/components/admin/VoiceManager';
 
 export const metadata = { title: 'Move videos and voice' };
 
-export default function VideosPage() {
+export default async function VideosPage() {
+  await requireStaff('content');
   return (
     <div className="space-y-4">
       <h1 className="text-xl font-semibold">Move videos</h1>

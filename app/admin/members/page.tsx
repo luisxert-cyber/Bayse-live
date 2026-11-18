@@ -1,3 +1,4 @@
+import { requireStaff } from '@/lib/auth/session';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { EmptyState } from '@/components/ui';
@@ -6,6 +7,7 @@ export const metadata = { title: 'Members' };
 export const dynamic = 'force-dynamic';
 
 export default async function Members({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
+  await requireStaff('members');
   const { q = '' } = await searchParams;
   const supabase = await createClient();
   let query = supabase.from('profiles').select('id, email, first_name, display_name, created_at, onboarding_completed_at, studios:home_studio_id(name)').order('created_at', { ascending: false }).limit(50);

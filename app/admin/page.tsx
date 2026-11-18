@@ -1,3 +1,4 @@
+import { requireStaff } from '@/lib/auth/session';
 import { createClient } from '@/lib/supabase/server';
 import { Card, Notice } from '@/components/ui';
 
@@ -13,6 +14,7 @@ async function count(table: string, filter?: (q: any) => any) { // eslint-disabl
 }
 
 export default async function AdminHome() {
+  await requireStaff('overview');
   const [members, onboarded, trials, active] = await Promise.all([
     count('profiles'),
     count('profiles', (q) => q.not('onboarding_completed_at', 'is', null)),

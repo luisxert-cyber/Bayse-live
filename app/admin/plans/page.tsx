@@ -1,3 +1,4 @@
+import { requireStaff } from '@/lib/auth/session';
 import { createClient } from '@/lib/supabase/server';
 import { Card, Notice, buttonClass } from '@/components/ui';
 import { formatPence } from '@/lib/types';
@@ -7,6 +8,7 @@ export const metadata = { title: 'Plans and prices' };
 export const dynamic = 'force-dynamic';
 
 export default async function Plans({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
+  await requireStaff('plans');
   const sp = await searchParams;
   const supabase = await createClient();
   const [{ data: plans }, { data: prices }, { data: map }, { data: tiers }] = await Promise.all([

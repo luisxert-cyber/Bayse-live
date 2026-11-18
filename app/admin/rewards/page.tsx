@@ -1,3 +1,4 @@
+import { requireStaff } from '@/lib/auth/session';
 import { createClient } from '@/lib/supabase/server';
 import { createOffer, setActive } from './actions';
 
@@ -7,6 +8,7 @@ export const dynamic = 'force-dynamic';
 const input = 'w-full border border-stone bg-bg px-3 py-2 text-sm';
 
 export default async function Rewards() {
+  await requireStaff('rewards');
   const supabase = await createClient();
   const [{ data: offers }, { data: claims }] = await Promise.all([
     supabase.from('reward_offers').select('*').order('created_at', { ascending: false }),

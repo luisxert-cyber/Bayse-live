@@ -1,3 +1,4 @@
+import { requireStaff } from '@/lib/auth/session';
 import { createClient } from '@/lib/supabase/server';
 import { EmptyState } from '@/components/ui';
 
@@ -5,6 +6,7 @@ export const metadata = { title: 'Audit log' };
 export const dynamic = 'force-dynamic';
 
 export default async function Audit() {
+  await requireStaff('audit');
   const supabase = await createClient();
   const { data } = await supabase.from('audit_log').select('id, actor_id, action, entity, entity_id, created_at').order('created_at', { ascending: false }).limit(100);
   return (
