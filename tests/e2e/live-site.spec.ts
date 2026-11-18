@@ -24,6 +24,7 @@ for (const path of PUBLIC) {
       if (href.startsWith('#') || href.startsWith('/#')) {
         if (href.startsWith('/#') && path !== '/') continue; // checked on the home page
         const id = href.split('#')[1];
+        if (id?.startsWith('play-')) continue; // opens a class in the player, tested in the home test
         if (id && (await page.locator(`[id="${id}"]`).count()) === 0) broken.push(`missing anchor ${href}`);
         continue;
       }
