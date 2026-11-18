@@ -114,6 +114,15 @@ test('email links: an expired or empty link explains what to do', async ({ page 
   await expect(page.getByRole('heading', { name: 'That link has expired' })).toBeVisible();
 });
 
+test('staff sign in offers forgot password and email link', async ({ page }) => {
+  await page.goto('/staff');
+  await page.getByRole('button', { name: 'Forgot password?' }).click();
+  await expect(page.getByRole('button', { name: 'Send reset link' })).toBeVisible();
+  await page.getByRole('button', { name: 'Back to sign in' }).click();
+  await page.getByRole('button', { name: 'Email me a link' }).click();
+  await expect(page.getByRole('button', { name: 'Email me a sign-in link' })).toBeVisible();
+});
+
 test('sign in: wrong password shows a friendly error', async ({ page }) => {
   await page.goto('/sign-in');
   await page.locator('#email').fill('nobody@bayse-test.invalid');

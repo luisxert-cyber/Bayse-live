@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { Wordmark, Notice } from '@/components/ui';
 import { getUser, getRoles, isStaff } from '@/lib/auth/session';
-import { StaffSignIn } from '@/components/auth/StaffSignIn';
+import { SignInForms } from '@/components/auth/SignInForms';
 
 export const metadata = { title: 'Staff sign in' };
 export const dynamic = 'force-dynamic';
@@ -17,7 +17,7 @@ export default async function Staff({ searchParams }: { searchParams: Promise<{ 
       <h1 className="mt-2 text-[30px]">Back office sign in</h1>
       <p className="mt-1 text-sm text-muted">For BAYSE admins, instructors and moderators. Members sign in on the main website.</p>
       {(sp.denied || (user && !user.is_anonymous)) && <div className="mt-5"><Notice tone="warning" title="No staff access on this account">Ask a BAYSE admin to add a staff role to your account, or sign in with your staff account.</Notice></div>}
-      <div className="mt-6"><StaffSignIn /></div>
+      <div className="mt-6"><SignInForms next="/admin" /></div>
     </main>
   );
 }

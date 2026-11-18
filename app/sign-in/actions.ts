@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import { createClient as createLinkClient } from '@supabase/supabase-js';
 import { publicEnv } from '@/lib/env';
-import { safeNext } from '@/lib/auth/session';
+import { safeNext, getRoles, isStaff } from '@/lib/auth/session';
 
 export type AuthState = { error?: string; sent?: boolean } | undefined;
 
@@ -56,5 +56,7 @@ export async function updatePassword(_prev: AuthState, form: FormData): Promise<
   const supabase = await createClient();
   const { error } = await supabase.auth.updateUser({ password: pw.data });
   if (error) return { error: 'We could not update your password. The link may have expired.' };
-  redirect('/today?password=updated');
+  // Staff go straight back to the back office; members to their Today page.
+  const staff = isStaff(await getRoles().catch(() => []));
+  redirect(staff ? '/admin' : '/today?password=updated');
 }
