@@ -77,30 +77,37 @@ export const FAQS = [
   { q: 'What do I need at home?', a: 'A mat and a little floor space. Some sessions use light weights or a resistance band, and every one shows you what to use instead if you do not have them. No reformer needed, but if you have one at home there are reformer classes too.' },
   { q: 'I am a complete beginner. Is it for me?', a: 'Yes. Tell us that when you build your plan and we will start you on Pilates Foundations, with beginner options in every live class.' },
   { q: 'Do I have to turn my camera on in live classes?', a: 'No, it is up to you. With your camera on, your instructor can watch your form and give you pointers.' },
-  { q: 'I have a BAYSE code. How do I use it?', a: 'Choose a plan, then tap "Add promotion code" on the payment page and enter your code. A free-membership code means you are not charged.' },
-  { q: 'Can I cancel?', a: 'Any time, from your account, in a couple of taps. If you cancel during your 7-day free trial you will not be charged.' },
+  { q: 'I have a BAYSE code. How do I use it?', a: 'Choose a plan, then tap "Add promotion code" on the payment page and enter your code. A free-membership code means you are not charged. Codes cannot be added to studio member prices.' },
+  { q: 'Can I cancel?', a: 'Yes, from your account. Cancel during your 7-day free trial and you will not be charged. After that, cancelling needs 28 days’ notice: if your next payment falls inside the notice you pay one last period and keep everything until it ends.' },
+  { q: 'I am a BAYSE studio member. What do I get?', a: 'Active £99 and £148 studio memberships include BAYSE Foundation at no extra cost, and half price on Inner Circle (£19.99) and Black (£39.99) every 28 days. Link your studio membership in the app and your studio confirms it.' },
   { q: 'I am pregnant, postnatal or have an injury.', a: 'Please check with your doctor or physio first. Tell your instructor before class and they will give you options. Remote classes cannot replace an in-person assessment.' },
   { q: 'Is my information private?', a: 'Yes. Anything about your health stays private to you, and other members only see your chosen display name.' },
 ];
 
-// Membership tiers (owner decision 18 Nov 2026). Billed every 28 days: 13 payments a year.
+// One line used across the website.
+export const STRAPLINE = 'More than Pilates. Your community, your movement, your BAYSE.';
+
+// Membership tiers. Billed every 28 days: 13 payments a year.
+// Owner brief 19 Nov 2026: verified £99 and £148 studio members get Foundation included and half price on
+// Inner Circle and Black (studioPrice). The amounts charged live in the database (public.prices).
+export const STUDIO_NOTE = 'Studio member prices are for active £99 and £148 BAYSE studio memberships, checked by your studio before they apply.';
 export const BILLING = 'every 28 days';
 export const PRIVATE_SESSION_PRICE = '£44.99';
 export const TIERS = [
   {
-    key: 'essential', name: 'BAYSE Foundation', price: '£19.99', tagline: 'Train on your terms',
-    bestFor: 'For you if you like to train at home, in your own time.',
-    items: ['Your personal plan, 4 to 12 weeks', 'The on-demand library and workout builder', 'Recipes and shopping lists', 'Progress, milestones and rewards', 'The member community and Clubs'],
+    key: 'essential', name: 'BAYSE Foundation', price: '£19.99', studioPrice: 'Included FREE', tagline: 'Your community and your Pilates',
+    bestFor: 'For you if you want Pilates on your terms and people to do it with.',
+    items: ['The BAYSE Club community and your studio’s own group', 'Member-led walking, padel and social groups', 'Member challenges and progress tracking', 'On-demand Pilates for beginner, intermediate and advanced', 'Your personal plan, 4 to 12 weeks', 'Recipes and healthy lifestyle content'],
   },
   {
-    key: 'club', name: 'BAYSE Inner Circle', price: '£39.99', tagline: 'Train live, together', featured: true,
+    key: 'club', name: 'BAYSE Inner Circle', price: '£39.99', studioPrice: '£19.99', tagline: 'Train live, together', featured: true,
     bestFor: 'For you if you want real instructors, a timetable to show up for and people who notice when you do.',
-    items: ['Everything in Foundation', `${LIVE_CLASSES_PER_WEEK} live Zoom classes a week`, 'Monthly challenges'],
+    items: ['Everything in Foundation', `${LIVE_CLASSES_PER_WEEK} live Zoom classes a week`, 'Extra structured programmes and premium classes', 'More coaching resources and support'],
   },
   {
-    key: 'coaching', name: 'BAYSE Black', price: '£79.99', tagline: 'One-to-one with your instructor',
+    key: 'coaching', name: 'BAYSE Black', price: '£79.99', studioPrice: '£39.99', tagline: 'One-to-one with your instructor',
     bestFor: 'For you if you want time with an instructor who knows you: form, progress and a plan that changes with you.',
-    items: ['Everything in Inner Circle', 'One 45-minute private Zoom session every 28 days', 'Unused session carries over one extra period', `Extra 1-to-1s any time (${PRIVATE_SESSION_PRICE})`],
+    items: ['Everything in Inner Circle', 'One 45-minute private Zoom session per paid 28 days, subject to availability', 'Unused session carries over one extra period', `Extra 1-to-1s any time (${PRIVATE_SESSION_PRICE})`],
   },
 ] as const;
 

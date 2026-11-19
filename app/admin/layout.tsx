@@ -6,6 +6,7 @@ import { Sidebar } from '@/components/staff/Sidebar';
 const NAV: { href: string; label: string; area: StaffArea }[] = [
   { href: '/admin', label: 'Dashboard', area: 'overview' },
   { href: '/admin/members', label: 'Members', area: 'members' },
+  { href: '/admin/studio-links', label: 'Studio member checks', area: 'plans' },
   { href: '/admin/staff', label: 'Staff and instructors', area: 'staff' },
   { href: '/admin/classes', label: 'Live classes', area: 'classes' },
   { href: '/admin/sessions', label: '1-to-1 sessions', area: 'sessions' },

@@ -130,7 +130,12 @@ select public._t_ok('verification stamped with manager', (select verified_by = '
 -- Member A again: verified £148 link unlocks live classes ----------------------------
 select set_config('request.jwt.claims', '{"sub":"11111111-1111-4111-8111-111111111111","role":"authenticated"}', false);
 set role authenticated;
-select public._t_ok('verified studio link grants live classes', public.has_entitlement('live_classes'));
+select public._t_ok('verified studio link grants Foundation (on demand)', public.has_entitlement('on_demand'));
+select public._t_ok('verified studio link grants community', public.has_entitlement('community'));
+select public._t_ok('verified studio link grants challenges', public.has_entitlement('challenges'));
+select public._t_ok('verified studio link does not grant live classes', not public.has_entitlement('live_classes'));
+select public._t_ok('verified studio member can pay the studio price', public.studio_price_eligible());
+select public._t_ok('verified link has a re-check date', (select verified_until = current_date + 90 from public.studio_memberships where user_id = auth.uid()));
 select public._t_ok('verified studio link does not grant 1:1 coaching', not public.has_entitlement('individual_coaching'));
 reset role;
 
@@ -213,6 +218,22 @@ do $$ begin
   begin update public.programme_recommendations set weeks = 12 where user_id = auth.uid(); perform public._t_ok('member cannot alter recommendation', false);
   exception when others then perform public._t_ok('member cannot alter recommendation', true); end;
 end $$;
+reset role;
+
+-- Studio membership ends: 28 days' notice, then included access stops ----------------------
+select set_config('request.jwt.claims', '{"sub":"22222222-2222-4222-8222-222222222222","role":"authenticated"}', false);
+set role authenticated;
+select public._t_ok('member without a studio link cannot pay the studio price', not public.studio_price_eligible());
+reset role;
+select set_config('request.jwt.claims', '{"sub":"66666666-6666-4666-8666-666666666666","role":"authenticated"}', false);
+set role authenticated;
+update public.studio_memberships set status = 'ended' where user_id = '11111111-1111-4111-8111-111111111111';
+reset role;
+select set_config('request.jwt.claims', '{"sub":"11111111-1111-4111-8111-111111111111","role":"authenticated"}', false);
+set role authenticated;
+select public._t_ok('ended studio link keeps included access during notice', public.has_entitlement('on_demand'));
+select public._t_ok('ended studio link cannot pay the studio price', not public.studio_price_eligible());
+select public._t_ok('included access ends 28 days after the studio membership', (select count(*) > 0 and bool_and(ends_at between now() + interval '27 days' and now() + interval '29 days') from public.entitlements where user_id = auth.uid() and source = 'studio'));
 reset role;
 
 -- Anonymous visitor ------------------------------------------------------------------
