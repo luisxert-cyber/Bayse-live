@@ -14,7 +14,7 @@ export type Profile = {
 };
 
 export type Plan = { id: string; key: string; name: string; description: string | null; sort: number; is_hypothesis: boolean };
-export type Price = { id: string; plan_id: string; stripe_price_id: string | null; billing_interval: 'month' | 'year' | '28_days'; amount_pence: number; currency: string; trial_days: number };
+export type Price = { id: string; plan_id: string; stripe_price_id: string | null; billing_interval: 'month' | 'year' | '28_days'; amount_pence: number; currency: string; trial_days: number; audience?: 'standard' | 'studio' };
 
 export type OnboardingRow = {
   user_id: string;

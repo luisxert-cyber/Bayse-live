@@ -54,15 +54,23 @@ join (values ('essential','month',1999),('club','month',3999),('coaching','month
   on v.plan = p.key
 where not exists (select 1 from public.prices x where x.plan_id = p.id and x.billing_interval = v.intv);
 
--- Default studio-tier access. DECISION PENDING (see plan doc): until Luis confirms,
--- £99 and £148 studio members get Club-level digital access at no charge.
+-- Studio-member prices (owner brief 19 Nov 2026): half price on Inner Circle and Black, no trial.
+insert into public.prices (plan_id, billing_interval, amount_pence, trial_days, audience)
+select p.id, '28_days', v.amount, 0, 'studio' from public.plans p
+join (values ('club',1999),('coaching',3999)) as v(plan, amount) on v.plan = p.key
+where not exists (select 1 from public.prices x where x.plan_id = p.id and x.audience = 'studio');
+
+-- Foundation includes member challenges.
+insert into public.plan_entitlements (plan_id, entitlement_key)
+select id, 'challenges' from public.plans where key = 'essential' on conflict do nothing;
+
+-- Studio-tier access (owner brief 19 Nov 2026): £99 and £148 studio members get Foundation at no charge.
+-- Live classes and private sessions come with the half-price Inner Circle and Black upgrades.
 insert into public.studio_tier_entitlements (tier, entitlement_key) values
   ('studio_99','on_demand'),('studio_99','programmes'),('studio_99','nutrition'),('studio_99','meal_planning'),
-  ('studio_99','progress'),('studio_99','community'),('studio_99','challenges'),('studio_99','live_classes'),
-  ('studio_99','group_coaching'),
+  ('studio_99','progress'),('studio_99','community'),('studio_99','challenges'),
   ('studio_148','on_demand'),('studio_148','programmes'),('studio_148','nutrition'),('studio_148','meal_planning'),
-  ('studio_148','progress'),('studio_148','community'),('studio_148','challenges'),('studio_148','live_classes'),
-  ('studio_148','group_coaching'),
+  ('studio_148','progress'),('studio_148','community'),('studio_148','challenges'),
   ('other','community'),('other','progress')
 on conflict do nothing;
 

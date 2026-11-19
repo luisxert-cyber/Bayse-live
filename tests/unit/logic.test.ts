@@ -5,6 +5,7 @@ import { recommend, pickWeeks, pickSessions, hasEquipmentFor, type Programme, ty
 import { STEPS, FLOW, LATER_STEPS, validateAnswer, nextStepId, prevStepId, stepIndex } from '../../lib/onboarding/steps';
 import { mapSubscription, normaliseStatus, isUuid } from '../../lib/billing/stripe-map';
 import { trialInfo, trialLeftLabel, trialDaysFor, firstPaymentAt } from '../../lib/billing/trial-math';
+import { checkoutRule, pricesFor } from '../../lib/billing/studio-pricing';
 
 // Mirrors supabase/seed.sql
 const PROGRAMMES: Programme[] = [
@@ -246,4 +247,34 @@ test('free trial: one per account, days left and first payment date', () => {
   // Paying members and people without a membership are not "on trial"
   assert.equal(trialInfo('active', at(-24), now).active, false);
   assert.equal(trialInfo(null, null, now).active, false);
+});
+
+// Studio-member pricing -----------------------------------------------------------------------
+test('studio price is refused unless the member is a verified studio member', () => {
+  assert.equal(checkoutRule('club', 'studio', false), 'not_eligible');
+  assert.equal(checkoutRule('coaching', 'studio', false), 'not_eligible');
+  assert.equal(checkoutRule('club', 'studio', true), 'ok');
+  assert.equal(checkoutRule('coaching', 'studio', true), 'ok');
+});
+
+test('a verified studio member is never charged for Foundation', () => {
+  assert.equal(checkoutRule('essential', 'standard', true), 'included');
+  assert.equal(checkoutRule('essential', 'studio', true), 'included');
+  assert.equal(checkoutRule('essential', 'standard', false), 'ok');
+});
+
+test('a verified studio member is not charged the standard price by mistake', () => {
+  assert.equal(checkoutRule('club', 'standard', true), 'use_studio_price');
+  assert.equal(checkoutRule('club', 'standard', false), 'ok');
+  assert.equal(checkoutRule('club', null, false), 'ok');
+});
+
+test('members only see the prices meant for them', () => {
+  const prices = [
+    { id: 'a', plan_id: 'club', audience: 'standard' as const },
+    { id: 'b', plan_id: 'club', audience: 'studio' as const },
+    { id: 'c', plan_id: 'coaching' },
+  ];
+  assert.deepEqual(pricesFor(prices, false).map((p) => p.id), ['a', 'c']);
+  assert.deepEqual(pricesFor(prices, true).map((p) => p.id), ['b']);
 });
