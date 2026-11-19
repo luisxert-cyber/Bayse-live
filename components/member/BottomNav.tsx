@@ -17,12 +17,12 @@ export function BottomNav() {
   const path = usePathname();
   return (
     <nav aria-label="Main" className="fixed inset-x-0 bottom-0 z-30 border-t border-stone bg-surface/95 backdrop-blur" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
-      <ul className="mx-auto grid max-w-xl grid-cols-7">
+      <ul className="mx-auto grid max-w-xl grid-cols-7 md:max-w-3xl lg:max-w-5xl">
         {TABS.map((t) => {
           const active = (path === t.href || path.startsWith(t.href + '/')) && !(t.href === '/you' && path.startsWith('/you/progress'));
           return (
             <li key={t.href}>
-              <Link href={t.href} aria-current={active ? 'page' : undefined} className={cx('flex min-h-[56px] flex-col items-center justify-center gap-1 text-[9.5px] min-[400px]:text-[10.5px]', active ? 'text-ink' : 'text-muted hover:text-ink')}>
+              <Link href={t.href} aria-current={active ? 'page' : undefined} className={cx('flex min-h-[56px] flex-col items-center justify-center gap-1 text-[9.5px] min-[400px]:text-[10.5px] md:text-xs', active ? 'text-ink' : 'text-muted hover:text-ink')}>
                 <svg viewBox="0 0 24 24" className="h-[22px] w-[22px]" fill="none" stroke="currentColor" strokeWidth={active ? 2 : 1.6} strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d={t.icon} /></svg>
                 {t.label}
               </Link>

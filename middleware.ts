@@ -11,19 +11,28 @@ const MEMBER_PATHS = ['/today', '/train', '/live', '/community', '/you', '/teach
 const DEVICE_COOKIE = 'bayse_device';
 // The id only counts as a device once the browser sends it back (see lib/devices.ts), so a browser that
 // has not stored it yet, or several page requests arriving at once, can never be counted as extra devices.
-const withDevice = (res: NextResponse, id: string | null, secure: boolean) => {
-  if (id) res.cookies.set(DEVICE_COOKIE, id, { httpOnly: true, secure, sameSite: 'lax', path: '/', maxAge: 60 * 60 * 24 * 400 });
+const withDevice = (res: NextResponse, id: string | null, secure: boolean, domain?: string) => {
+  if (id) res.cookies.set(DEVICE_COOKIE, id, { httpOnly: true, secure, sameSite: 'lax', path: '/', maxAge: 60 * 60 * 24 * 400, ...(domain ? { domain } : {}) });
   return res;
 };
+
+// thebayseclub.com and www.thebayseclub.com are the same site, but a browser keeps their cookies apart
+// unless the cookie names the shared domain. Without this, one iPad opened both ways counts as two devices.
+// Only our own domain is shared: preview addresses (netlify.app) and localhost keep a host-only cookie.
+function sharedDomain(host: string | null) {
+  const h = (host ?? '').split(':')[0].toLowerCase().replace(/^www\./, '');
+  return h === 'thebayseclub.com' ? h : undefined;
+}
 
 export async function middleware(request: NextRequest) {
   const newDevice = request.cookies.get(DEVICE_COOKIE)?.value ? null : crypto.randomUUID();
   // A "secure" cookie is thrown away by the browser on a plain http address, so only mark it secure on https.
   const secure = (request.headers.get('x-forwarded-proto') ?? request.nextUrl.protocol).startsWith('https');
+  const domain = sharedDomain(request.headers.get('host'));
   let response = NextResponse.next({ request });
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !key) return withDevice(response, newDevice, secure);
+  if (!url || !key) return withDevice(response, newDevice, secure, domain);
 
   const supabase = createServerClient(url, key, {
     cookies: {
@@ -42,9 +51,9 @@ export async function middleware(request: NextRequest) {
     const to = request.nextUrl.clone();
     to.pathname = '/sign-in';
     to.searchParams.set('next', path);
-    return withDevice(NextResponse.redirect(to), newDevice, secure);
+    return withDevice(NextResponse.redirect(to), newDevice, secure, domain);
   }
-  return withDevice(response, newDevice, secure);
+  return withDevice(response, newDevice, secure, domain);
 }
 
 export const config = {

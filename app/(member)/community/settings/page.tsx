@@ -40,6 +40,8 @@ export default async function Settings({ searchParams }: { searchParams: Promise
         </fieldset>
         <label className="flex items-start gap-3 text-sm"><input type="checkbox" name="notify" defaultChecked={prefs?.notify_new_activities ?? true} className="mt-0.5 h-4 w-4 accent-ink" />
           <span><span className="font-semibold">Tell me about new activities</span><span className="block text-muted">For the interests above. Notifications start when BAYSE emails go live.</span></span></label>
+        <label className="flex items-start gap-3 text-sm"><input type="checkbox" name="rankings" defaultChecked={prefs?.show_in_rankings ?? true} className="mt-0.5 h-4 w-4 accent-ink" />
+          <span><span className="font-semibold">Show my level and include me in the weekly league</span><span className="block text-muted">Other members see your level beside your name and your place in this week&rsquo;s league. Switch off to keep both private.</span></span></label>
         <button className="rounded-full bg-ink px-5 py-2 text-sm font-bold text-bg">Save</button>
       </form>
       <section className="space-y-2">

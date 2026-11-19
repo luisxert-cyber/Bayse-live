@@ -1,5 +1,6 @@
 import 'server-only';
 import { createClient } from '@/lib/supabase/server';
+import { levelFor } from '@/lib/daily/game';
 
 export type Status = 'ok' | 'sign_in' | 'restricted' | 'membership' | 'profile';
 
@@ -27,6 +28,30 @@ export async function staffIds(ids: string[]) {
   return new Set(((data ?? []) as unknown[]).map((r) => (typeof r === 'string' ? r : (r as { staff_ids: string }).staff_ids)));
 }
 
+/** Level names for people the caller can see (members who hide their level are left out). */
+export async function levelsFor(ids: string[]) {
+  const unique = [...new Set(ids)].filter(Boolean);
+  if (!unique.length) return new Map<string, string>();
+  const supabase = await createClient();
+  const { data } = await supabase.rpc('member_levels', { p_ids: unique });
+  return new Map(((data ?? []) as { user_id: string; points: number }[]).map((r) => [r.user_id, levelFor(r.points).name]));
+}
+
+export type ChatMessage = { id: string; authorId: string; author: string; mine: boolean; staff: boolean; level: string | null; body: string; created_at: string };
+/** The latest messages in a chat room, oldest first. Row-level security hides rooms the member has not joined. */
+export async function loadChat(groupId: string, me: string): Promise<ChatMessage[]> {
+  const supabase = await createClient();
+  const { data } = await supabase.from('room_messages').select('id, author_id, body, created_at').eq('group_id', groupId).is('hidden_at', null)
+    .order('created_at', { ascending: false }).limit(80);
+  const rows = (data ?? []).slice().reverse();
+  const people = rows.map((r) => r.author_id as string);
+  const [names, staff, levels] = await Promise.all([namesFor(people), staffIds(people), levelsFor(people)]);
+  return rows.filter((r) => r.author_id === me || names.has(r.author_id)).map((r) => ({
+    id: r.id, authorId: r.author_id, author: r.author_id === me ? 'You' : names.get(r.author_id)!, mine: r.author_id === me,
+    staff: staff.has(r.author_id), level: levels.get(r.author_id) ?? null, body: r.body, created_at: r.created_at,
+  }));
+}
+
 export type Pin = { id: string; label: string; title: string; body: string };
 export async function loadPins(groupId: string): Promise<Pin[]> {
   const supabase = await createClient();
@@ -45,9 +70,9 @@ export async function communityPulse() {
 }
 
 export type FeedPost = {
-  id: string; author: string; authorId: string; mine: boolean; staff: boolean; body: string; created_at: string; hidden: boolean;
+  id: string; author: string; authorId: string; mine: boolean; staff: boolean; level: string | null; body: string; created_at: string; hidden: boolean;
   claps: number; clapped: boolean;
-  comments: { id: string; author: string; authorId: string; mine: boolean; staff: boolean; body: string; created_at: string }[];
+  comments: { id: string; author: string; authorId: string; mine: boolean; staff: boolean; level: string | null; body: string; created_at: string }[];
 };
 
 export async function loadFeed(groupId: string, me: string): Promise<FeedPost[]> {
@@ -61,13 +86,13 @@ export async function loadFeed(groupId: string, me: string): Promise<FeedPost[]>
     supabase.from('reactions').select('post_id, user_id').in('post_id', ids),
   ]);
   const people = [...(posts ?? []).map((p) => p.author_id as string), ...(comments ?? []).map((c) => c.author_id as string)];
-  const [names, staff] = await Promise.all([namesFor(people), staffIds(people)]);
+  const [names, staff, levels] = await Promise.all([namesFor(people), staffIds(people), levelsFor(people)]);
   const nm = (id: string) => (id === me ? 'You' : names.get(id) ?? 'BAYSE member');
   return (posts ?? []).map((p) => ({
-    id: p.id, authorId: p.author_id, author: nm(p.author_id), mine: p.author_id === me, staff: staff.has(p.author_id), body: p.body, created_at: p.created_at, hidden: Boolean(p.hidden_at),
+    id: p.id, authorId: p.author_id, author: nm(p.author_id), mine: p.author_id === me, staff: staff.has(p.author_id), level: levels.get(p.author_id) ?? null, body: p.body, created_at: p.created_at, hidden: Boolean(p.hidden_at),
     claps: (reactions ?? []).filter((r) => r.post_id === p.id).length,
     clapped: (reactions ?? []).some((r) => r.post_id === p.id && r.user_id === me),
-    comments: (comments ?? []).filter((c) => c.post_id === p.id).map((c) => ({ id: c.id, authorId: c.author_id, author: nm(c.author_id), mine: c.author_id === me, staff: staff.has(c.author_id), body: c.body, created_at: c.created_at })),
+    comments: (comments ?? []).filter((c) => c.post_id === p.id).map((c) => ({ id: c.id, authorId: c.author_id, author: nm(c.author_id), mine: c.author_id === me, staff: staff.has(c.author_id), level: levels.get(c.author_id) ?? null, body: c.body, created_at: c.created_at })),
   }));
 }
 

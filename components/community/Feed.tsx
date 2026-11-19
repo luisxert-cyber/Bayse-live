@@ -3,7 +3,10 @@ import { when, type FeedPost, type Pin } from '@/lib/community/data';
 import { createPost, deletePost, toggleClap, addComment, deleteComment } from '@/app/(member)/community/actions';
 import { ReportBlock } from './ReportBlock';
 
-const Badge = () => <span className="ml-1.5 rounded-full bg-ink px-2 py-0.5 align-middle text-[10px] font-bold uppercase tracking-wide text-bg">BAYSE team</span>;
+export const Badge = () => <span className="ml-1.5 rounded-full bg-ink px-2 py-0.5 align-middle text-[10px] font-bold uppercase tracking-wide text-bg">BAYSE team</span>;
+
+/** A member's level, shown beside their name (hidden for members who switch it off in Privacy). */
+export const Level = ({ name }: { name: string | null }) => name ? <span className="ml-1.5 rounded-full border border-stone px-2 py-0.5 align-middle text-[10px] font-bold uppercase tracking-wide text-muted">{name}</span> : null;
 
 /** Pinned notes and prompts from the BAYSE team. */
 export function Pins({ pins }: { pins: Pin[] }) {
@@ -45,7 +48,7 @@ export function Feed({ posts, back }: { posts: FeedPost[]; back: string }) {
         <li key={p.id}>
           <Card className="!p-4">
             <div className="flex items-start justify-between gap-3">
-              <p className="text-sm"><span className="font-semibold">{p.author}</span>{p.staff && <Badge />} <span className="text-muted">· {when(p.created_at)}</span></p>
+              <p className="text-sm"><span className="font-semibold">{p.author}</span>{p.staff ? <Badge /> : <Level name={p.level} />} <span className="text-muted">· {when(p.created_at)}</span></p>
               {p.mine
                 ? <form action={deletePost}><input type="hidden" name="id" value={p.id} /><input type="hidden" name="back" value={back} /><button className="text-xs text-muted underline">Delete</button></form>
                 : <ReportBlock targetType="post" targetId={p.id} userId={p.authorId} name={p.author} back={back} />}
@@ -65,7 +68,7 @@ export function Feed({ posts, back }: { posts: FeedPost[]; back: string }) {
                 {p.comments.map((c) => (
                   <li key={c.id} className="rounded-xl bg-bg px-3 py-2 text-sm">
                     <div className="flex items-start justify-between gap-2">
-                      <p><span className="font-semibold">{c.author}</span>{c.staff && <Badge />} <span className="text-muted">· {when(c.created_at)}</span></p>
+                      <p><span className="font-semibold">{c.author}</span>{c.staff ? <Badge /> : <Level name={c.level} />} <span className="text-muted">· {when(c.created_at)}</span></p>
                       {c.mine
                         ? <form action={deleteComment}><input type="hidden" name="id" value={c.id} /><input type="hidden" name="back" value={back} /><button className="text-xs text-muted underline">Delete</button></form>
                         : <ReportBlock targetType="comment" targetId={c.id} userId={c.authorId} name={c.author} back={back} />}

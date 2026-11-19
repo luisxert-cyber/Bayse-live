@@ -12,6 +12,7 @@ import { Icon } from '@/components/site/Graphics';
 import { StudioFinder } from '@/components/site/StudioFinder';
 import { ReviewsBadge } from '@/components/site/ReviewsBadge';
 import { PricingChooser } from '@/components/site/PricingChooser';
+import { AnywhereSection } from '@/components/site/Anywhere';
 import { PHOTO, wrap, Tick, ClassesSection, FeaturesSection, FaqSection, TrialCta } from '@/components/site/sections';
 
 // Home: what The BAYSE Club is, then a taste of each part. Each part has its own page for the detail.
@@ -80,6 +81,8 @@ export default async function Home() {
             <div className="flex justify-center"><PhoneTour photos={{ hero: PHOTO.hero, a: PHOTO.core, b: PHOTO.plank, c: PHOTO.plank, group: PHOTO.friends }} /></div>
           </div>
         </section>
+
+        <AnywhereSection photos={{ a: PHOTO.hero, b: PHOTO.core, c: PHOTO.plank }} />
 
         <ClassesSection member={member} />
         <FeaturesSection />
