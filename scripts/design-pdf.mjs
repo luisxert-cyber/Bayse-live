@@ -22,7 +22,7 @@ const PUBLIC = [
   ['Terms and conditions', '/terms'], ['Privacy policy', '/privacy'], ['Community guidelines', '/community-guidelines'],
 ];
 const MEMBER = [
-  ['Today', '/today'], ['Train', '/train'], ['Workout builder', '/train/build'], ['Programmes (app)', '/train/programmes'],
+  ['Today', '/today'], ['Train', '/train'], ['Workout builder', '/train/build'],
   ['Reformer at home (app)', '/train/reformer'], ['Live (app)', '/live'], ['Community', '/community'],
   ['Community chat', '/community/chat'], ['Circles', '/community/circles'], ['Clubs', '/community/clubs'],
   ['Nourish', '/nourish'], ['You', '/you'], ['Progress', '/you/progress'], ['Personalise', '/you/personalise'],
@@ -41,6 +41,14 @@ async function settle(page) {
     window.scrollTo(0, 0);
   });
   await page.addStyleTag({ content: '*,*::before,*::after{animation-duration:0s!important;transition:none!important}' }).catch(() => {});
+  // Fixed bars (app menu at the bottom) would land mid-way down a full-page shot: pin them to the page end.
+  await page.evaluate(() => {
+    document.body.style.position = 'relative';
+    for (const el of document.querySelectorAll('body *')) {
+      const cs = getComputedStyle(el);
+      if (cs.position === 'fixed' && cs.bottom === '0px' && cs.top !== '0px') { el.style.position = 'absolute'; el.style.bottom = '0'; }
+    }
+  }).catch(() => {});
   await page.waitForTimeout(600);
 }
 
