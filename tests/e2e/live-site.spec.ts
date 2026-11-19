@@ -71,7 +71,7 @@ test('home: menu, class library, player and favourites respond', async ({ page }
   await expect(page).toHaveURL(/\/$/);
   await expect(page.frameLocator('[data-trial-window] iframe').getByRole('button', { name: 'Build my plan' })).toBeVisible({ timeout: 15000 });
   await page.keyboard.press('Escape');
-  for (const name of ['Start your 7-day free trial', 'Start free trial', 'See membership']) {
+  for (const name of ['Start your 7-day free trial', 'Start 7 days free', 'See membership']) {
     const href = await page.getByRole('link', { name }).first().getAttribute('href');
     expect(href, name).toBeTruthy();
   }
