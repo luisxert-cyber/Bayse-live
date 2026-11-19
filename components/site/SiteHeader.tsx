@@ -3,20 +3,22 @@ import { Wordmark } from '@/components/ui';
 import { SiteMenu } from './SiteMenu';
 
 // Studio-brand header: BAYSE logo, the free-trial button and a full-screen menu.
+// The first three are the main pages and show larger in the menu.
 const MENU = [
-  ['/features', 'Features'],
-  ['/benefits', 'Benefits'],
   ['/pricing', 'Pricing'],
+  ['/features', 'Features'],
+  ['/community', 'Community'],
   ['/free-trial', '7-day free trial'],
   ['/live-classes', 'Live classes'],
   ['/classes', 'On-demand classes'],
-  ['/reformer', 'Reformer at home'],
   ['/programmes', 'Programmes'],
   ['/instructors', 'Instructors and 1-to-1s'],
-  ['/clubs', 'Community and Clubs'],
+  ['/reformer', 'Reformer at home'],
+  ['/benefits', 'Benefits'],
   ['/faq', 'Questions'],
-  ['https://www.baysereformerpilates.com', 'Our studios'],
+  ['/#studios', 'Find your local studio'],
 ] as const;
+const MAIN_PAGES = 3;
 
 export function SiteHeader({ signedIn = false }: { signedIn?: boolean }) {
   return (
@@ -33,7 +35,7 @@ export function SiteHeader({ signedIn = false }: { signedIn?: boolean }) {
             </>
           )}
         </div>
-        <SiteMenu items={MENU} signedIn={signedIn} />
+        <SiteMenu items={MENU} primary={MAIN_PAGES} signedIn={signedIn} />
       </div>
     </header>
   );

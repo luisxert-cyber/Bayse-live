@@ -1,8 +1,6 @@
-import { SitePage } from '@/components/site/SitePage';
-import { PeopleSection, TrialCta } from '@/components/site/sections';
+import { redirect } from 'next/navigation';
 
-export const metadata = { title: 'Community and Clubs' };
-
+// The community has its own page now. Old links to /clubs still work.
 export default function ClubsPage() {
-  return <SitePage><PeopleSection /><TrialCta /></SitePage>;
+  redirect('/community');
 }

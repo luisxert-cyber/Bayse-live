@@ -9,6 +9,7 @@ import { LIVE_CLASSES_PER_WEEK } from '@/lib/site/offer';
 import { PhoneTour } from '@/components/site/PhoneTour';
 import { FreeClassButton } from '@/components/site/FreeClassButton';
 import { Icon } from '@/components/site/Graphics';
+import { StudioFinder } from '@/components/site/StudioFinder';
 import { PHOTO, wrap, Tick, ClassesSection, FeaturesSection, MembershipSection, FaqSection, TrialCta } from '@/components/site/sections';
 
 // Home: what The BAYSE Club is, then a taste of each part. Each part has its own page for the detail.
@@ -45,7 +46,7 @@ export default async function Home() {
             [Icon.live, 'Live coached classes', `${LIVE_CLASSES_PER_WEEK} a week, taught live by the BAYSE team`, '/live-classes'],
             [Icon.plan, 'Your personal plan', '4 to 12 weeks, built from your answers', '/programmes'],
             [Icon.play, 'On-demand library', 'Follow-along classes and a workout builder', '/classes'],
-            [Icon.people, 'Community', 'Circles, Clubs and members near you', '/clubs'],
+            [Icon.people, 'Community', 'Circles, Clubs and members near you', '/community'],
           ].map(([icon, t, d, href]) => (
             <Link key={t as string} href={href as string} className="group bg-bg px-4 py-5 hover:bg-surface sm:px-6">
               <span className="block h-6 w-6">{icon}</span>
@@ -81,6 +82,7 @@ export default async function Home() {
         <MembershipSection />
         <FaqSection limit={4} />
         <p className="-mt-8 pb-6 text-center"><Link href="/faq" className="text-sm underline">All questions</Link></p>
+        <StudioFinder />
         <TrialCta />
       </main>
       <SiteFooter />
