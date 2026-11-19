@@ -1,0 +1,32 @@
+name: Site design PDF
+# Screenshots every page of the live site (desktop and phone) into one PDF and saves it on the
+# design-pdf branch. Run on demand from the Actions tab.
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  pdf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - name: Capture pages and build the PDF
+        env:
+          SITE_URL: https://thebayseclub.netlify.app
+        run: node scripts/design-pdf.mjs
+      - name: Save the PDF on the design-pdf branch
+        run: |
+          ls -la design/*.pdf
+          mkdir /tmp/out && cp design/bayse-club-site-design.pdf /tmp/out/
+          cd /tmp/out
+          printf '[build]\n  ignore = "exit 0"\n' > netlify.toml
+          git init -q -b design-pdf
+          git config user.name "BAYSE design bot"; git config user.email "actions@users.noreply.github.com"
+          git add . && git commit -qm "Site design PDF ${GITHUB_SHA::7}"
+          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" design-pdf
