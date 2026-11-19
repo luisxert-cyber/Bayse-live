@@ -7,6 +7,8 @@ import { computeGame, POINTS, LEVELS } from '@/lib/daily/game';
 import { Rings } from '@/components/member/Rings';
 import { Notice } from '@/components/ui';
 import { claimReward } from './actions';
+import { hasEntitlement } from '@/lib/auth/access';
+import { UpgradeGate } from '@/components/member/UpgradeGate';
 import { Dial } from '@/components/member/Dial';
 import { CheckinForm } from '@/components/member/CheckinForm';
 import { recoveryScore, sleepScore, effortScore, zoneFor, ZONES, average, checkinStreak, type Checkin } from '@/lib/daily/readiness';
@@ -23,6 +25,9 @@ type Reward = { id: string; title: string; description: string; partner: string 
 export default async function Progress({ searchParams }: { searchParams: Promise<{ e?: string; claimed?: string; checked?: string }> }) {
   const user = await requireUser('/you/progress');
   const sp = await searchParams;
+  if (!(await hasEntitlement('progress'))) {
+    return <UpgradeGate title="Progress">Daily recovery, sleep and effort scores, your weekly rings, levels, the weekly league and rewards.</UpgradeGate>;
+  }
   const daily = await loadDaily(user.id);
   const p = computeProgress(daily.completions);
   const supabase = await createClient();

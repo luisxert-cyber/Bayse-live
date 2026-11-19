@@ -359,3 +359,35 @@ test('UK days and level names', () => {
   assert.equal(levelFor(160).name, 'Flow Finder');
   assert.equal(levelFor(99999).name, 'BAYSE Legend');
 });
+
+// ---------- Stage-of-life programmes ----------
+import { AVAILABLE } from '../../lib/workouts/catalog';
+import { findAnyWorkout } from '../../lib/workouts/builder';
+import { STAGE_PROGRAMMES, OPEN_STAGE_PROGRAMMES, stageSchedule, isStageWorkout } from '../../lib/workouts/stages';
+
+test('stage programmes only use beginner moves that have a demo', () => {
+  for (const p of STAGE_PROGRAMMES) {
+    assert.ok(p.note.length > 20, `${p.key} has a note to read first`);
+    for (const c of p.classes) for (const b of c.blocks) {
+      const ex = AVAILABLE[b.ex];
+      assert.ok(ex, `${c.key} uses ${b.ex}, which has no demo`);
+      if (p.key !== 'midlife') assert.equal(ex.level, 1, `${c.key}: ${b.ex} is not a beginner move`);
+    }
+  }
+});
+
+test('prenatal and postnatal stay closed until an instructor has reviewed them', () => {
+  assert.deepEqual(OPEN_STAGE_PROGRAMMES.map((p) => p.key), ['begin', 'stronger-years', 'midlife', 'at-home']);
+  assert.equal(findAnyWorkout('prenatal-standing'), undefined);
+  assert.equal(findAnyWorkout('postnatal-reconnect'), undefined);
+  assert.ok(findAnyWorkout('begin-first-steps'));
+  assert.ok(isStageWorkout('midlife-strong') && !isStageWorkout('core-10'));
+});
+
+test('a stage programme has a session for every slot in every week', () => {
+  for (const p of OPEN_STAGE_PROGRAMMES) {
+    const s = stageSchedule(p);
+    assert.equal(s.length, p.weeks);
+    for (const wk of s) assert.equal(wk.sessions.length, p.perWeek);
+  }
+});

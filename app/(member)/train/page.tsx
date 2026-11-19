@@ -5,6 +5,7 @@ import { READY, READY_STYLE, STYLES } from '@/lib/workouts/builder';
 import { MoveThumb } from '@/components/workout/MoveThumb';
 import { createClient } from '@/lib/supabase/server';
 import { VIDEO_STYLES, coverUrl } from '@/lib/video';
+import { OPEN_STAGE_PROGRAMMES } from '@/lib/workouts/stages';
 
 export const metadata = { title: 'Train' };
 
@@ -47,6 +48,19 @@ export default async function Train() {
           <span aria-hidden className="text-2xl">›</span>
         </Link>
       </div>
+      <section>
+        <h2 className="text-sm font-bold uppercase tracking-[0.1em]">Programmes for your stage of life</h2>
+        <p className="mb-2 text-sm text-muted">Short classes put together for where you are, week by week.</p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {OPEN_STAGE_PROGRAMMES.map((p) => (
+            <Link key={p.key} href={`/train/programmes/${p.key}`} className="block border border-stone p-4 hover:border-ink" data-stage-programme>
+              <p className="font-display text-lg font-extrabold uppercase leading-tight">{p.name}</p>
+              <p className="text-sm text-muted">{p.tagline}</p>
+              <p className="mt-1 text-xs text-muted">{p.weeks} weeks · {p.perWeek} sessions a week</p>
+            </Link>
+          ))}
+        </div>
+      </section>
       {(videos ?? []).length > 0 && (
         <section>
           <h2 className="text-sm font-bold uppercase tracking-[0.1em]">Filmed classes</h2>
