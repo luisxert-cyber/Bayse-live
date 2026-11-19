@@ -93,12 +93,17 @@ export const STRAPLINE = 'More than Pilates. Your community, your movement, your
 // half price on Inner Circle and Black (studioPrice). The amounts charged live in the database (public.prices).
 export const STUDIO_NOTE = 'Studio member prices are for active £99 and £148 BAYSE studio memberships, checked by your studio before they apply.';
 export const BILLING = 'every 28 days';
+// Library size shown on the website (owner instruction, 19 Nov 2026). These are the numbers for launch:
+// the classes and moves are being filmed and were not all in the app when this was written.
+// Check both against the real library before the site opens to the public (docs/deployment.md).
+export const ON_DEMAND_CLASSES = '250+';
+export const BUILDER_MOVES = '200+';
 export const PRIVATE_SESSION_PRICE = '£44.99';
 export const TIERS = [
   {
     key: 'essential', name: 'BAYSE Foundation', price: '£19.99', studioPrice: 'Free', tagline: 'Classes and community',
     bestFor: 'For you if you want Pilates classes to follow in your own time, and people to do it with.',
-    items: ['On-demand Pilates for beginner, intermediate and advanced', 'Workout builder: a class made for your time and kit in seconds', 'Reformer at home classes, if you have a bed', 'The BAYSE Club community: the feed, General Chat, Circles and Clubs', 'Find BAYSE members near you, wherever you live'],
+    items: [`${ON_DEMAND_CLASSES} on-demand Pilates classes for beginner, intermediate and advanced`, `Workout builder: a class made for your time and kit in seconds, from ${BUILDER_MOVES} moves`, 'Reformer at home classes, if you have a bed', 'The BAYSE Club community: the feed, General Chat, Circles and Clubs', 'Find BAYSE members near you, wherever you live'],
     not: ['Live classes', 'Your personal plan and programmes', 'Nutrition, food plan and diary', 'Progress scores and the weekly league'],
     highlight: '', studioHighlight: 'Included with your studio membership',
   },

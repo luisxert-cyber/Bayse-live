@@ -3,15 +3,15 @@ import { SitePage } from '@/components/site/SitePage';
 import { PageHero } from '@/components/site/PageHero';
 import { SixFeatures } from '@/components/site/SixFeatures';
 import { wrap, PHOTO, TrialCta } from '@/components/site/sections';
-import { LIVE_CLASSES_PER_WEEK, PRIVATE_SESSION_PRICE } from '@/lib/site/offer';
+import { LIVE_CLASSES_PER_WEEK, PRIVATE_SESSION_PRICE, ON_DEMAND_CLASSES, BUILDER_MOVES } from '@/lib/site/offer';
 
 export const metadata = { title: 'Features', description: 'Everything in The BAYSE Club app: your plan, BAYSE Daily, on-demand and live classes, the workout builder, 1-to-1s, Nourish, progress and community.' };
 
 const GROUPS: { id: string; title: string; plan: string; items: [string, string][] }[] = [
   { id: 'train', title: 'Train', plan: 'Every plan', items: [
     ['BAYSE Daily', 'Open the app and see your next best move, picked for your plan, your week and how you are doing.'],
-    ['On-demand and filmed classes', 'Follow-along timer classes plus full filmed classes with BAYSE instructors, from 10 to 45 minutes.'],
-    ['Workout builder', 'Choose a style, what to work on, your time and kit. It builds a class in seconds, with video demos, rest timers and voice cues.'],
+    ['On-demand and filmed classes', `More than ${ON_DEMAND_CLASSES.replace('+', '')} classes with BAYSE instructors, from 10 to 45 minutes.`],
+    ['Workout builder', `Choose a style, what to work on, your time and kit. It builds a class in seconds from more than ${BUILDER_MOVES.replace('+', '')} moves, with video demos, rest timers and voice cues.`],
     ['Reformer at home', 'Have a bed at home? Studio reformer classes with spring settings for every section.'],
     ['Move library', 'Every move with a demo and coaching cues, so you know you are doing it right.'],
     ['Phone, tablet or laptop', 'Runs in your browser on any screen, with nothing to download.'],
