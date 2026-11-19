@@ -21,7 +21,7 @@ jobs:
         run: sleep 150
       - name: Test the live site
         env:
-          E2E_BASE_URL: https://bayse-live.netlify.app
+          E2E_BASE_URL: https://thebayseclub.netlify.app
         run: npx playwright test tests/e2e/live-site.spec.ts --reporter=list,html
       - uses: actions/upload-artifact@v4
         if: always()
