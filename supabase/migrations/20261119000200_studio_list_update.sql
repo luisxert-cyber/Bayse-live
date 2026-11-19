@@ -1,10 +1,11 @@
 -- Owner's studio list, 19 Nov 2026: Chester and Harrogate are open, the mat studio is now
 -- Mega Reformer (Stockton Heath and Liverpool), and three studios are opening soon.
+-- Mega Reformer Liverpool is in the same building as BAYSE Liverpool and is the same membership,
+-- so members link to BAYSE Liverpool: it is not a separate studio here.
 update public.studios set status = 'open' where slug in ('chester', 'harrogate') and status = 'opening';
 
 insert into public.studios (slug, name, town, status) values
   ('mega-reformer-stockton-heath', 'BAYSE Mega Reformer Stockton Heath', 'Stockton Heath', 'open'),
-  ('mega-reformer-liverpool',      'BAYSE Mega Reformer Liverpool',      'Liverpool',      'open'),
   ('manchester-northern-quarter',  'BAYSE Manchester Northern Quarter',  'Manchester',     'opening'),
   ('leeds',                        'BAYSE Leeds',                        'Leeds',          'opening'),
   ('cheltenham',                   'BAYSE Cheltenham',                   'Cheltenham',     'opening')
