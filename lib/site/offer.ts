@@ -88,16 +88,24 @@ export const FAQS = [
 export const STRAPLINE = 'More than Pilates. Your community, your movement, your BAYSE.';
 
 // Membership tiers. Billed every 28 days: 13 payments a year.
-// Owner brief 19 Nov 2026: verified £99 and £148 studio members get Foundation included and half price on
-// Inner Circle and Black (studioPrice). The amounts charged live in the database (public.prices).
+// Owner decision 19 Nov 2026: verified £99 and £148 studio members get on-demand classes and the community
+// included (not the whole of Foundation) and half price on Inner Circle and Black (studioPrice).
+// The amounts charged live in the database (public.prices).
+export const STUDIO_INCLUDED = {
+  name: 'On demand and community',
+  bestFor: 'Pilates at home between studio sessions, and the BAYSE community in your pocket.',
+  items: ['On-demand Pilates for beginner, intermediate and advanced', 'The BAYSE Club community and your studio’s own group', 'General Chat, Circles and member-led walking, padel and social groups'],
+} as const;
+/** What a studio member adds by upgrading, on top of what their studio membership includes. */
+export const STUDIO_UPGRADE_EXTRAS = ['Your personal plan, 4 to 12 weeks', 'Recipes, your weekly food plan and food diary', 'Member challenges'] as const;
 export const STUDIO_NOTE = 'Studio member prices are for active £99 and £148 BAYSE studio memberships, checked by your studio before they apply.';
 export const BILLING = 'every 28 days';
 export const PRIVATE_SESSION_PRICE = '£44.99';
 export const TIERS = [
   {
-    key: 'essential', name: 'BAYSE Foundation', price: '£19.99', studioPrice: 'Included FREE', tagline: 'Your community and your Pilates',
+    key: 'essential', name: 'BAYSE Foundation', price: '£19.99', studioPrice: 'Not sold to studio members', tagline: 'Your community and your Pilates',
     bestFor: 'For you if you want Pilates on your terms and people to do it with.',
-    items: ['The BAYSE Club community and your studio’s own group', 'Member-led walking, padel and social groups', 'Member challenges and progress tracking', 'On-demand Pilates for beginner, intermediate and advanced', 'Your personal plan, 4 to 12 weeks', 'Recipes and healthy lifestyle content'],
+    items: ['The BAYSE Club community, General Chat and member-led walking, padel and social groups', 'On-demand Pilates for beginner, intermediate and advanced', 'Your personal plan, 4 to 12 weeks', 'Recipes with videos, a weekly food plan and an optional food diary', 'Daily recovery, sleep and effort scores, no watch needed', 'Member challenges, levels and the weekly league'],
   },
   {
     key: 'club', name: 'BAYSE Inner Circle', price: '£39.99', studioPrice: '£19.99', tagline: 'Train live, together', featured: true,

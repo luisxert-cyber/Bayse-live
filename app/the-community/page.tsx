@@ -10,7 +10,7 @@ export const metadata = { title: 'Community', description: 'The BAYSE Club commu
 const INSIDE: [string, string][] = [
   ['The BAYSE Club feed', 'Share a win, ask a question, cheer someone on. Send a heart when a post makes your day.'],
   ['Your studio’s group', 'Every BAYSE studio has its own group, so you can find the people you train next to.'],
-  ['Chat rooms', 'Rooms for the things members talk about most, from beginners’ questions to what’s for dinner.'],
+  ['General Chat', 'One open chat room for every member, for anything from beginners’ questions to what’s for dinner.'],
   ['Circles', 'Small groups of 10 to 20 who train at similar times and keep each other going.'],
   ['Clubs and meetups', 'Walking, padel and social groups, and nights out near you, set up and run by members.'],
   ['Member challenges', 'A new challenge to join each month, with everyone’s progress side by side.'],
@@ -48,7 +48,7 @@ export default function TheCommunity() {
           <div>
             <p className="eyebrow">Included</p>
             <h2 className="mt-2 text-2xl font-bold uppercase">Every plan includes the community</h2>
-            <p className="mt-3 max-w-[60ch] text-muted">It’s part of BAYSE Foundation, not an extra. If you train at a BAYSE studio on a £99 or £148 membership, Foundation is included, so the community is yours already.</p>
+            <p className="mt-3 max-w-[60ch] text-muted">It’s part of BAYSE Foundation, not an extra. If you train at a BAYSE studio on a £99 or £148 membership, the community and on-demand classes are included, so the community is yours already.</p>
           </div>
           <Link href="/pricing" className="inline-flex min-h-[48px] items-center justify-center border border-white px-6 text-sm font-bold uppercase hover:bg-white hover:text-black">See pricing</Link>
         </div>

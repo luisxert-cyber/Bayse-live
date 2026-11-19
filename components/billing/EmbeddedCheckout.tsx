@@ -19,7 +19,7 @@ const MESSAGES: Record<string, string> = {
   not_connected: 'Payments are being switched on for this membership. Please try again shortly.',
   failed: 'We could not open the payment form. Nothing has been charged. Please try again.',
   already: 'You already have a membership. Manage it from You → Membership.',
-  included: 'BAYSE Foundation is included with your studio membership, so there is nothing to pay.',
+  included: 'Studio members upgrade with BAYSE Inner Circle or BAYSE Black at half price. On-demand classes and the community are already included with your studio membership.',
   not_eligible: 'This price is for verified BAYSE studio members. Link your studio membership from You → Membership first.',
   use_studio_price: 'You have a studio member price. Go back and choose your membership again to see it.',
   script: 'We could not load the payment form. Check your connection and try again.',

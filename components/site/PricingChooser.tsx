@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { TIERS, BILLING, STUDIO_NOTE } from '@/lib/site/offer';
+import { TIERS, BILLING, STUDIO_NOTE, STUDIO_INCLUDED, STUDIO_UPGRADE_EXTRAS } from '@/lib/site/offer';
 
 // The pricing page asks one question first: are you a BAYSE studio member?
 // The answer decides which three prices are shown, so nobody has to read both sets.
@@ -49,21 +49,29 @@ export function PricingChooser() {
         {studio ? (
           <div id="studio-members">
             <p className="eyebrow">Studio member prices</p>
-            <h2 className="mt-2 text-[30px] sm:text-[40px]">Foundation is included. The rest is half price.</h2>
+            <h2 className="mt-2 text-[30px] sm:text-[40px]">On demand and community are included. The rest is half price.</h2>
             <p className="mt-3 max-w-[60ch] text-muted">For as long as your studio membership is active.</p>
             <div className="mt-6 grid gap-4 md:grid-cols-3">
-              {TIERS.map((t) => {
-                const free = t.key === 'essential';
+              <div className="flex min-w-0 flex-col gap-3 border border-stone p-6" data-studio-plan-card>
+                <p className="text-xs font-bold uppercase text-muted">Included with your studio membership</p>
+                <p className="text-2xl font-bold uppercase">{STUDIO_INCLUDED.name}</p>
+                <p><span className="text-[40px] font-bold leading-none">Free</span></p>
+                <p className="text-sm text-muted">{STUDIO_INCLUDED.bestFor}</p>
+                <ul className="flex-1 space-y-2 text-[15px]">{STUDIO_INCLUDED.items.map((i) => <li key={i} className="flex gap-3"><Tick />{i}</li>)}</ul>
+              </div>
+              {TIERS.filter((t) => t.key !== 'essential').map((t) => {
+                // Inner Circle is where a studio member gets the rest of Foundation, so spell it out instead of "Everything in Foundation".
+                const items: readonly string[] = t.key === 'club' ? ['Everything included with your studio membership', ...STUDIO_UPGRADE_EXTRAS, ...t.items.filter((i) => i !== 'Everything in Foundation')] : t.items;
                 return (
                   <div key={t.key} className="flex min-w-0 flex-col gap-3 border border-stone p-6" data-studio-plan-card>
-                    <p className="text-xs font-bold uppercase text-muted">{free ? 'Included with your studio membership' : 'Half price for studio members'}</p>
+                    <p className="text-xs font-bold uppercase text-muted">Half price for studio members</p>
                     <p className="text-2xl font-bold uppercase">{t.name}</p>
                     <p>
-                      <span className="text-[40px] font-bold leading-none">{free ? 'Free' : t.studioPrice}</span>{' '}
-                      {free ? <span className="text-sm text-muted">usually <span className="line-through">{t.price}</span></span> : <span className="text-sm text-muted">{BILLING} · usually <span className="line-through">{t.price}</span></span>}
+                      <span className="text-[40px] font-bold leading-none">{t.studioPrice}</span>{' '}
+                      <span className="text-sm text-muted">{BILLING} · usually <span className="line-through">{t.price}</span></span>
                     </p>
                     <p className="text-sm text-muted">{t.bestFor}</p>
-                    <ul className="flex-1 space-y-2 text-[15px]">{t.items.map((i) => <li key={i} className="flex gap-3"><Tick />{i}</li>)}</ul>
+                    <ul className="flex-1 space-y-2 text-[15px]">{items.map((i) => <li key={i} className="flex gap-3"><Tick />{i}</li>)}</ul>
                   </div>
                 );
               })}
@@ -96,7 +104,7 @@ export function PricingChooser() {
               })}
             </div>
             <p className="mt-3 text-xs text-muted">13 payments a year. <Link href="/free-trial" className="underline">What’s in the free trial</Link> · <Link href="/terms" className="underline">Terms</Link></p>
-            <p className="mt-4 text-sm text-muted">Thinking of joining a studio? <a href="#studios" className="underline">Find your local studio</a> and Foundation is included with your membership.</p>
+            <p className="mt-4 text-sm text-muted">Thinking of joining a studio? <a href="#studios" className="underline">Find your local studio</a> and on-demand classes and the community are included with your membership.</p>
           </div>
         )}
       </div>

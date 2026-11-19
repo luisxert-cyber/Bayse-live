@@ -55,7 +55,7 @@ export default async function Membership({ searchParams }: { searchParams: Promi
         <Card className="border-ink">
           <p className="eyebrow">BAYSE studio member</p>
           <h2 className="mt-1 text-lg font-semibold">Your BAYSE Studio Membership Includes BAYSE Club</h2>
-          <p className="mt-2 text-sm text-muted">Enjoy your complimentary Foundation membership, including Pilates on demand, community groups, challenges and more.</p>
+          <p className="mt-2 text-sm text-muted">Your studio membership includes Pilates on demand and the BAYSE Club community. Add your personal plan, recipes, live classes or 1-to-1s with a half-price upgrade.</p>
           {!s && offers.length > 0 && (
             <div className="mt-4 space-y-3 border-t border-stone pt-4">
               <p className="eyebrow">Upgrade options · 50% studio member discount</p>
@@ -72,7 +72,7 @@ export default async function Membership({ searchParams }: { searchParams: Promi
       )}
       {!studioMember && ended?.ended_at && (
         <Notice tone="warning" title="Your studio membership has ended">
-          Your included BAYSE Foundation access stays on until {fmtDate(addDays(ended.ended_at, NOTICE_DAYS))}.
+          Your included on-demand and community access stays on until {fmtDate(addDays(ended.ended_at, NOTICE_DAYS))}.
           {onStudioPrice && s?.current_period_end ? <> Your studio member price ends with your paid period on {fmtDate(s.current_period_end)}. Nothing more will be taken at that price, and your payment is never raised without your agreement.</> : null}
           {' '}To carry on after that, choose a standard-price membership.
         </Notice>
@@ -104,7 +104,7 @@ export default async function Membership({ searchParams }: { searchParams: Promi
             <p className="mt-2 text-sm text-muted">Your request to link {pending.studios?.name ?? 'your studio'} is waiting for the studio to confirm it.</p>
           ) : (
             <>
-              <p className="mt-2 text-sm text-muted">Active £99 and £148 studio memberships include BAYSE Foundation free and half price on Inner Circle and Black. Tell us your studio and your studio team will confirm it.</p>
+              <p className="mt-2 text-sm text-muted">Active £99 and £148 studio memberships include on-demand classes and the community free, and half price on Inner Circle and Black. Tell us your studio and your studio team will confirm it.</p>
               <form action={requestStudioLink} className="mt-3 space-y-2">
                 <label className="block text-sm">Your studio
                   <select name="studio_id" required className="mt-1 block min-h-tap w-full rounded-2xl border border-stone bg-surface px-3 text-sm">

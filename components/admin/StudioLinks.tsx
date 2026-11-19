@@ -66,7 +66,7 @@ export async function StudioLinks({ back, admin, ok, error }: { back: '/admin/st
   return (
     <div className="space-y-5">
       <h1 className="text-xl font-semibold">Studio member checks</h1>
-      <p className="text-sm text-muted">Check each person against your studio booking system before you verify them: an active £99 or £148 membership, not just a matching email. Verified members get BAYSE Foundation free and half price on Inner Circle and Black.</p>
+      <p className="text-sm text-muted">Check each person against your studio booking system before you verify them: an active £99 or £148 membership, not just a matching email. Verified members get on-demand classes and the community free, and half price on Inner Circle and Black.</p>
       {msg && <Notice tone={msg[0]}>{msg[1]}</Notice>}
       {error && <Notice tone="error">That change was not saved. You can only change members of your own studio.</Notice>}
 
@@ -74,7 +74,7 @@ export async function StudioLinks({ back, admin, ok, error }: { back: '/admin/st
         <Card>
           <p className="eyebrow">Online and studio members</p>
           <dl className="mt-2 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
-            <div><dt className="text-muted">Free Foundation (studio)</dt><dd className="text-lg font-semibold">{b.complimentary_foundation ?? 0}</dd></div>
+            <div><dt className="text-muted">Free on demand and community (studio)</dt><dd className="text-lg font-semibold">{b.complimentary_foundation ?? 0}</dd></div>
             <div><dt className="text-muted">Studio paid upgrades</dt><dd className="text-lg font-semibold">{b.studio_upgrades ?? 0}</dd></div>
             <div><dt className="text-muted">Online-only subscribers</dt><dd className="text-lg font-semibold">{b.online_only ?? 0}</dd></div>
             <div><dt className="text-muted">In 28-day notice</dt><dd className="text-lg font-semibold">{b.in_notice ?? 0}</dd></div>

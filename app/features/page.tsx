@@ -15,6 +15,7 @@ const GROUPS: { id: string; title: string; plan: string; items: [string, string]
     ['Workout builder', 'Choose a style, what to work on, your time and kit. It builds a class in seconds, with video demos, rest timers and voice cues.'],
     ['Reformer at home', 'Have a bed at home? Studio reformer classes with spring settings for every section.'],
     ['Move library', 'Every move with a demo and coaching cues, so you know you are doing it right.'],
+    ['Phone, tablet or laptop', 'Runs in your browser on any screen, with nothing to download.'],
   ] },
   { id: 'live', title: 'Live and 1-to-1', plan: 'Inner Circle and Black', items: [
     ['Live Zoom classes', `${LIVE_CLASSES_PER_WEEK} classes a week, 45 minutes each, with an instructor who can watch your form.`],
@@ -23,17 +24,22 @@ const GROUPS: { id: string; title: string; plan: string; items: [string, string]
   ] },
   { id: 'nourish', title: 'Nourish', plan: 'Every plan', items: [
     ['Recipes', 'Simple, high-protein meals that suit busy weeks, filtered by allergies and the way you eat.'],
-    ['Shopping list', 'Add a recipe and the ingredients go straight onto your list.'],
+    ['Recipe videos', 'Every recipe has a short video so you can watch it being made.'],
+    ['Your food plan', 'Tell us your goals and get a week of meals built around them, new every Monday.'],
+    ['Food diary, your way', 'Optional. Keep a simple log, track protein, or track calories and macros. Or do not track at all.'],
+    ['Shopping list', 'Add a recipe, or the whole week, and the ingredients go straight onto your list.'],
   ] },
   { id: 'progress', title: 'Progress and rewards', plan: 'Every plan', items: [
+    ['Daily scores, no watch needed', 'A 20-second morning check-in gives you Recovery, Sleep and Effort scores out of 100, and a suggestion for how hard to go today.'],
     ['Weekly progress', 'See your sessions, minutes and streak, and how close you are to this week’s goal.'],
+    ['Levels and the weekly league', 'Earn points for showing up and climb from Starter to BAYSE Legend. A friendly league resets every Monday.'],
     ['Milestones and rewards', 'Hit milestones and unlock member rewards from BAYSE and partners.'],
   ] },
   { id: 'community', title: 'Community', plan: 'Every plan', items: [
     ['The feed', 'Share wins and questions with women who get it, moderated by the BAYSE team.'],
+    ['General Chat', 'One open chat room for every member. Say hello and chat in real time.'],
     ['Circles', 'Small groups of 10 to 20 who train at similar times and keep each other going.'],
     ['Clubs and meet-ups', 'Padel games, walks and socials organised by members, with places and waiting lists handled for you.'],
-    ['Chat rooms', 'Join rooms for padel, walking, nutrition and more, chat and plan meet-ups.'],
     ['Safety built in', 'Report and block, private profiles, adults only, and meet-ups at public places.'],
   ] },
 ];
