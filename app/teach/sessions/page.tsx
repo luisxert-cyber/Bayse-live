@@ -23,7 +23,7 @@ export default async function TeachSessions({ searchParams }: { searchParams: Pr
     <div className="space-y-6">
       <div>
         <h1 className="text-xl font-semibold">My 1-to-1s</h1>
-        <p className="mt-1 text-sm text-muted">45-minute private Zoom sessions. You earn the same for each one. Please mark each session completed or a no-show afterwards.</p>
+        <p className="mt-1 text-sm text-muted">40-minute private Zoom sessions. You earn the same for each one. Please mark each session completed or a no-show afterwards.</p>
       </div>
       {sp.ok && <Notice tone="success">{OK[sp.ok] ?? 'Saved.'}</Notice>}
       {sp.error && <Notice tone="error">{decodeURIComponent(sp.error)}</Notice>}

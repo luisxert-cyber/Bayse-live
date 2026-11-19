@@ -1,26 +1,15 @@
 // What The BAYSE Club offers, in one place, so the website, pricing page and FAQs say the same thing.
 // Update here when the offer changes.
 
-// Launch timetable: 17 live classes a week, all 45 minutes, UK time.
+// Live timetable (master brief, 19 Nov 2026): 17 classes live now, 10 more coming soon (27 a week), all 40 minutes, UK time.
+// The timetable itself lives in the database (public.live_classes); these counts are for website copy.
 // Review attendance after 4 to 6 weeks before adding more slots.
-export const LIVE_CLASS_MINUTES = 45;
+export const LIVE_CLASS_MINUTES = 40;
+export const LIVE_CLASSES_PLANNED = 27;
+export const LIVE_CLASS_STRUCTURE = '5-minute warm-up, 30-minute main class, 5-minute cool-down';
 
-const WAKE = 'Wake-up Flow';
-const MAT = 'Mat Pilates';
-const LUNCH = 'Lunchtime Core & Glutes';
-const SCULPT = 'Signature Sculpt';
-
-export const LIVE_TIMETABLE: { day: string; short: string; classes: { time: string; name: string }[] }[] = [
-  { day: 'Monday', short: 'Mon', classes: [{ time: '7am', name: WAKE }, { time: '9am', name: MAT }, { time: '7pm', name: SCULPT }] },
-  { day: 'Tuesday', short: 'Tue', classes: [{ time: '7am', name: WAKE }, { time: '12pm', name: LUNCH }, { time: '7pm', name: SCULPT }] },
-  { day: 'Wednesday', short: 'Wed', classes: [{ time: '7am', name: WAKE }, { time: '9am', name: MAT }, { time: '7pm', name: SCULPT }] },
-  { day: 'Thursday', short: 'Thu', classes: [{ time: '7am', name: WAKE }, { time: '12pm', name: LUNCH }, { time: '7pm', name: SCULPT }] },
-  { day: 'Friday', short: 'Fri', classes: [{ time: '7am', name: WAKE }, { time: '9am', name: MAT }, { time: '7pm', name: 'Stretch & Restore' }] },
-  { day: 'Saturday', short: 'Sat', classes: [{ time: '9am', name: 'Full Body Sculpt' }] },
-  { day: 'Sunday', short: 'Sun', classes: [{ time: '9am', name: 'Slow Flow & Mobility' }] },
-];
-
-export const LIVE_CLASSES_PER_WEEK = LIVE_TIMETABLE.reduce((n, d) => n + d.classes.length, 0);
+// Classes live now (bookable). Update when a coming-soon class is launched in Admin → Live classes.
+export const LIVE_CLASSES_PER_WEEK = 17;
 
 export const ON_DEMAND = [
   { name: 'Mat Pilates', note: 'The BAYSE method, on the mat' },
@@ -110,16 +99,16 @@ export const TIERS = [
   {
     key: 'club', name: 'BAYSE Inner Circle', price: '£39.99', studioPrice: '£19.99', tagline: 'Most popular', featured: true,
     bestFor: 'For you if you want a plan that is yours, live instructors and everything BAYSE has to help you keep going.',
-    items: ['Everything in Foundation', `${LIVE_CLASSES_PER_WEEK} live Zoom classes a week with BAYSE instructors`, 'Your personal plan, built from your answers', 'Six programmes for your stage of life, from Begin to Midlife', 'Nutrition: recipes with videos, a weekly food plan and a food diary', 'Daily recovery, sleep and effort scores, no watch needed', 'Levels, the weekly league, challenges and member rewards'],
+    items: ['Everything in Foundation', `${LIVE_CLASSES_PER_WEEK} live Zoom classes a week with BAYSE instructors, growing to ${LIVE_CLASSES_PLANNED}`, 'Your personal plan, built from your answers', 'Six programmes for your stage of life, from Begin to Midlife', 'Nutrition: recipes with videos, a weekly food plan and a food diary', 'Daily recovery, sleep and effort scores, no watch needed', 'Levels, the weekly league, challenges and member rewards'],
     not: [],
     highlight: 'The full BAYSE Club for £1.43 a day', studioHighlight: 'The full BAYSE Club for 71p a day',
   },
   {
-    key: 'coaching', name: 'BAYSE Black', price: '£79.99', studioPrice: '£39.99', tagline: 'Your own instructor',
+    key: 'coaching', name: 'BAYSE Black', price: '£89.99', studioPrice: '£44.99', tagline: 'Your own instructor',
     bestFor: 'For you if you want an instructor who knows you: your form, your progress and a plan that changes with you.',
-    items: ['Everything in Inner Circle', 'A private 45-minute Zoom session with your instructor every paid 28 days, subject to availability', 'An unused session carries over one extra period', `Extra 1-to-1s any time (${PRIVATE_SESSION_PRICE})`],
+    items: ['Everything in Inner Circle', 'A private 40-minute Zoom session with your instructor every paid 28 days, subject to availability', 'Bookable from your first payment; use it within its 28 days (no carry-over)', `Extra 1-to-1s any time (${PRIVATE_SESSION_PRICE})`],
     not: [],
-    highlight: `Includes a ${PRIVATE_SESSION_PRICE} private session every 28 days, for £40 more than Inner Circle`, studioHighlight: `Includes a ${PRIVATE_SESSION_PRICE} private session every 28 days: the session alone costs more`,
+    highlight: `Includes a ${PRIVATE_SESSION_PRICE} private session every 28 days, for £50 more than Inner Circle`, studioHighlight: `Includes a ${PRIVATE_SESSION_PRICE} private session every 28 days: the session alone costs more`,
   },
 ] as const;
 

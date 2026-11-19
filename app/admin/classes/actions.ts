@@ -28,7 +28,18 @@ const ZOOM = /^https:\/\/([a-z0-9-]+\.)*zoom\.us\//;
 const fields = (f: FormData) => ({
   name: text(f, 'name', 60),
   starts_at: z.string().regex(/^\d{2}:\d{2}$/).safeParse(f.get('starts_at')),
-  minutes: Math.max(10, Math.min(120, Math.round(Number(f.get('minutes')) || 45))),
+  minutes: Math.max(10, Math.min(120, Math.round(Number(f.get('minutes')) || 40))),
+});
+const LEVELS = ['All levels', 'Beginner', 'Intermediate', 'Advanced', 'Gentle', 'Specialist'] as const;
+const EQUIP = ['none', 'mat', 'optional', 'required'] as const;
+const TYPES = ['Pilates', 'Strength', 'Mobility', 'Beginner', '50+', 'Prenatal', 'Postnatal'] as const;
+// Level, equipment (shown on every booking card), type and description.
+const details = (f: FormData) => ({
+  level: (LEVELS as readonly string[]).includes(String(f.get('level'))) ? String(f.get('level')) : null,
+  equipment: (EQUIP as readonly string[]).includes(String(f.get('equipment'))) ? String(f.get('equipment')) : 'mat',
+  equipment_detail: text(f, 'equipment_detail', 120) || null,
+  class_type: (TYPES as readonly string[]).includes(String(f.get('class_type'))) ? String(f.get('class_type')) : null,
+  description: text(f, 'description', 400) || null,
 });
 
 async function setLink(supabase: Awaited<ReturnType<typeof createClient>>, classId: string, url: string) {
@@ -50,7 +61,8 @@ export async function addClass(f: FormData) {
   if (!once && !(weekday >= 1 && weekday <= 7)) back(`error=${encodeURIComponent('Choose the day of the week.')}`);
   const supabase = await createClient();
   const { data, error } = await supabase.from('live_classes').insert({
-    name: v.name, starts_at: v.starts_at.data, minutes: v.minutes,
+    name: v.name, starts_at: v.starts_at.data, minutes: v.minutes, ...details(f),
+    status: f.get('status') === 'coming_soon' && !once ? 'coming_soon' : 'live',
     weekday: once ? isoDow(date.data as string) : weekday, one_off_date: once ? date.data : null,
   }).select('id').single();
   if (error || !data) back(`error=${encodeURIComponent(error?.code === '23505' ? 'There is already a class at that day and time.' : 'That class could not be added.')}`);
@@ -69,7 +81,7 @@ export async function updateClass(f: FormData) {
   const v = fields(f);
   if (v.name.length < 2 || !v.starts_at.success) back(`error=${encodeURIComponent('Add a class name and a start time.')}`, id);
   const supabase = await createClient();
-  const { error } = await supabase.from('live_classes').update({ name: v.name, starts_at: v.starts_at.data, minutes: v.minutes }).eq('id', id);
+  const { error } = await supabase.from('live_classes').update({ name: v.name, starts_at: v.starts_at.data, minutes: v.minutes, ...details(f) }).eq('id', id);
   if (error) back(`error=${encodeURIComponent(error.code === '23505' ? 'There is already a class at that day and time.' : 'Those changes could not be saved.')}`, id);
   const linkErr = await setLink(supabase, id, text(f, 'join_url', 500));
   revalidatePath('/admin/classes');
@@ -106,4 +118,18 @@ export async function removeClass(f: FormData) {
   const { error } = await supabase.from('live_classes').update({ active: false }).eq('id', id);
   revalidatePath('/admin/classes');
   back(error ? 'error=1' : 'ok=removed');
+}
+
+// Launch a coming-soon class: the database checks it has an instructor, a Zoom link, a level and a description,
+// makes it bookable, and gives every member who asked to be notified a notice in the app.
+export async function activateClass(f: FormData) {
+  await requireStaff('classes');
+  const id = z.string().uuid().parse(f.get('class_id'));
+  if (f.get('confirm') !== 'on') back(`error=${encodeURIComponent('Tick the box to confirm the class is ready to launch.')}`, id);
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc('activate_live_class', { p_class: id });
+  revalidatePath('/admin/classes');
+  revalidatePath('/live-classes');
+  revalidatePath('/live');
+  back(error ? `error=${encodeURIComponent(error.message.slice(0, 160))}` : `ok=launched&n=${data ?? 0}`, id);
 }

@@ -20,7 +20,7 @@ export default async function Plans({ searchParams }: { searchParams: Promise<Re
   return (
     <div className="space-y-5">
       <h1 className="text-xl font-semibold">Plans and prices</h1>
-      <Notice tone="success" title="Prices are confirmed">Standard: £19.99, £39.99 and £79.99 every 28 days after a 7-day free trial. Verified studio members: Foundation included, Inner Circle £19.99 and Black £39.99 (no trial). Every price needs its own Stripe price id below for checkout to work.</Notice>
+      <Notice tone="success" title="Prices are confirmed">Standard: £19.99, £39.99 and £89.99 every 28 days after a 7-day free trial. Verified studio members: Foundation included, Inner Circle £19.99 and Black £44.99, also with a 7-day free trial (once per member). Every price needs its own Stripe price id below for checkout to work.</Notice>
       {sp.ok && <Notice tone="success">Saved.</Notice>}
       {sp.error && <Notice tone="error">That was not saved. Price ids look like price_123.</Notice>}
       {plans?.map((plan) => (

@@ -2,15 +2,19 @@ import { requireStaff } from '@/lib/auth/session';
 import { createClient } from '@/lib/supabase/server';
 import { Notice } from '@/components/ui';
 import { WEEKDAYS, input, btn, btnSolid } from '@/lib/teach/format';
-import { setClassInstructors, addClass, updateClass, cancelDate, restoreDate, removeClass } from './actions';
+import { setClassInstructors, addClass, updateClass, cancelDate, restoreDate, removeClass, activateClass } from './actions';
+import { EQUIPMENT_LABEL, clock } from '@/lib/site/timetable';
 
 export const metadata = { title: 'Live classes' };
 export const dynamic = 'force-dynamic';
 
-type Class = { id: string; weekday: number; starts_at: string; name: string; minutes: number; one_off_date: string | null };
+type Class = { id: string; weekday: number; starts_at: string; name: string; minutes: number; one_off_date: string | null; status: 'live' | 'coming_soon'; level: string | null; equipment: string; equipment_detail: string | null; class_type: string | null; description: string | null };
+type Interest = { class_id: string; name: string; weekday: number; starts_at: string; status: string; interested: number; booked_after_launch: number };
+const LEVELS = ['All levels', 'Beginner', 'Intermediate', 'Advanced', 'Gentle', 'Specialist'];
+const TYPES = ['Pilates', 'Strength', 'Mobility', 'Beginner', '50+', 'Prenatal', 'Postnatal'];
 type Slot = { class_id: string; class_date: string; booked: number; state: string };
 
-const OK: Record<string, string> = { added: 'Class added.', cancelled: 'That date is cancelled. Members who booked will see it as cancelled.', restored: 'That date is back on.', removed: 'Class removed from the timetable.' };
+const OK: Record<string, string> = { launched: 'Class launched. It is now bookable and shows as Live now.', added: 'Class added.', cancelled: 'That date is cancelled. Members who booked will see it as cancelled.', restored: 'That date is back on.', removed: 'Class removed from the timetable.' };
 const nice = (iso: string) => new Date(`${iso}T12:00:00Z`).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });
 
 export default async function Classes({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
@@ -18,13 +22,16 @@ export default async function Classes({ searchParams }: { searchParams: Promise<
   const sp = await searchParams;
   const supabase = await createClient();
   const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/London' });
-  const [{ data: all }, { data: team }, { data: assigned }, { data: links }, { data: sched }] = await Promise.all([
-    supabase.from('live_classes').select('id, weekday, starts_at, name, minutes, one_off_date').eq('active', true).order('weekday').order('starts_at'),
+  const [{ data: all }, { data: team }, { data: assigned }, { data: links }, { data: sched }, { data: demand }] = await Promise.all([
+    supabase.from('live_classes').select('id, weekday, starts_at, name, minutes, one_off_date, status, level, equipment, equipment_detail, class_type, description').eq('active', true).order('weekday').order('starts_at'),
     supabase.from('instructors').select('id, display_name').eq('active', true).order('display_name'),
     supabase.from('live_class_instructors').select('*'),
     supabase.from('live_class_links').select('class_id, join_url'),
     supabase.rpc('live_schedule', { p_days: 14 }),
+    supabase.rpc('class_interest_report'),
   ]);
+  const interest = (demand ?? []) as Interest[];
+  const wantsFor = (id: string) => interest.find((i) => i.class_id === id)?.interested ?? 0;
   const classes = ((all ?? []) as Class[]).filter((c) => !c.one_off_date || c.one_off_date >= today);
   const weekly = classes.filter((c) => !c.one_off_date);
   const once = classes.filter((c) => c.one_off_date).sort((a, b) => (a.one_off_date as string).localeCompare(b.one_off_date as string) || a.starts_at.localeCompare(b.starts_at));
@@ -44,7 +51,8 @@ export default async function Classes({ searchParams }: { searchParams: Promise<
       <li id={`c-${c.id}`} className="scroll-mt-16 space-y-3 p-4 text-sm">
         <div>
           <p className="font-bold">{c.one_off_date ? nice(c.one_off_date) : WEEKDAYS[c.weekday - 1]} {c.starts_at.slice(0, 5)} <span className="font-normal text-muted">· {c.one_off_date ? 'one-off' : 'every week'}</span></p>
-          <p>{c.name} · {c.minutes} min</p>
+          <p className="flex flex-wrap items-center gap-2">{c.name} · {c.minutes} min · {c.level ?? 'level not set'} · {EQUIPMENT_LABEL[c.equipment as keyof typeof EQUIPMENT_LABEL] ?? c.equipment}
+            <span className={`px-2 py-0.5 text-[10px] font-bold uppercase ${c.status === 'live' ? 'bg-white text-black' : 'border border-white'}`}>{c.status === 'live' ? 'Live now' : `Coming soon · ${wantsFor(c.id)} want it`}</span></p>
           <p className="text-xs text-muted">{linkFor.has(c.id) ? 'Zoom link set' : 'No Zoom link yet'}{lead ? ` · ${name(lead)}` : ' · no instructor yet'}{next ? ` · ${next.booked} booked for ${nice(next.class_date)}` : ''}</p>
           {cancelled.map((x) => (
             <form key={x.class_date} action={restoreDate} className="mt-1 flex flex-wrap items-center gap-2 text-xs">
@@ -53,6 +61,20 @@ export default async function Classes({ searchParams }: { searchParams: Promise<
             </form>
           ))}
         </div>
+        {c.status === 'coming_soon' && (
+          <form action={activateClass} className="space-y-2 border border-white p-3">
+            <input type="hidden" name="class_id" value={c.id} />
+            <p className="text-xs font-bold uppercase">Launch this class</p>
+            <ul className="text-xs text-muted">
+              <li>{lead ? '✓' : '✗'} Instructor assigned and available</li>
+              <li>{linkFor.has(c.id) ? '✓' : '✗'} Zoom link set</li>
+              <li>{c.level && c.description ? '✓' : '✗'} Level, equipment and description checked</li>
+              <li>{c.class_type && ['Prenatal', 'Postnatal', '50+'].includes(c.class_type) ? '! Specialist class: the instructor must hold the right qualification' : '✓ No specialist qualification needed'}</li>
+            </ul>
+            <label className="flex items-center gap-2 text-xs"><input type="checkbox" name="confirm" />The time, recurring schedule and booking rules are right. Launch it now.</label>
+            <button className={btnSolid}>Launch and notify {wantsFor(c.id)} interested</button>
+          </form>
+        )}
         <form action={setClassInstructors} className="flex flex-wrap items-end gap-2">
           <input type="hidden" name="class_id" value={c.id} />
           <label className="grid gap-1 text-xs">Instructor<select name="lead" defaultValue={lead} className={`${input} min-w-[170px]`}><option value="">Not set</option>{teamOptions}</select></label>
@@ -67,6 +89,11 @@ export default async function Classes({ searchParams }: { searchParams: Promise<
               <label className="grid gap-1 text-xs">Start time (UK)<input name="starts_at" type="time" defaultValue={c.starts_at.slice(0, 5)} required className={input} /></label>
               <label className="grid gap-1 text-xs">Length (minutes)<input name="minutes" type="number" min={10} max={120} defaultValue={c.minutes} className={input} /></label>
               <label className="grid gap-1 text-xs">Zoom link<input name="join_url" type="url" defaultValue={linkFor.get(c.id) ?? ''} placeholder="https://zoom.us/j/…" className={input} /></label>
+              <label className="grid gap-1 text-xs">Level<select name="level" defaultValue={c.level ?? ''} className={input}><option value="">Not set</option>{LEVELS.map((l) => <option key={l}>{l}</option>)}</select></label>
+              <label className="grid gap-1 text-xs">Class type<select name="class_type" defaultValue={c.class_type ?? ''} className={input}><option value="">Not set</option>{TYPES.map((l) => <option key={l}>{l}</option>)}</select></label>
+              <label className="grid gap-1 text-xs">Equipment<select name="equipment" defaultValue={c.equipment} className={input}>{Object.entries(EQUIPMENT_LABEL).map(([k, l]) => <option key={k} value={k}>{l}</option>)}</select></label>
+              <label className="grid gap-1 text-xs">Exact equipment (shown to members)<input name="equipment_detail" defaultValue={c.equipment_detail ?? ''} maxLength={120} placeholder="Mat + light 1–2 kg dumbbells" className={input} /></label>
+              <label className="grid gap-1 text-xs sm:col-span-2">Description<textarea name="description" defaultValue={c.description ?? ''} maxLength={400} rows={2} className={input} /></label>
               <div><button className={btn}>Save changes</button></div>
             </form>
             {upcoming.length > 0 && (
@@ -106,9 +133,14 @@ export default async function Classes({ searchParams }: { searchParams: Promise<
           <label className="grid gap-1">Day (for every week)<select name="weekday" defaultValue="1" className={input}>{WEEKDAYS.map((d, i) => <option key={d} value={i + 1}>{d}</option>)}</select></label>
           <label className="grid gap-1">Date (for one time only)<input name="date" type="date" min={today} className={input} /></label>
           <label className="grid gap-1">Start time (UK)<input name="starts_at" type="time" required className={input} /></label>
-          <label className="grid gap-1">Length (minutes)<input name="minutes" type="number" min={10} max={120} defaultValue={45} className={input} /></label>
+          <label className="grid gap-1">Length (minutes)<input name="minutes" type="number" min={10} max={120} defaultValue={40} className={input} /></label>
           <label className="grid gap-1">Instructor<select name="lead" defaultValue="" className={input}><option value="">Not set</option>{teamOptions}</select></label>
           <label className="grid gap-1">Zoom link<input name="join_url" type="url" placeholder="https://zoom.us/j/…" className={input} /></label>
+          <label className="grid gap-1">Level<select name="level" defaultValue="All levels" className={input}>{LEVELS.map((l) => <option key={l}>{l}</option>)}</select></label>
+          <label className="grid gap-1">Equipment<select name="equipment" defaultValue="mat" className={input}>{Object.entries(EQUIPMENT_LABEL).map(([k, l]) => <option key={k} value={k}>{l}</option>)}</select></label>
+          <label className="grid gap-1">Exact equipment<input name="equipment_detail" maxLength={120} placeholder="Mat + light 1–2 kg dumbbells" className={input} /></label>
+          <label className="grid gap-1">Status<select name="status" defaultValue="live" className={input}><option value="live">Live now (bookable)</option><option value="coming_soon">Coming soon (not bookable)</option></select></label>
+          <label className="grid gap-1 sm:col-span-2">Description<textarea name="description" maxLength={400} rows={2} className={input} /></label>
           <div className="sm:col-span-2"><button className={btnSolid}>Add class</button></div>
         </form>
       </details>
@@ -119,6 +151,19 @@ export default async function Classes({ searchParams }: { searchParams: Promise<
           <ul className="divide-y divide-stone border border-stone">{once.map((c) => <Row key={c.id} c={c} />)}</ul>
         </section>
       )}
+      <section>
+        <p className="mb-2 font-bold">Coming soon demand</p>
+        <p className="mb-2 text-xs text-muted">Members who tapped “Notify me”. Launch the most wanted classes first. After launch, the last column shows how many of them booked.</p>
+        <table className="w-full border border-stone text-sm">
+          <thead><tr className="text-left text-xs text-muted"><th className="p-2 font-normal">Class</th><th className="font-normal">Status</th><th className="font-normal">Interested</th><th className="p-2 text-right font-normal">Booked after launch</th></tr></thead>
+          <tbody>
+            {interest.map((i) => <tr key={i.class_id} className="border-t border-stone"><td className="p-2"><a href={`#c-${i.class_id}`} className="underline">{WEEKDAYS[i.weekday - 1]} {clock(i.starts_at)} · {i.name}</a></td><td>{i.status === 'live' ? 'Launched' : 'Coming soon'}</td><td>{i.interested}</td><td className="p-2 text-right">{i.status === 'live' ? i.booked_after_launch : '–'}</td></tr>)}
+            {!interest.length && <tr><td colSpan={4} className="p-3 text-center text-muted">No coming-soon classes.</td></tr>}
+          </tbody>
+          {interest.length > 0 && <tfoot><tr className="border-t border-white"><td className="p-2 font-bold" colSpan={2}>Total interest</td><td className="font-bold">{interest.reduce((a, i) => a + i.interested, 0)}</td><td /></tr></tfoot>}
+        </table>
+      </section>
+
       <section>
         <p className="mb-2 font-bold">Weekly timetable</p>
         <ul className="divide-y divide-stone border border-stone">

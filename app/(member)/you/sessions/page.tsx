@@ -32,7 +32,7 @@ export default async function MySessions({ searchParams }: { searchParams: Promi
       <div>
         <p className="text-sm"><Link href="/you" className="text-muted">← You</Link></p>
         <h1 className="mt-2 text-2xl font-bold uppercase">My 1-to-1s</h1>
-        <p className="mt-1 text-sm text-muted">45-minute private sessions on Zoom. Free to cancel up to {cutoff} hours before; after that the session is lost.</p>
+        <p className="mt-1 text-sm text-muted">40-minute private sessions on Zoom. Free to cancel up to {cutoff} hours before; after that the session is lost.</p>
       </div>
       {sp.booked === 'credit' && <Notice tone="success" title="Requested">Your free Personal Coaching session is reserved. Your instructor will confirm it shortly.</Notice>}
       {sp.booked === 'unpaid' && <Notice tone="warning" title="Request saved, payment not taken">Card payments for 1-to-1s are being switched on. Your time is held for 30 minutes; we will be in touch if it can’t be confirmed.</Notice>}

@@ -62,7 +62,7 @@ export default async function Membership({ searchParams }: { searchParams: Promi
               {offers.map((o) => (
                 <div key={o.plans?.key} className="text-sm">
                   <p className="font-medium">Upgrade to {(o.plans?.name ?? '').replace(/^BAYSE /, '')} — {formatPence(o.amount_pence, o.currency)} / 28 days</p>
-                  <p className="text-muted">{o.plans?.key === 'coaching' ? 'Includes live classes and a private 45-minute online coaching session every billing cycle.' : 'Your exclusive BAYSE studio member price.'}</p>
+                  <p className="text-muted">{o.plans?.key === 'coaching' ? 'Includes live classes and a private 40-minute online coaching session every billing cycle.' : 'Your exclusive BAYSE studio member price.'}</p>
                 </div>
               ))}
               <Link href="/join" className={`${buttonClass('primary')} mt-1`}>See my member upgrades</Link>

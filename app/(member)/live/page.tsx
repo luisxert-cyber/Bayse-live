@@ -3,7 +3,8 @@ import { requireUser } from '@/lib/auth/session';
 import { requireHealthCheck } from '@/lib/health/gate';
 import { createClient } from '@/lib/supabase/server';
 import { Card, Notice, buttonClass } from '@/components/ui';
-import { bookClass, cancelBooking, joinClass } from './actions';
+import { bookClass, cancelBooking, joinClass, toggleInterest } from './actions';
+import { DAYS, equipmentText, clock, type TimetableClass } from '@/lib/site/timetable';
 
 export const metadata = { title: 'Live' };
 export const dynamic = 'force-dynamic';
@@ -35,11 +36,17 @@ export default async function Live({ searchParams }: { searchParams: Promise<{ e
   await requireHealthCheck('/live');
   const sp = await searchParams;
   const supabase = await createClient();
-  const [{ data }, { data: entitled }, { data: roles }] = await Promise.all([
+  const [{ data }, { data: entitled }, { data: roles }, { data: timetable }, { data: interest }] = await Promise.all([
     supabase.rpc('live_schedule', { p_days: 7 }),
     supabase.rpc('has_entitlement', { k: 'live_classes' }),
     supabase.from('user_roles').select('role'),
+    supabase.rpc('public_timetable'),
+    supabase.from('live_class_interest').select('class_id'),
   ]);
+  const all = (timetable ?? []) as TimetableClass[];
+  const info = new Map(all.map((c) => [c.id, c]));
+  const soon = all.filter((c) => c.status === 'coming_soon');
+  const wanted = new Set((interest ?? []).map((i) => i.class_id as string));
   const slots = (data ?? []) as Slot[];
   const canJoin = entitled === true || (roles ?? []).some((r) => ['admin', 'super_admin', 'virtual_assistant'].includes(r.role as string));
   const days = [...new Set(slots.map((s) => s.class_date))];
@@ -56,6 +63,8 @@ export default async function Live({ searchParams }: { searchParams: Promise<{ e
       {sp.e && <Notice tone="error">{sp.e}</Notice>}
       {sp.ok === 'booked' && <Notice tone="success" title="You are booked">The join button appears here 15 minutes before the class starts.</Notice>}
       {sp.ok === 'cancelled' && <Notice tone="success">Booking cancelled.</Notice>}
+      {sp.ok === 'notify' && <Notice tone="success" title="We’ll let you know">You’ll get a notice in the app when that class launches. You can change your mind any time.</Notice>}
+      {sp.ok === 'unnotify' && <Notice tone="success">Removed. We won’t notify you about that class.</Notice>}
 
       {!canJoin && (
         <Notice title="Live classes come with BAYSE Inner Circle">
@@ -98,7 +107,7 @@ export default async function Live({ searchParams }: { searchParams: Promise<{ e
                 <span className="w-14 shrink-0 font-display text-lg font-extrabold">{pretty(s.starts_at)}</span>
                 <span className="min-w-0 flex-1">
                   <span className="block font-semibold">{s.name}</span>
-                  <span className="block text-sm text-muted">{s.minutes} min · mat</span>
+                  <span className="block text-sm text-muted">{s.minutes} min · {info.get(s.class_id)?.level ?? 'All levels'} · {info.get(s.class_id) ? equipmentText(info.get(s.class_id)!) : 'Mat'}</span>
                   {s.state !== 'finished' && s.state !== 'cancelled' && <span className="mt-0.5 block text-xs text-muted">{going(s.booked, s.mine)}</span>}
                 </span>
                 <Action s={s} canJoin={canJoin} />
@@ -107,7 +116,31 @@ export default async function Live({ searchParams }: { searchParams: Promise<{ e
           </div>
         </section>
       ))}
-      <p className="text-xs text-muted">Joining opens Zoom, where you wait in the lobby until your instructor lets everyone in. If you are pregnant, postnatal or injured, tell your instructor at the start and they will give you options.</p>
+      {soon.length > 0 && (
+        <section id="coming-soon" className="scroll-mt-4">
+          <h2 className="text-sm font-bold uppercase tracking-[0.1em]">Coming soon · {soon.length} more classes a week</h2>
+          <p className="mb-2 text-sm text-muted">We’re growing to {all.length} live classes a week. These aren’t bookable yet. Tap Notify me and we’ll tell you in the app when one launches.</p>
+          <div className="space-y-2">
+            {soon.map((c) => {
+              const on = wanted.has(c.id);
+              return (
+                <Card key={c.id} className="flex items-center gap-4 !p-4 border-dashed">
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-xs font-bold uppercase tracking-[0.1em] text-muted">{DAYS[c.weekday - 1]} · {clock(c.starts_at)} · Coming soon</span>
+                    <span className="block font-semibold">{c.name}</span>
+                    <span className="block text-sm text-muted">{c.minutes} min · {c.level} · {equipmentText(c)}</span>
+                  </span>
+                  <form action={toggleInterest}><input type="hidden" name="class_id" value={c.id} /><input type="hidden" name="on" value={on ? '0' : '1'} />
+                    <button className={`${on ? buttonClass('solid') : buttonClass('secondary')} !min-h-[38px] !px-3 text-xs`}>{on ? '✓ Notifying you' : 'Notify me'}</button>
+                  </form>
+                </Card>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      <p className="text-xs text-muted">Every class is 40 minutes: a 5-minute warm-up, 30-minute main class and 5-minute cool-down. Joining opens Zoom, where you wait in the lobby until your instructor lets everyone in. If you are pregnant, postnatal or injured, tell your instructor at the start and they will give you options.</p>
     </main>
   );
 }

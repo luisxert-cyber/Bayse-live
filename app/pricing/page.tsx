@@ -5,22 +5,22 @@ import { ReviewsBadge } from '@/components/site/ReviewsBadge';
 import { SitePage } from '@/components/site/SitePage';
 import { PageHero, Check } from '@/components/site/PageHero';
 import { wrap, PHOTO, CodesSection, TrialCta } from '@/components/site/sections';
-import { TIERS, BILLING, PRIVATE_SESSION_PRICE, LIVE_CLASSES_PER_WEEK, STRAPLINE } from '@/lib/site/offer';
+import { TIERS, BILLING, PRIVATE_SESSION_PRICE, LIVE_CLASSES_PER_WEEK, LIVE_CLASSES_PLANNED, STRAPLINE } from '@/lib/site/offer';
 
-export const metadata = { title: 'Pricing', description: 'The BAYSE Club pricing: Foundation £19.99, Inner Circle £39.99 and Black £79.99 every 28 days, after 7 days free. BAYSE studio members get Foundation included and half price on Inner Circle and Black.' };
+export const metadata = { title: 'Pricing', description: 'The BAYSE Club pricing: Foundation £19.99, Inner Circle £39.99 and Black £89.99 every 28 days, after 7 days free. BAYSE studio members get Foundation included and half price on Inner Circle and Black.' };
 
 const ROWS: [string, boolean, boolean, boolean][] = [
   ['On-demand classes, filmed classes and the workout builder', true, true, true],
   ['Reformer at home classes', true, true, true],
   ['The BAYSE Club community, General Chat, Circles and your studio’s group', true, true, true],
   ['Member-led walking, padel and social groups, and members near you', true, true, true],
-  [`${LIVE_CLASSES_PER_WEEK} live Zoom classes a week`, false, true, true],
+  [`${LIVE_CLASSES_PER_WEEK} live Zoom classes a week now, ${LIVE_CLASSES_PLANNED} coming soon`, false, true, true],
   ['Your personal plan, 4 to 12 weeks', false, true, true],
   ['Six programmes for your stage of life', false, true, true],
   ['Nutrition: recipes with videos, a weekly food plan, food diary and shopping lists', false, true, true],
   ['Daily recovery, sleep and effort scores', false, true, true],
   ['Levels, the weekly league, challenges and member rewards', false, true, true],
-  ['One 45-minute private Zoom session per paid 28 days', false, false, true],
+  ['One 40-minute private Zoom session per paid 28 days', false, false, true],
   [`Book extra 1-to-1s (${PRIVATE_SESSION_PRICE} each)`, true, true, true],
 ];
 
@@ -38,7 +38,7 @@ const FAQ: [string, string][] = [
   ['Can I change plan?', 'Yes, you can move up or down between plans at any time.'],
   ['I’m a BAYSE studio member. Do I pay?', 'Active £99 and £148 studio memberships include BAYSE Foundation at no extra cost. Inner Circle is £19.99 and Black is £39.99 every 28 days, half the standard price. Link your studio membership in the app; your studio confirms it before the member price applies.'],
   ['What if my studio membership ends?', 'We tell you at least 28 days ahead. Included Foundation access then ends, and a half-price Inner Circle or Black membership is set to finish at the end of a paid period unless you choose a standard-price plan. We never raise what you pay without you agreeing to it.'],
-  ['What if I don’t use my Black 1-to-1?', 'It carries over for one more 28-day period, then expires. You can cancel a 1-to-1 up to 12 hours before and keep it.'],
+  ['What if I don’t use my Black 1-to-1?', 'It’s for the 28 days you paid for and doesn’t carry over, so book it in that period. It unlocks after your first payment, not during the free trial. You can cancel a 1-to-1 up to 12 hours before and keep it.'],
 ];
 
 export default function Pricing() {
@@ -85,7 +85,7 @@ export default function Pricing() {
         <div className="border border-stone p-6">
           <p className="eyebrow">1-to-1s</p>
           <h3 className="mt-2 text-2xl font-bold uppercase">Private Zoom sessions</h3>
-          <p className="mt-3 text-muted">45 minutes with a BAYSE instructor, just you. {PRIVATE_SESSION_PRICE} each, or one every 28 days included with BAYSE Black. Free to cancel up to 12 hours before.</p>
+          <p className="mt-3 text-muted">40 minutes with a BAYSE instructor, just you. {PRIVATE_SESSION_PRICE} each, or one every 28 days included with BAYSE Black. Free to cancel up to 12 hours before.</p>
           <Link href="/instructors" className="mt-5 inline-flex min-h-[44px] items-center border border-white px-5 text-sm font-bold uppercase hover:bg-white hover:text-black">Meet the instructors</Link>
         </div>
       </section>

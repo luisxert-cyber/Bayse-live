@@ -37,3 +37,20 @@ export async function joinClass(f: FormData) {
   if (error || typeof data !== 'string' || !/^https:\/\//.test(data)) redirect(fail(error?.message ?? 'The Zoom link for this class has not been set yet.'));
   redirect(data as string);
 }
+
+/** "Notify me when this class launches": add or remove interest in a coming-soon class. */
+export async function toggleInterest(form: FormData) {
+  const classId = String(form.get('class_id') ?? '');
+  if (!/^[0-9a-f-]{36}$/.test(classId)) redirect('/live#coming-soon');
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect('/sign-in?next=/live%23coming-soon');
+  if (form.get('on') === '1') {
+    const { error } = await supabase.from('live_class_interest').upsert({ class_id: classId, user_id: user.id }, { onConflict: 'class_id,user_id', ignoreDuplicates: true });
+    revalidatePath('/live');
+    redirect(error ? `/live?e=${encodeURIComponent('Could not save that. Please try again.')}#coming-soon` : '/live?ok=notify#coming-soon');
+  }
+  await supabase.from('live_class_interest').delete().eq('class_id', classId).eq('user_id', user.id);
+  revalidatePath('/live');
+  redirect('/live?ok=unnotify#coming-soon');
+}

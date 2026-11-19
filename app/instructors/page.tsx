@@ -4,7 +4,7 @@ import { SitePage } from '@/components/site/SitePage';
 import { wrap } from '@/components/site/sections';
 import { photoUrl, money } from '@/lib/teach/format';
 
-export const metadata = { title: 'Our instructors', description: 'Meet the BAYSE instructors and book a 45-minute 1-to-1 on Zoom.' };
+export const metadata = { title: 'Our instructors', description: 'Meet the BAYSE instructors and book a 40-minute 1-to-1 on Zoom.' };
 export const dynamic = 'force-dynamic';
 
 export default async function Instructors() {

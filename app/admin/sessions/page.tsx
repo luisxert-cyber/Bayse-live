@@ -49,7 +49,7 @@ export default async function Sessions({ searchParams }: { searchParams: Promise
     <div className="space-y-6">
       <div>
         <h1 className="text-xl font-semibold">1-to-1 sessions</h1>
-        <p className="mt-1 max-w-[70ch] text-sm text-muted">45-minute private Zoom sessions. Members cancelling 12 hours or more before get their credit or money back; under 12 hours the session is lost. Personal Coaching credits last for the month they are given and one more.</p>
+        <p className="mt-1 max-w-[70ch] text-sm text-muted">40-minute private Zoom sessions. Members cancelling 12 hours or more before get their credit or money back; under 12 hours the session is lost. Personal Coaching credits last for the month they are given and one more.</p>
       </div>
       {sp.ok && <Notice tone="success">{OK[sp.ok] ?? 'Saved.'}</Notice>}
       {sp.error && <Notice tone="error">{sp.error === 'nomember' ? 'No member with that email.' : sp.error === 'email' ? 'Check the email.' : decodeURIComponent(sp.error)}</Notice>}

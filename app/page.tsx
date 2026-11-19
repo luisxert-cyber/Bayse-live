@@ -5,7 +5,7 @@ import { SiteFooter } from '@/components/site/SiteFooter';
 import { buttonClass } from '@/components/ui';
 import { getUser } from '@/lib/auth/session';
 import { hasOnDemand } from '@/lib/auth/access';
-import { LIVE_CLASSES_PER_WEEK, ON_DEMAND_CLASSES, BUILDER_MOVES } from '@/lib/site/offer';
+import { LIVE_CLASSES_PER_WEEK, LIVE_CLASSES_PLANNED, ON_DEMAND_CLASSES, BUILDER_MOVES } from '@/lib/site/offer';
 import { PhoneTour } from '@/components/site/PhoneTour';
 import { FreeClassButton } from '@/components/site/FreeClassButton';
 import { Icon } from '@/components/site/Graphics';
@@ -85,6 +85,18 @@ export default async function Home() {
 
         <AnywhereSection photos={{ a: PHOTO.hero, b: PHOTO.core, c: PHOTO.plank }} />
 
+        {/* Live classes: 17 now, growing to 27 */}
+        <section className={`${wrap} pb-10`}>
+          <Link href="/live-classes" className="group grid items-center gap-4 border-2 border-white p-6 sm:grid-cols-[1fr_auto] sm:p-8" data-live-teaser>
+            <div>
+              <p className="eyebrow">Live on Zoom · 40 minutes · from anywhere</p>
+              <p className="mt-2 text-[28px] font-bold uppercase leading-tight sm:text-[36px]">{LIVE_CLASSES_PER_WEEK} live classes every week</p>
+              <p className="mt-1 text-lg font-bold uppercase text-muted">{LIVE_CLASSES_PLANNED} weekly live classes · coming soon</p>
+              <p className="mt-3 max-w-[56ch] text-sm text-muted">Early mornings, lunchtimes, afternoons and evenings, with strength, mobility, 50+, prenatal and postnatal classes on the way. See which are live now and tap Notify me for the rest.</p>
+            </div>
+            <span className="inline-flex min-h-[48px] items-center justify-center bg-white px-6 text-sm font-bold uppercase text-black group-hover:opacity-90">See the timetable</span>
+          </Link>
+        </section>
         <ClassesSection member={member} />
         <FeaturesSection />
         <div id="membership" className="scroll-mt-28"><PricingChooser studio="summary" /></div>

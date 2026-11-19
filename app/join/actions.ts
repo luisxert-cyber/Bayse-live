@@ -49,7 +49,8 @@ export async function createMembershipCheckout(priceId: string): Promise<Checkou
   if (!price.stripe_price_id) return { error: 'not_connected' };
   if ((subs ?? []).some((s) => ['trialing', 'active', 'past_due'].includes(s.status as string))) return { error: 'already' };
 
-  const trialDays = studioPrice ? 0 : trialDaysFor((subs ?? []).length > 0, price.trial_days as number);
+  // Studio members can try Inner Circle and Black free for 7 days too (owner decision, master brief): one trial per member.
+  const trialDays = trialDaysFor((subs ?? []).length > 0, price.trial_days as number);
   const onTrial = trialDays > 0;
   const email = user.email ?? user.new_email ?? undefined;
 

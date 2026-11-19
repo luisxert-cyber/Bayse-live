@@ -21,8 +21,8 @@ const GROUPS: { id: string; title: string; plan: string; items: [string, string]
     ['Programmes for your stage of life', 'BAYSE Begin, Stronger Years, Midlife, At Home, Postnatal and Prenatal: short guided classes, week by week.'],
   ] },
   { id: 'live', title: 'Live and 1-to-1', plan: 'Inner Circle and Black', items: [
-    ['Live Zoom classes', `${LIVE_CLASSES_PER_WEEK} classes a week, 45 minutes each, with an instructor who can watch your form.`],
-    ['Private 1-to-1s', `45 minutes on Zoom with the instructor you choose. One every 28 days with Black, or ${PRIVATE_SESSION_PRICE} each on any plan.`],
+    ['Live Zoom classes', `${LIVE_CLASSES_PER_WEEK} classes a week now, 10 more coming soon, 40 minutes each, with an instructor who can watch your form.`],
+    ['Private 1-to-1s', `40 minutes on Zoom with the instructor you choose. One every 28 days with Black, or ${PRIVATE_SESSION_PRICE} each on any plan.`],
     ['Meet the instructors', 'Every instructor has a page with photos, what they specialise in and the times you can book them.'],
   ] },
   { id: 'nourish', title: 'Nourish', plan: 'Inner Circle and Black', items: [

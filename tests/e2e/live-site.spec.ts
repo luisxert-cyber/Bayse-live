@@ -99,6 +99,21 @@ test('home: phone tour and questions respond', async ({ page }) => {
   }
 });
 
+test('live timetable: 17 live now, 10 coming soon, coming soon cannot be booked', async ({ page }) => {
+  await page.goto('/live-classes');
+  const table = page.locator('[data-timetable]');
+  await expect(table.getByText(/17 available now · 10 more coming soon/)).toBeVisible();
+  await table.getByRole('tab', { name: 'Week' }).click();
+  await expect(table.locator('[data-class-status="live"]')).toHaveCount(17);
+  const soon = table.locator('[data-class-status="coming_soon"]');
+  await expect(soon).toHaveCount(10);
+  await expect(soon.first().getByRole('link', { name: 'Book class' })).toHaveCount(0);
+  await expect(soon.first().getByRole('link', { name: 'Notify me when it launches' })).toBeVisible();
+  await expect(table.getByText('40 minutes').first()).toBeVisible();
+  await table.getByRole('button', { name: 'Coming soon' }).click();
+  await expect(table.locator('[data-class-status="live"]')).toHaveCount(0);
+});
+
 test('signed-out visitors are sent to sign in from member areas', async ({ page }) => {
   for (const path of ['/today', '/you', '/you/personalise', '/you/sessions', '/admin', '/teach', '/teach/profile']) {
     await page.goto(path);

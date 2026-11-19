@@ -59,7 +59,7 @@ export function invoiceSubscriptionId(inv: InvoiceLike): string | null {
 }
 
 /**
- * BAYSE Black includes one 45-minute private Zoom session per billing period (every 28 days). Each paid invoice
+ * BAYSE Black includes one 40-minute private Zoom session per paid billing period (every 28 days), with no carry-over. Each paid invoice
  * for a plan with personal coaching gives the member one credit, keyed on the invoice id so a
  * replayed webhook can never give two. Free-trial invoices (nothing paid, still trialing) give none.
  * Returns true when a credit was added.
@@ -75,11 +75,9 @@ export async function grantCreditForInvoice(admin: Admin, inv: InvoiceLike, sub:
   const userId = await resolveUserId(admin, row.stripe_customer_id, row.user_id_hint);
   if (!userId) throw new Error(`No BAYSE user for customer ${row.stripe_customer_id}`);
 
-  const { data: settings } = await admin.from('booking_settings').select('credit_valid_months').maybeSingle();
-  const months = Math.max(1, Number(settings?.credit_valid_months ?? 1));
+  // No carry-over (master brief): the session must be used within the paid 28-day period it came with.
   const now = new Date();
-  const expires = new Date(now);
-  expires.setMonth(expires.getMonth() + months);
+  const expires = row.current_period_end ? new Date(row.current_period_end) : new Date(now.getTime() + 28 * 864e5);
   const { error } = await admin.from('coaching_credits').upsert({
     user_id: userId,
     period_start: now.toISOString().slice(0, 10),

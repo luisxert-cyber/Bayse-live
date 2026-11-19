@@ -1,10 +1,12 @@
 import Link from 'next/link';
 import { buttonClass } from '@/components/ui';
-import { LIVE_TIMETABLE, LIVE_CLASSES_PER_WEEK, LIVE_CLASS_MINUTES, PROGRAMMES, CLUBS, FAQS, TIERS } from '@/lib/site/offer';
+import { LIVE_CLASSES_PER_WEEK, LIVE_CLASS_MINUTES, LIVE_CLASSES_PLANNED, LIVE_CLASS_STRUCTURE, PROGRAMMES, CLUBS, FAQS, TIERS } from '@/lib/site/offer';
 import { ClassLibrary } from '@/components/site/ClassLibrary';
 import { FreeClassButton } from '@/components/site/FreeClassButton';
 import { HeroInstructor } from '@/components/site/HeroInstructor';
 import { SixFeatures } from '@/components/site/SixFeatures';
+import { createClient } from '@/lib/supabase/server';
+import type { TimetableClass } from '@/lib/site/timetable';
 import { LiveTimetable } from '@/components/site/LiveTimetable';
 import { Icon } from '@/components/site/Graphics';
 import { PlanCard } from '@/components/site/PricingChooser';
@@ -27,18 +29,23 @@ const Eyebrow = ({ children }: { children: React.ReactNode }) => <p className="e
 const Rule = () => <hr className="border-stone" />;
 const CLUB_ICONS = [Icon.padel, Icon.walk, Icon.coffee, Icon.circle];
 
-export function LiveSection() {
+export async function LiveSection() {
+  const supabase = await createClient();
+  const { data } = await supabase.rpc('public_timetable');
+  const classes = (data ?? []) as TimetableClass[];
+  const live = classes.filter((c) => c.status === 'live').length || LIVE_CLASSES_PER_WEEK;
+  const total = classes.length || LIVE_CLASSES_PLANNED;
   return (
     <>
-        {/* Live classes */}
+        {/* Live classes: what runs now, and what is coming */}
         <section id="live" className={`${wrap} scroll-mt-28 py-14`}>
           <div className="grid items-start gap-10 md:grid-cols-2">
             <div>
               <Eyebrow>Live classes</Eyebrow>
-              <h2 className="mt-3 text-[32px] sm:text-[40px]">Real instructors, live, with someone watching your form</h2>
-              <p className="mt-4 text-muted">One instructor teaches. The other watches your form and coaches you by name.</p>
+              <h2 className="mt-3 text-[32px] sm:text-[40px]">{total} live classes per week, coming soon</h2>
+              <p className="mt-4 text-muted">Enjoy {live} live instructor-led classes every week right now. We’re growing to {total} weekly sessions, with even more Pilates, strength, mobility and specialist classes to fit your lifestyle.</p>
               <ul className="mt-5 space-y-2.5 text-[15px]">
-                {[`${LIVE_CLASSES_PER_WEEK} classes a week, ${LIVE_CLASS_MINUTES} minutes each`, 'Mornings, lunchtimes and evenings', 'Camera on for feedback, or off', 'Just a mat: no reformer needed'].map((t) => <li key={t} className="flex gap-3"><Tick />{t}</li>)}
+                {[`${live} classes a week available now, ${LIVE_CLASS_MINUTES} minutes each`, LIVE_CLASS_STRUCTURE, 'Early mornings, lunchtimes, afternoons and evenings', 'Camera on for feedback, or off', 'Most classes need just a mat'].map((t) => <li key={t} className="flex gap-3"><Tick />{t}</li>)}
               </ul>
             </div>
             <figure className="border border-stone">
@@ -47,11 +54,11 @@ export function LiveSection() {
             </figure>
           </div>
           <div className="mt-12 mb-4 flex flex-wrap items-end justify-between gap-2">
-            <h3 className="text-2xl uppercase">This week&rsquo;s live classes</h3>
-            <p className="text-sm text-muted">{LIVE_CLASSES_PER_WEEK} classes · all {LIVE_CLASS_MINUTES} min · UK time</p>
+            <h3 className="text-2xl uppercase">The weekly timetable</h3>
+            <p className="text-sm text-muted">All {LIVE_CLASS_MINUTES} min · UK time</p>
           </div>
-          <LiveTimetable days={LIVE_TIMETABLE} minutes={LIVE_CLASS_MINUTES} />
-          <p className="mt-3 text-xs text-muted">The app always shows the latest timetable. Join any class from your phone, tablet or laptop.</p>
+          {classes.length > 0 ? <LiveTimetable classes={classes} /> : <p className="border border-dashed border-stone p-6 text-center text-sm text-muted">The timetable is loading. Please refresh.</p>}
+          <p className="mt-3 text-xs text-muted">Coming soon classes are not bookable yet. Tap Notify me and we’ll let you know in the app when one launches. Join live classes from your phone, tablet or laptop.</p>
         </section>
 
     </>

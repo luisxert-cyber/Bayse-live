@@ -51,7 +51,7 @@ export default async function Join({ searchParams }: { searchParams: Promise<Rec
   const ready = Boolean(publicEnv.stripePublishableKey);
   const chosen = isUuid(sp.price) ? prices.find((p) => p.id === sp.price) ?? null : null;
   const chosenPlan = chosen ? plans.find((p) => p.id === chosen.plan_id) ?? null : null;
-  const freeTrial = !billing.hadMembership && !studioMember;
+  const freeTrial = !billing.hadMembership;
   const chosenTrialDays = chosen ? trialDaysFor(billing.hadMembership, chosen.trial_days) : 0;
   const firstPayment = firstPaymentAt(chosenTrialDays);
 
