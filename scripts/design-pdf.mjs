@@ -110,7 +110,10 @@ try {
   await makeMember(dp);
   await shoot(dp, 'Sign-up journey', 'Start your free trial', '/join', 'desktop');
   const skip = dp.getByRole('button', { name: /Test mode · skip payment/ });
-  if (await skip.count()) { await skip.click(); await dp.waitForLoadState('networkidle').catch(() => {}); }
+  if (await skip.count()) {
+    await Promise.all([dp.waitForURL(/\/today|test=failed/, { timeout: 30000 }), skip.click()]);
+    console.log('test mode:', dp.url());
+  } else console.log('no test mode button');
   memberOk = true;
 } catch (e) {
   console.log('member journey failed:', e.message.split('\n')[0]);
@@ -119,6 +122,9 @@ try {
 if (memberOk) {
   // Same signed-in member on the phone.
   await phone.addCookies(await desktop.cookies());
+  await dp.goto(BASE + '/train');
+  const prog = await dp.locator('[data-stage-programme]').first().getAttribute('href').catch(() => null);
+  if (prog) MEMBER.splice(3, 0, ['A programme', prog]);
   for (const [name, path] of MEMBER) {
     await shoot(dp, 'Member app', name, path, 'desktop');
     await shoot(pp, 'Member app', name, path, 'phone');
@@ -142,8 +148,8 @@ h1{font-size:112px;line-height:.92;font-weight:800;text-transform:uppercase;lett
 .toc b{display:block;color:#fff;text-transform:uppercase;letter-spacing:.12em;font-size:12px;margin:10px 0 2px;break-after:avoid}
 .meta{display:flex;justify-content:space-between;font-size:14px;color:#9a9a9a;border-top:1px solid #333;padding-top:18px}
 .shot{break-after:page;background:#000}
-.band{height:${BAND}px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid #333;font-size:15px}
-.band span{color:#9a9a9a;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+.band{height:${BAND}px;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:0 20px;border-bottom:1px solid #333;font-size:15px;overflow:hidden;white-space:nowrap}
+.band span{color:#9a9a9a;font-size:10px;letter-spacing:.12em;text-transform:uppercase}
 .shot img{display:block}
 `;
 let html = `<section class="cover"><div><p class="eyebrow">Site design · ${esc(date)}</p><h1>The BAYSE<br>Club</h1>
