@@ -9,6 +9,8 @@ import { LIVE_CLASSES_PER_WEEK } from '@/lib/site/offer';
 import { PhoneTour } from '@/components/site/PhoneTour';
 import { FreeClassButton } from '@/components/site/FreeClassButton';
 import { Icon } from '@/components/site/Graphics';
+import { StudioFinder } from '@/components/site/StudioFinder';
+import { ReviewsBadge } from '@/components/site/ReviewsBadge';
 import { PHOTO, wrap, Tick, ClassesSection, FeaturesSection, MembershipSection, FaqSection, TrialCta } from '@/components/site/sections';
 
 // Home: what The BAYSE Club is, then a taste of each part. Each part has its own page for the detail.
@@ -45,7 +47,7 @@ export default async function Home() {
             [Icon.live, 'Live coached classes', `${LIVE_CLASSES_PER_WEEK} a week, taught live by the BAYSE team`, '/live-classes'],
             [Icon.plan, 'Your personal plan', '4 to 12 weeks, built from your answers', '/programmes'],
             [Icon.play, 'On-demand library', 'Follow-along classes and a workout builder', '/classes'],
-            [Icon.people, 'Community', 'Circles, Clubs and members near you', '/clubs'],
+            [Icon.people, 'Community', 'Circles, Clubs and members near you', '/the-community'],
           ].map(([icon, t, d, href]) => (
             <Link key={t as string} href={href as string} className="group bg-bg px-4 py-5 hover:bg-surface sm:px-6">
               <span className="block h-6 w-6">{icon}</span>
@@ -56,6 +58,8 @@ export default async function Home() {
           ))}
           </div>
         </section>
+
+        <ReviewsBadge />
 
         {/* Your programme. Your coach. Your people. + app tour */}
         <section className={`${wrap} py-10`}>
@@ -81,6 +85,19 @@ export default async function Home() {
         <MembershipSection />
         <FaqSection limit={4} />
         <p className="-mt-8 pb-6 text-center"><Link href="/faq" className="text-sm underline">All questions</Link></p>
+        {/* Who it's for */}
+        <section className={`${wrap} py-12`}>
+          <div className="grid gap-6 border border-stone p-6 md:grid-cols-[1fr_auto] md:items-center">
+            <div>
+              <p className="eyebrow">Who it’s for</p>
+              <h2 className="mt-2 text-[28px] sm:text-[36px]">Every woman is welcome here</h2>
+              <p className="mt-3 max-w-[60ch] text-muted">Beginners, new mums, midlife, later life, busy weeks and long breaks. Gentle where you need it, stronger when you’re ready.</p>
+            </div>
+            <Link href="/who-its-for" className="inline-flex min-h-[48px] items-center justify-center border border-white px-6 text-sm font-bold uppercase hover:bg-white hover:text-black">See who we help</Link>
+          </div>
+        </section>
+
+        <StudioFinder />
         <TrialCta />
       </main>
       <SiteFooter />

@@ -278,3 +278,18 @@ test('members only see the prices meant for them', () => {
   assert.deepEqual(pricesFor(prices, false).map((p) => p.id), ['a', 'c']);
   assert.deepEqual(pricesFor(prices, true).map((p) => p.id), ['b']);
 });
+
+test('studio map: every studio has a unique slug and sits inside the map', async () => {
+  const { STUDIOS, MAP_WIDTH, MAP_HEIGHT, mapPoint, directionsUrl } = await import('../../lib/site/studios');
+  assert.equal(new Set(STUDIOS.map((s) => s.slug)).size, STUDIOS.length);
+  for (const s of STUDIOS) {
+    const { x, y } = mapPoint(s.lat, s.lng);
+    assert.ok(x > 20 && x < MAP_WIDTH - 20, `${s.town} x`);
+    assert.ok(y > 20 && y < MAP_HEIGHT - 20, `${s.town} y`);
+    assert.match(directionsUrl(s), /^https:\/\/www\.google\.com\/maps\/search\/\?api=1&query=BAYSE/);
+  }
+  // Liverpool is west of Harrogate and north of Stafford.
+  const at = (slug: string) => { const s = STUDIOS.find((x) => x.slug === slug)!; return mapPoint(s.lat, s.lng); };
+  assert.ok(at('liverpool').x < at('harrogate').x);
+  assert.ok(at('liverpool').y < at('stafford').y);
+});
