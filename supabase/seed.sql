@@ -13,7 +13,6 @@ insert into public.studios (slug, name, town, status) values
   ('chester',        'BAYSE Chester',        'Chester',        'open'),
   ('harrogate',      'BAYSE Harrogate',      'Harrogate',      'open'),
   ('mega-reformer-stockton-heath', 'BAYSE Mega Reformer Stockton Heath', 'Stockton Heath', 'open'),
-  ('mega-reformer-liverpool',      'BAYSE Mega Reformer Liverpool',      'Liverpool',      'open'),
   ('manchester-northern-quarter',  'BAYSE Manchester Northern Quarter',  'Manchester',     'opening'),
   ('leeds',                        'BAYSE Leeds',                        'Leeds',          'opening'),
   ('cheltenham',                   'BAYSE Cheltenham',                   'Cheltenham',     'opening')

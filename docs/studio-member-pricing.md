@@ -29,5 +29,5 @@ Foundation stays at £19.99 (owner decision 19 Nov; the written brief said £14.
 2. Apply migration `20261119000100_studio_member_pricing.sql` to the database, together with the deploy (the previous join page would list the new studio rows to everyone).
 3. Switch off the `test_mode` flag (anyone can currently give themselves full access).
 4. Set up the email provider: the 28-day notice when a studio membership ends is only shown in the app until emails are on.
-5. Done 19 Nov: the studio list holds all 11 open studios (incl. Mega Reformer Stockton Heath and Liverpool) and the three opening soon (migration `20261119000200_studio_list_update.sql`).
+5. Done 19 Nov: the studio list holds the 10 open studios members can link to (incl. Mega Reformer Stockton Heath; Mega Reformer Liverpool is the same membership as Liverpool) and the three opening soon (migration `20261119000200_studio_list_update.sql`).
 6. A scheduled job to flag overdue re-checks is not built; the admin screen lists them.
