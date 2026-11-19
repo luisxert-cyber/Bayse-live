@@ -7,7 +7,7 @@ import { SiteMenu } from './SiteMenu';
 const MENU = [
   ['/pricing', 'Pricing'],
   ['/features', 'Features'],
-  ['/community', 'Community'],
+  ['/the-community', 'Community'],
   ['/free-trial', '7-day free trial'],
   ['/live-classes', 'Live classes'],
   ['/classes', 'On-demand classes'],

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+// The public page about the community. (/community itself is the members’ community inside the app.)
 import { SitePage } from '@/components/site/SitePage';
 import { PageHero } from '@/components/site/PageHero';
 import { StudioFinder } from '@/components/site/StudioFinder';
@@ -22,7 +23,7 @@ const SAFE: [string, string][] = [
   ['Adults only, public places', 'Meetups are for adults and happen in public places.'],
 ];
 
-export default function Community() {
+export default function TheCommunity() {
   return (
     <SitePage>
       <PageHero eyebrow="Community" title="Your people, online and near you" intro="Pilates is easier to stick with when someone notices you showed up. The community is part of every plan, including Foundation." image={PHOTO.friends} />

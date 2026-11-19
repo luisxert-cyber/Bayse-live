@@ -61,7 +61,7 @@ export default function Pricing() {
           <p className="eyebrow">Community</p>
           <h3 className="mt-2 text-2xl font-bold uppercase">Every plan includes the community</h3>
           <p className="mt-3 text-muted">The BAYSE Club feed, a group for each BAYSE studio, and walking, padel and social groups that members set up and run themselves. It’s part of Foundation, not an extra.</p>
-          <Link href="/community" className="mt-5 inline-flex min-h-[44px] items-center border border-white px-5 text-sm font-bold uppercase hover:bg-white hover:text-black">See the community</Link>
+          <Link href="/the-community" className="mt-5 inline-flex min-h-[44px] items-center border border-white px-5 text-sm font-bold uppercase hover:bg-white hover:text-black">See the community</Link>
         </div>
         <div className="border border-stone p-6">
           <p className="eyebrow">1-to-1s</p>

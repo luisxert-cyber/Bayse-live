@@ -19,7 +19,7 @@ export function SiteFooter() {
           <Link href="/reformer" className="block hover:text-ink">Reformer at home</Link>
           <Link href="/programmes" className="block hover:text-ink">Programmes</Link>
           <Link href="/instructors" className="block hover:text-ink">Instructors and 1-to-1s</Link>
-          <Link href="/community" className="block hover:text-ink">Community</Link>
+          <Link href="/the-community" className="block hover:text-ink">Community</Link>
           <Link href="/faq" className="block hover:text-ink">Questions</Link>
           <Link href="/pricing" className="block hover:text-ink">Pricing</Link>
           <Link href="/start/welcome" className="block hover:text-ink">Build my plan</Link>

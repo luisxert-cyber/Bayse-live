@@ -46,7 +46,7 @@ export default async function Home() {
             [Icon.live, 'Live coached classes', `${LIVE_CLASSES_PER_WEEK} a week, taught live by the BAYSE team`, '/live-classes'],
             [Icon.plan, 'Your personal plan', '4 to 12 weeks, built from your answers', '/programmes'],
             [Icon.play, 'On-demand library', 'Follow-along classes and a workout builder', '/classes'],
-            [Icon.people, 'Community', 'Circles, Clubs and members near you', '/community'],
+            [Icon.people, 'Community', 'Circles, Clubs and members near you', '/the-community'],
           ].map(([icon, t, d, href]) => (
             <Link key={t as string} href={href as string} className="group bg-bg px-4 py-5 hover:bg-surface sm:px-6">
               <span className="block h-6 w-6">{icon}</span>
