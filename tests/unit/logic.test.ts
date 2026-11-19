@@ -359,3 +359,41 @@ test('UK days and level names', () => {
   assert.equal(levelFor(160).name, 'Flow Finder');
   assert.equal(levelFor(99999).name, 'BAYSE Legend');
 });
+
+// ---------- Stage-of-life programmes ----------
+import { AVAILABLE } from '../../lib/workouts/catalog';
+import { findAnyWorkout } from '../../lib/workouts/builder';
+import { STAGE_PROGRAMMES, OPEN_STAGE_PROGRAMMES, stageSchedule, isStageWorkout, PRENATAL_CUES } from '../../lib/workouts/stages';
+
+test('stage programmes only use beginner moves that have a demo', () => {
+  for (const p of STAGE_PROGRAMMES) {
+    assert.ok(p.note.length > 20, `${p.key} has a note to read first`);
+    for (const c of p.classes) for (const b of c.blocks) {
+      const ex = AVAILABLE[b.ex];
+      assert.ok(ex, `${c.key} uses ${b.ex}, which has no demo`);
+      if (p.key !== 'midlife') assert.equal(ex.level, 1, `${c.key}: ${b.ex} is not a beginner move`);
+    }
+  }
+});
+
+test('prenatal has nothing lying down, no twists and no planks; postnatal has no planks', () => {
+  const pre = STAGE_PROGRAMMES.find((p) => p.key === 'prenatal')!, post = STAGE_PROGRAMMES.find((p) => p.key === 'postnatal')!;
+  const used = (p: typeof pre) => new Set(p.classes.flatMap((c) => c.blocks.map((b) => b.ex)));
+  // Only standing and all-fours moves in pregnancy.
+  for (const ex of used(pre)) assert.ok(['march', 'arm-circles', 'squat', 'good-morning', 'catcow', 'quad-hip-circle', 'birddog', 'childs'].includes(ex), `prenatal uses ${ex}`);
+  for (const ex of used(post)) assert.ok(!['plank', 'bear-hold', 'bear-hold-hold', 'singleleg', 'deadbug', 'roll-back'].includes(ex), `postnatal uses ${ex}`);
+  // Every move in both programmes has wording written for that stage, never the general cue.
+  for (const p of [pre, post]) for (const c of p.classes) for (const b of c.blocks) assert.ok((b.cue?.length ?? 0) > 30 && (b.easier?.length ?? 0) > 10, `${c.key}: ${b.ex} has no specific cue`);
+  assert.ok(!Object.values(PRENATAL_CUES).some(([cue]) => /belly in|on your back|lie /i.test(cue)), 'prenatal cues never ask for lying down or drawing the belly in');
+  for (const p of [pre, post]) assert.ok((p.stop?.length ?? 0) >= 4 && (p.adapt?.length ?? 0) >= 3, `${p.key} lists when to stop and how to adapt`);
+  assert.ok(findAnyWorkout('begin-first-steps'));
+  assert.ok(isStageWorkout('midlife-strong') && !isStageWorkout('core-10'));
+});
+
+test('a stage programme has a session for every slot in every week', () => {
+  for (const p of OPEN_STAGE_PROGRAMMES) {
+    const s = stageSchedule(p);
+    assert.equal(s.length, p.weeks);
+    for (const wk of s) assert.equal(wk.sessions.length, p.perWeek);
+  }
+});

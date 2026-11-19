@@ -8,7 +8,8 @@ import { loadVoice } from '@/lib/workouts/voice';
 import { EXERCISES, workoutMinutes, type Workout } from '@/lib/workouts/catalog';
 import { buttonClass } from '@/components/ui';
 
-type Step = { kind: 'work' | 'rest'; ex: string; seconds: number };
+// `cue` and `easier` are set when the class has its own wording for a move (for example in pregnancy).
+type Step = { kind: 'work' | 'rest'; ex: string; seconds: number; cue?: string; easier?: string };
 
 function beep(ctx: AudioContext | null, high = false) {
   if (!ctx) return;
@@ -63,7 +64,7 @@ function say(text: string, on: boolean) {
 
 export function WorkoutPlayer({ workout, onComplete, exitHref, onExit }: { workout: Workout; onComplete?: () => Promise<void> | void; exitHref: string; onExit?: () => void }) {
   const steps = useMemo<Step[]>(() => workout.blocks.flatMap((b, i) => {
-    const s: Step[] = [{ kind: 'work', ex: b.ex, seconds: b.seconds }];
+    const s: Step[] = [{ kind: 'work', ex: b.ex, seconds: b.seconds, cue: b.cue, easier: b.easier }];
     if (i < workout.blocks.length - 1 && workout.rest > 0) s.push({ kind: 'rest', ex: workout.blocks[i + 1].ex, seconds: workout.rest });
     return s;
   }), [workout]);
@@ -90,8 +91,9 @@ export function WorkoutPlayer({ workout, onComplete, exitHref, onExit }: { worko
     const s = steps[Math.max(0, to)];
     setI(Math.max(0, to)); setLeft(s.seconds);
     const e = EXERCISES[s.ex];
-    const played = s.kind === 'rest' ? playRecorded(recorded, ['_rest'], voice) : playRecorded(recorded, [e.move], voice);
-    if (!played) say(s.kind === 'rest' ? `Rest. Next, ${e.name}.` : `${e.name}. ${e.cue}`, voice);
+    // A recorded cue is the general wording for the move, so a class with its own wording is always read out instead.
+    const played = s.kind === 'rest' ? playRecorded(recorded, ['_rest'], voice) : s.cue ? false : playRecorded(recorded, [e.move], voice);
+    if (!played) say(s.kind === 'rest' ? `Rest. Next, ${e.name}.` : `${e.name}. ${s.cue ?? e.cue}`, voice);
   }, [steps, voice, recorded]);
 
   useEffect(() => {
@@ -134,7 +136,8 @@ export function WorkoutPlayer({ workout, onComplete, exitHref, onExit }: { worko
     try { audio.current = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)(); } catch { audio.current = null; }
     setStarted(true);
     const first = EXERCISES[steps[0].ex];
-    if (!playRecorded(recorded, ['_start', first.move].filter((k) => recorded.has(k)), voice)) say(`${workout.name}. First up, ${first.name}. ${first.cue}`, voice);
+    const own = steps[0].cue;
+    if (own || !playRecorded(recorded, ['_start', first.move].filter((k) => recorded.has(k)), voice)) say(`${workout.name}. First up, ${first.name}. ${own ?? first.cue}`, voice);
   };
 
   const pct = step.seconds ? 1 - left / step.seconds : 0;
@@ -177,8 +180,8 @@ export function WorkoutPlayer({ workout, onComplete, exitHref, onExit }: { worko
         </svg>
         <div className="min-w-0" aria-live="polite">
           <h2 className="text-[24px] leading-tight">{step.kind === 'rest' ? 'Breathe' : ex.name}</h2>
-          <p className="mt-1 text-sm">{step.kind === 'rest' ? `Get ready for ${ex.name}.` : ex.cue}</p>
-          {step.kind === 'work' && <p className="mt-1 text-xs text-muted">Easier: {ex.easier}</p>}
+          <p className="mt-1 text-sm">{step.kind === 'rest' ? `Get ready for ${ex.name}.` : step.cue ?? ex.cue}</p>
+          {step.kind === 'work' && <p className="mt-1 text-xs text-muted">Easier: {step.easier ?? ex.easier}</p>}
         </div>
       </div>
 

@@ -36,11 +36,12 @@ const WOMEN: { title: string; who: [string, string][] }[] = [
 ];
 
 const PROGRAMMES: { name: string; body: string; now: [string, string] | null }[] = [
-  { name: 'BAYSE Begin', body: 'For beginners and women returning to movement. Start from the very first breath.', now: ['/programmes', 'Start with Pilates Foundations'] },
-  { name: 'BAYSE Stronger Years', body: 'For older women: strength, balance and staying independent.', now: null },
-  { name: 'BAYSE Postnatal', body: 'A gradual return after pregnancy and childbirth.', now: null },
-  { name: 'BAYSE Midlife', body: 'Support through perimenopause and menopause.', now: null },
-  { name: 'BAYSE At Home', body: 'Low-impact, adaptable sessions for your own space.', now: null },
+  { name: 'BAYSE Begin', body: 'For beginners and women returning to movement. Start from the very first breath.', now: ['/start/welcome', 'Open now: 4 weeks, 3 short classes a week'] },
+  { name: 'BAYSE Stronger Years', body: 'For women over 50: strength, balance and staying independent.', now: ['/start/welcome', 'Open now: 6 weeks, mostly standing'] },
+  { name: 'BAYSE Postnatal', body: 'A gradual return after pregnancy and childbirth, once you have been cleared to exercise.', now: ['/start/welcome', 'Open now: 6 weeks of very gentle sessions'] },
+  { name: 'BAYSE Midlife', body: 'Support through perimenopause and menopause.', now: ['/start/welcome', 'Open now: 6 weeks of strength, core and unwinding'] },
+  { name: 'BAYSE Prenatal', body: 'Gentle strength through pregnancy, with your midwife or doctor’s agreement.', now: ['/start/welcome', 'Open now: 6 weeks, standing and all-fours only'] },
+  { name: 'BAYSE At Home', body: 'Low-impact, adaptable sessions for your own space.', now: ['/start/welcome', 'Open now: 4 weeks, no equipment'] },
   { name: 'BAYSE Personal', body: 'Private one-to-one Pilates, coaching and accountability.', now: ['/instructors', 'Meet the instructors'] },
 ];
 
