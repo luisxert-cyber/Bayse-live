@@ -5,7 +5,7 @@ import { SiteFooter } from '@/components/site/SiteFooter';
 import { buttonClass } from '@/components/ui';
 import { getUser } from '@/lib/auth/session';
 import { hasOnDemand } from '@/lib/auth/access';
-import { LIVE_CLASSES_PER_WEEK } from '@/lib/site/offer';
+import { LIVE_CLASSES_PER_WEEK, ON_DEMAND_CLASSES, BUILDER_MOVES } from '@/lib/site/offer';
 import { PhoneTour } from '@/components/site/PhoneTour';
 import { FreeClassButton } from '@/components/site/FreeClassButton';
 import { Icon } from '@/components/site/Graphics';
@@ -49,7 +49,7 @@ export default async function Home() {
           {[
             [Icon.live, 'Live coached classes', `${LIVE_CLASSES_PER_WEEK} a week, taught live by the BAYSE team`, '/live-classes'],
             [Icon.plan, 'Your personal plan', '4 to 12 weeks, built from your answers', '/programmes'],
-            [Icon.play, 'On-demand library', 'Follow-along classes and a workout builder', '/classes'],
+            [Icon.play, 'On-demand library', `${ON_DEMAND_CLASSES} classes and a workout builder with ${BUILDER_MOVES} moves`, '/classes'],
             [Icon.people, 'Community', 'Optional: Circles, Clubs and members near you, in any town', '/the-community'],
           ].map(([icon, t, d, href]) => (
             <Link key={t as string} href={href as string} className="group bg-bg px-4 py-5 hover:bg-surface sm:px-6">

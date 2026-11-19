@@ -6,6 +6,7 @@ import { MoveThumb } from '@/components/workout/MoveThumb';
 import { createClient } from '@/lib/supabase/server';
 import { VIDEO_STYLES, coverUrl } from '@/lib/video';
 import { OPEN_STAGE_PROGRAMMES } from '@/lib/workouts/stages';
+import { LIBRARY, ON_DEMAND_CLASSES } from '@/lib/site/offer';
 
 export const metadata = { title: 'Train' };
 
@@ -28,6 +29,10 @@ export default async function Train() {
   const supabase = await createClient();
   const { data: videos } = await supabase.from('video_classes').select('slug, title, minutes, level, style, cover_path, free, instructors(display_name)').eq('status', 'published').neq('style', 'reformer').order('sort').order('published_at', { ascending: false });
   const count = Object.keys(AVAILABLE).length;
+  const total = Object.keys(EXERCISES).length;
+  // Filmed classes that are planned but not ready yet: shown as "Available soon" until a class with the same name is published.
+  const have = new Set((videos ?? []).map((v) => String(v.title).toLowerCase()));
+  const soon = LIBRARY.filter((c) => !have.has(c.name.toLowerCase()));
   return (
     <main className="page space-y-6">
       <div>
@@ -44,7 +49,7 @@ export default async function Train() {
           <span aria-hidden className="text-2xl">›</span>
         </Link>
         <Link href="/train/moves" className="flex items-center justify-between gap-4 rounded-card border border-ink p-5">
-          <span><span className="block font-display text-xl font-extrabold uppercase">Move library</span><span className="text-sm text-muted">{count} moves with cues.</span></span>
+          <span><span className="block font-display text-xl font-extrabold uppercase">Move library</span><span className="text-sm text-muted">{count} moves ready, {total - count} more available soon.</span></span>
           <span aria-hidden className="text-2xl">›</span>
         </Link>
       </div>
@@ -76,6 +81,20 @@ export default async function Train() {
               </Link>
             ))}
           </div>
+        </section>
+      )}
+      {soon.length > 0 && (
+        <section data-classes-soon>
+          <h2 className="text-sm font-bold uppercase tracking-[0.1em]">Filmed classes · available soon</h2>
+          <p className="mb-2 text-sm text-muted">{ON_DEMAND_CLASSES} on-demand classes are being filmed with BAYSE instructors. They appear here as each one is ready. These are among the first.</p>
+          <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {soon.map((c) => (
+              <li key={c.id} className="flex items-center justify-between gap-3 border border-dashed border-stone p-3 text-muted">
+                <span className="min-w-0"><span className="block font-semibold leading-tight">{c.name}</span><span className="block text-xs">{c.minutes} min · {c.focus} · {c.kit}</span></span>
+                <span className="shrink-0 text-[10px] font-bold uppercase tracking-[0.1em]">Available soon</span>
+              </li>
+            ))}
+          </ul>
         </section>
       )}
       {(Object.keys(STYLES) as Style[]).map((st) => (

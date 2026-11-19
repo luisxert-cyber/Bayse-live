@@ -2,6 +2,7 @@
 // "Find your class" (BAYSE On Demand layout) with the real BAYSE classes behind it.
 // Every card opens the class player on the page. The free class plays for anyone;
 // the rest play for signed-in members, and visitors are offered the free trial instead.
+import { ON_DEMAND_CLASSES, BUILDER_MOVES } from '@/lib/site/offer';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { MoveThumb } from '@/components/workout/MoveThumb';
@@ -188,7 +189,7 @@ export function ClassLibrary({ signedIn, onRecord, preview = false }: { signedIn
       )}
       {preview && (
         <div className="mt-4 border-2 border-white p-6 text-center sm:p-8">
-          <p className="eyebrow">{CLASSES.length - 3}+ more classes, the workout builder and live classes</p>
+          <p className="eyebrow">{ON_DEMAND_CLASSES} on-demand classes, {BUILDER_MOVES} moves in the workout builder, and live classes</p>
           <p className="mt-3 font-display text-[26px] font-bold uppercase leading-tight sm:text-[34px]">{signedIn ? 'Your full library is waiting' : 'Try everything 100% free for 7 days'}</p>
           {!signedIn && <p className="mx-auto mt-2 max-w-[46ch] text-muted">Every class, every style, your own plan and 17 live classes a week. Cancel any time before day 7 and you pay nothing.</p>}
           <a href={signedIn ? '/train' : '/start/welcome'} className="mt-5 inline-flex min-h-[48px] items-center justify-center border-2 border-white bg-white px-7 text-[15px] font-bold uppercase text-black hover:opacity-90">{signedIn ? 'See all classes' : 'Start my 7-day free trial'}</a>

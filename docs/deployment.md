@@ -13,5 +13,6 @@
 
 - Run the Phase 7 checklist: payments, booking and video end to end; security and privacy review; DPIA for health data; legal pages reviewed.
 - Switch Stripe to live keys, then switch on `live_billing` in Admin → Feature flags (typed confirmation).
+- Check the library numbers on the website (`ON_DEMAND_CLASSES` 250+ and `BUILDER_MOVES` 200+ in `lib/site/offer.ts`) against what is really in the app. On 19 Nov 2026 there were 35 guided classes, no filmed classes and 26 moves with a demo. Change the numbers if the filming is not finished.
 - Remove `robots: noindex` in `app/layout.tsx`.
 - Switch on `member_emails` only when templates are approved.
