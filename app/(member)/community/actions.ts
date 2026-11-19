@@ -155,6 +155,7 @@ export async function savePrefs(f: FormData) {
     interests: f.getAll('interests').map(String).filter((i) => INTERESTS.includes(i)),
     notify_new_activities: f.get('notify') === 'on',
     show_in_rankings: f.get('rankings') === 'on',
+    town: str(f, 'town').replace(/\s+/g, ' ').slice(0, 60).length >= 2 ? str(f, 'town').replace(/\s+/g, ' ').slice(0, 60) : null,
   });
   done(f, error, error ? undefined : '/community/settings?ok=saved');
 }

@@ -11,6 +11,7 @@ const INSIDE: [string, string][] = [
   ['The BAYSE Club feed', 'Share a win, ask a question, cheer someone on. Send a heart when a post makes your day.'],
   ['Your studio’s group', 'Every BAYSE studio has its own group, so you can find the people you train next to.'],
   ['General Chat', 'One open chat room for every member, for anything from beginners’ questions to what’s for dinner.'],
+  ['Members near you, anywhere in the UK', 'Add your town or city and find BAYSE members nearby, whether or not there is a studio near you. Completely optional.'],
   ['Circles', 'Small groups of 10 to 20 who train at similar times and keep each other going.'],
   ['Clubs and meetups', 'Walking, padel and social groups, and nights out near you, set up and run by members.'],
   ['Member challenges', 'A new challenge to join each month, with everyone’s progress side by side.'],
