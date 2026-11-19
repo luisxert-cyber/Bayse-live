@@ -57,7 +57,7 @@ export function LiveTimetable({ classes, liveHref = '/start/welcome', notifyHref
               <p className="text-sm">{c.minutes} minutes · {c.level ?? 'All levels'} · {partOfDay(c.starts_at)}</p>
               <p className="text-sm"><span className="text-muted">Equipment:</span> {equipmentText(c)}</p>
               {c.description && <p className="text-sm text-muted">{c.description}</p>}
-              {c.instructors.length > 0 && <p className="text-xs text-muted">With {c.instructors.join(' and ')}</p>}
+              <p className="text-xs text-muted" data-class-instructor>{c.instructors.length > 0 ? `With ${c.instructors.join(' and ')}` : 'Instructor announced soon'}</p>
               <div className="mt-auto pt-2">
                 {isLive
                   ? <Link href={liveHref} className="inline-flex min-h-[44px] w-full items-center justify-center bg-white px-4 text-xs font-bold uppercase text-black">Book class</Link>

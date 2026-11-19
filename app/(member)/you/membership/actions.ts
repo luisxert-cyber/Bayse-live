@@ -38,3 +38,19 @@ export async function requestStudioLink(form: FormData) {
   // 23505: a link to this studio already exists (pending, verified or ended). Staff re-open it.
   redirect(`/you/membership?studio=${error ? (error.code === '23505' ? 'exists' : 'failed') : 'requested'}`);
 }
+
+/**
+ * A studio member enters the code BAYSE gave them. The database checks the code and, if it is
+ * good, links their studio membership as verified straight away (free Foundation, member prices).
+ */
+export async function redeemStudioCode(form: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user || !hasAccount(user)) redirect('/sign-in?next=/you/membership');
+  const code = String(form.get('code') ?? '').trim().slice(0, 40);
+  if (!code) redirect('/you/membership?code=invalid');
+  const { data, error } = await supabase.rpc('redeem_studio_code', { p_code: code });
+  const result = error ? 'failed' : String(data);
+  revalidatePath('/you/membership');
+  redirect(`/you/membership?code=${encodeURIComponent(result)}`);
+}

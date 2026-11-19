@@ -82,6 +82,11 @@ export const STRAPLINE = 'More than Pilates. Your community, your movement, your
 // half price on Inner Circle and Black (studioPrice). The amounts charged live in the database (public.prices).
 export const STUDIO_NOTE = 'Studio member prices are for active £99 and £148 BAYSE studio memberships, checked by your studio before they apply.';
 export const BILLING = 'every 28 days';
+// Company details used in the legal pages (Companies House, checked 19 Nov 2026).
+export const COMPANY = { name: 'Northwest Reformer Pilates Ltd', number: '16010894', office: '312 Ripponden Road, Oldham, OL4 2NY, England' };
+// The mailbox members are told to write to. It must exist and be read before launch.
+export const SUPPORT_EMAIL = 'support@thebayseclub.com';
+export const LEGAL_UPDATED = '19 November 2026';
 // Library size shown on the website (owner instruction, 19 Nov 2026). These are the numbers for launch:
 // the classes and moves are being filmed and were not all in the app when this was written.
 // Check both against the real library before the site opens to the public (docs/deployment.md).

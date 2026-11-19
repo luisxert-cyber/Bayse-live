@@ -18,7 +18,7 @@ export default async function Instructors() {
       <section className={`${wrap} py-10`}>
         <p className="eyebrow">The BAYSE Club</p>
         <h1 className="mt-3 text-[40px] leading-none sm:text-[56px]">Our instructors</h1>
-        <p className="mt-4 max-w-[52ch] text-lg text-muted">The same team that teaches in our studios. Join their live classes, or book a {settings?.session_minutes ?? 45}-minute 1-to-1 on Zoom for {money(settings?.price_pence ?? 4499)}. One every 28 days is included with BAYSE Black.</p>
+        <p className="mt-4 max-w-[52ch] text-lg text-muted">The same team that teaches in our studios. Join their live classes, or book a {settings?.session_minutes ?? 40}-minute 1-to-1 on Zoom for {money(settings?.price_pence ?? 4499)}. One every 28 days is included with BAYSE Black.</p>
         <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {(team ?? []).map((t) => (
             <li key={t.slug}>
@@ -33,7 +33,14 @@ export default async function Instructors() {
             </li>
           ))}
         </ul>
-        {!team?.length && <p className="mt-8 border border-dashed border-stone p-8 text-center text-muted">Instructor profiles are on their way.</p>}
+        {!team?.length && (
+          <div className="mt-8 border border-dashed border-stone p-8 text-center" data-instructors-soon>
+            <p className="text-xs font-bold uppercase tracking-[0.14em]">Coming soon</p>
+            <p className="mx-auto mt-3 max-w-[46ch] text-lg">Meet the team behind your live classes and 1-to-1s.</p>
+            <p className="mx-auto mt-2 max-w-[52ch] text-sm text-muted">Instructor profiles and 1-to-1 booking open here shortly. BAYSE Black members keep their included session for each paid 28 days, and we’ll let you know as soon as booking opens.</p>
+            <Link href="/live-classes" className="mt-5 inline-flex min-h-[44px] items-center border border-white px-5 text-xs font-bold uppercase tracking-[0.06em] hover:bg-white hover:text-black">See the live timetable</Link>
+          </div>
+        )}
       </section>
     </SitePage>
   );

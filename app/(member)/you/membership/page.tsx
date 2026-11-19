@@ -3,12 +3,20 @@ import { requireUser } from '@/lib/auth/session';
 import { loadMember, fmtDate } from '@/lib/data/member';
 import { Card, Notice, buttonClass } from '@/components/ui';
 import { openBillingPortal } from '../actions';
-import { requestStudioLink } from './actions';
+import { requestStudioLink, redeemStudioCode } from './actions';
 import { createClient } from '@/lib/supabase/server';
 import { formatPence } from '@/lib/types';
 
 type StudioLink = { status: string; tier: string; verified_until: string | null; ended_at: string | null; studios: { name: string } | null };
 const NOTICE_DAYS = 28;
+const CODE_MSG: Record<string, string> = {
+  invalid: 'That code was not recognised. Check it and try again: codes look like BOLT-AB12CD34.',
+  used: 'That code has already been used. Ask your studio team for a new one.',
+  expired: 'That code has expired. Ask your studio team for a new one.',
+  already: 'Your studio membership is already linked to this account.',
+  slow_down: 'Too many tries. Please wait an hour and try again, or ask your studio team.',
+  failed: 'We could not check that code just now. Please try again.',
+};
 const addDays = (iso: string, days: number) => new Date(new Date(iso).getTime() + days * 86_400_000).toISOString();
 
 export const metadata = { title: 'Membership' };
@@ -49,6 +57,8 @@ export default async function Membership({ searchParams }: { searchParams: Promi
       {sp.already && <Notice>You already have an active membership.</Notice>}
       {sp.studio === 'requested' && <Notice tone="success" title="Request sent">Your studio will confirm your membership. Your included access and member prices switch on as soon as they do.</Notice>}
       {sp.studio === 'exists' && <Notice>You have already asked to link that studio. If it has been a while, speak to your studio team.</Notice>}
+      {sp.code === 'ok' && <Notice tone="success" title="Code accepted">Your studio membership is linked. BAYSE Foundation is now included free, and Inner Circle and Black are at the studio member price.</Notice>}
+      {sp.code && sp.code !== 'ok' && <Notice tone="error">{CODE_MSG[sp.code] ?? CODE_MSG.failed}</Notice>}
       {(sp.studio === 'invalid' || sp.studio === 'failed') && <Notice tone="error">We could not send that request. Please choose your studio and membership and try again.</Notice>}
 
       {studioMember && (
@@ -101,10 +111,25 @@ export default async function Membership({ searchParams }: { searchParams: Promi
         <Card>
           <p className="eyebrow">Already a BAYSE studio member?</p>
           {pending ? (
-            <p className="mt-2 text-sm text-muted">Your request to link {pending.studios?.name ?? 'your studio'} is waiting for the studio to confirm it.</p>
+            <>
+              <p className="mt-2 text-sm text-muted">Your request to link {pending.studios?.name ?? 'your studio'} is waiting for the studio to confirm it. Have a studio member code? Enter it to switch everything on now.</p>
+              <form action={redeemStudioCode} className="mt-3 flex flex-wrap items-end gap-2">
+                <label className="block min-w-0 flex-1 text-sm">Your studio member code
+                  <input name="code" required maxLength={40} autoComplete="off" autoCapitalize="characters" placeholder="e.g. BOLT-AB12CD34" className="mt-1 block min-h-tap w-full rounded-2xl border border-stone bg-surface px-3 text-sm uppercase" />
+                </label>
+                <button className={buttonClass('primary')}>Use code</button>
+              </form>
+            </>
           ) : (
             <>
-              <p className="mt-2 text-sm text-muted">Active £99 and £148 studio memberships include BAYSE Foundation free and half price on Inner Circle and Black. Tell us your studio and your studio team will confirm it.</p>
+              <p className="mt-2 text-sm text-muted">Active £99 and £148 studio memberships include BAYSE Foundation free and half price on Inner Circle and Black.</p>
+              <form action={redeemStudioCode} className="mt-3 flex flex-wrap items-end gap-2" data-studio-code>
+                <label className="block min-w-0 flex-1 text-sm">Your studio member code
+                  <input name="code" required maxLength={40} autoComplete="off" autoCapitalize="characters" placeholder="e.g. BOLT-AB12CD34" className="mt-1 block min-h-tap w-full rounded-2xl border border-stone bg-surface px-3 text-sm uppercase" />
+                </label>
+                <button className={buttonClass('primary')}>Use code</button>
+              </form>
+              <p className="mt-4 text-sm text-muted">No code? Ask at your studio, or tell us your studio below and your studio team will confirm it.</p>
               <form action={requestStudioLink} className="mt-3 space-y-2">
                 <label className="block text-sm">Your studio
                   <select name="studio_id" required className="mt-1 block min-h-tap w-full rounded-2xl border border-stone bg-surface px-3 text-sm">

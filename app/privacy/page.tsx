@@ -1,4 +1,5 @@
 import { LegalPage } from '@/components/site/LegalPage';
+import { COMPANY, SUPPORT_EMAIL, LEGAL_UPDATED } from '@/lib/site/offer';
 
 export const metadata = { title: 'Privacy policy' };
 
@@ -18,9 +19,9 @@ const ROWS: [string, string, string][] = [
 
 export default function Privacy() {
   return (
-    <LegalPage title="The BAYSE Club Privacy Policy" updated="[Publication date]">
+    <LegalPage title="The BAYSE Club Privacy Policy" updated={LEGAL_UPDATED}>
       <h2>Who is responsible for your information?</h2>
-      <p>Northwest Reformer Pilates Ltd, trading as The BAYSE Club, is the data controller for the personal information covered by this policy. This policy applies to the BAYSE Club app and website, including your account, on-demand workouts, live classes, private coaching and the member community. For questions or to exercise your privacy rights, contact BAYSE and mention The BAYSE Club. We handle your personal information under applicable UK data protection law, including the UK GDPR and the Data Protection Act 2018. The BAYSE studio privacy policy explains how BAYSE handles information about in-studio services.</p>
+      <p>Northwest Reformer Pilates Ltd, trading as The BAYSE Club, is the data controller for the personal information covered by this policy. This policy applies to the BAYSE Club app and website, including your account, on-demand workouts, live classes, private coaching and the member community. For questions or to exercise your privacy rights, email <a href={`mailto:${SUPPORT_EMAIL}`} className="underline">{SUPPORT_EMAIL}</a> or write to {COMPANY.name}, {COMPANY.office}. Company number {COMPANY.number}. We handle your personal information under applicable UK data protection law, including the UK GDPR and the Data Protection Act 2018. The BAYSE studio privacy policy explains how BAYSE handles information about in-studio services.</p>
 
       <h2>What we collect and why</h2>
       <div className="overflow-x-auto">
@@ -34,7 +35,7 @@ export default function Privacy() {
       <h2>Health information and private sessions</h2>
       {/* Addition: the required health check (PAR-Q) before classes. */}
       <p>Before your first class we ask you to complete a short health check (yes or no questions about your health) and to agree to our health and safety terms. We use your answers to help keep you safe when exercising, and we ask for your explicit consent before storing them. Your answers can be seen only by you and BAYSE’s administrators. If you book a private session, your instructor is told only whether you have told us about a health condition, so they can ask you about it; they do not see your answers. Other members and advertisers never see this information. We ask you to confirm the health check every 12 months and keep each dated record while your account is open, and afterwards only where needed for a legal claim.</p>
-      <p>If you choose to share information about an injury, pregnancy, a medical condition or another health consideration through a private screening or coaching form, we use it to discuss suitable exercises or adaptations. We ask for your explicit consent before using this information for that purpose. You can withdraw it at any time through our contact form. Withdrawal applies to future use and may affect the guidance we can offer. We share relevant details with the instructor supporting you where needed for that purpose.</p>
+      <p>If you choose to share information about an injury, pregnancy, a medical condition or another health consideration through a private screening or coaching form, we use it to discuss suitable exercises or adaptations. We ask for your explicit consent before using this information for that purpose. You can withdraw it at any time by emailing {SUPPORT_EMAIL}. Withdrawal applies to future use and may affect the guidance we can offer. We share relevant details with the instructor supporting you where needed for that purpose.</p>
       <p>When you join a live group class, other participants may see your display name and video, hear you if your microphone is enabled, and read messages you share with the group. Private coaching takes place on Zoom. If a session is to be recorded, we explain the purpose, lawful basis, viewers and retention period before recording begins.</p>
 
       <h2>Payments, service providers and community visibility</h2>
@@ -61,10 +62,10 @@ export default function Privacy() {
       <p>You can object to direct marketing at any time. You can also object to processing based on legitimate interests.</p>
 
       <h2>Updating or deleting your information</h2>
-      <p>You can update the account details available to you in the app. For help or to request account deletion, contact BAYSE and mention The BAYSE Club. We may need to verify your identity before acting on a request. We explain if we need to retain information for a lawful reason, such as accounting obligations or an ongoing legal claim. Withdrawing consent does not affect processing that was lawful before you withdrew it.</p>
+      <p>You can update the account details available to you in the app. For help or to request account deletion, email {SUPPORT_EMAIL}. We may need to verify your identity before acting on a request. We explain if we need to retain information for a lawful reason, such as accounting obligations or an ongoing legal claim. Withdrawing consent does not affect processing that was lawful before you withdrew it.</p>
 
       <h2>Complaints</h2>
-      <p>If you have a concern about how we handle your information, contact BAYSE. You can also complain to the <a href="https://ico.org.uk/make-a-complaint/" className="underline">Information Commissioner’s Office</a>.</p>
+      <p>If you have a concern about how we handle your information, email {SUPPORT_EMAIL}. You can also complain to the <a href="https://ico.org.uk/make-a-complaint/" className="underline">Information Commissioner’s Office</a>.</p>
     </LegalPage>
   );
 }

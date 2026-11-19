@@ -1,15 +1,16 @@
 import { LegalPage } from '@/components/site/LegalPage';
 import { AGREEMENT, PARQ } from '@/lib/health/parq';
+import { COMPANY, SUPPORT_EMAIL, LEGAL_UPDATED } from '@/lib/site/offer';
 
 export const metadata = { title: 'Terms and conditions' };
 
-// The BAYSE Club Terms & Conditions, version 1 (draft for approval, supplied by BAYSE on 18 Nov 2026).
-// Placeholders in [brackets] are filled in once the company details are confirmed.
+// The BAYSE Club Terms & Conditions, version 1 (supplied by BAYSE on 18 Nov 2026, published 19 Nov 2026).
+// Company details and the support address come from lib/site/offer.ts.
 export default function Terms() {
   return (
-    <LegalPage title="The BAYSE Club Terms and Conditions" updated="18 November 2026 · Version 1 · Draft for approval · Effective date [Insert launch date]">
+    <LegalPage title="The BAYSE Club Terms and Conditions" updated={`${LEGAL_UPDATED} · Version 1 · Effective from ${LEGAL_UPDATED}`}>
       <h2>1. Who supplies The BAYSE Club</h2>
-      <p>The BAYSE Club is supplied by Northwest Reformer Pilates Ltd, company number [number], registered office [address]. In these terms, “BAYSE”, “we” and “us” mean that company. Contact us through the support section of your BAYSE Club account or at [support email]. Our <a href="/privacy" className="underline">Privacy Policy</a> explains how we use personal data.</p>
+      <p>The BAYSE Club is supplied by Northwest Reformer Pilates Ltd, company number {COMPANY.number}, registered office {COMPANY.office}. In these terms, “BAYSE”, “we” and “us” mean that company. Contact us through the support section of your BAYSE Club account or at <a href={`mailto:${SUPPORT_EMAIL}`} className="underline">{SUPPORT_EMAIL}</a>. Our <a href="/privacy" className="underline">Privacy Policy</a> explains how we use personal data.</p>
       <p>These terms apply to BAYSE Club memberships, digital content, online classes, private sessions and the member community. Your studio operator’s terms govern any studio membership or in-person bookings.</p>
 
       <h2>2. Memberships and access</h2>
@@ -23,7 +24,7 @@ export default function Terms() {
       <p>Any trial or introductory offer will show its length, expiry, and any later charge and renewal date before you accept it. Browsing free material or activating studio-included access does not authorise a paid subscription.</p>
 
       <h2>4. Cancelling a paid membership</h2>
-      <p>You can give 28 days’ notice through the cancellation option in your BAYSE Club account or by emailing [support email]. Your notice starts when we receive it. We will confirm receipt, any final payment, and the date access ends.</p>
+      <p>You can give 28 days’ notice through the cancellation option in your BAYSE Club account or by emailing <a href={`mailto:${SUPPORT_EMAIL}`} className="underline">{SUPPORT_EMAIL}</a>. Your notice starts when we receive it. We will confirm receipt, any final payment, and the date access ends.</p>
       <p>If your current paid period covers the full notice period, no further payment is due. If your next renewal falls before the notice period ends, we will collect one final full 28-day payment. You keep access and the plan benefits for that full paid period. Your subscription then ends without another renewal.</p>
       <p><strong>Example.</strong> If you give notice on 10 September, your 28-day notice ends on 8 October. If your next payment is due on 20 September, that payment covers 20 September through 17 October inclusive. Your access ends after 17 October.</p>
       <p>The first paid period is subject to your statutory cancellation rights and any other rights to end the contract earlier. If you become unable to use the service because of a significant change in circumstances, contact us so we can consider your request for early cancellation.</p>
@@ -33,7 +34,7 @@ export default function Terms() {
       <p>If you expressly ask us to start supplying a service during the cooling-off period and then cancel, we may charge a proportionate amount for the service already supplied where the law allows it. The cancellation right for a service can end on full performance where you expressly requested early performance and acknowledged that consequence.</p>
       <p>For digital content such as on-demand videos, an applicable cancellation right for that content can be lost once supply begins, provided you expressly consented to immediate supply, acknowledged the loss of the right and received the required confirmation. Starting a video does not automatically remove rights that apply to other parts of your membership.</p>
       <p>Some standalone leisure bookings for a specific date or time may be exempt from the statutory cooling-off period. The cancellation terms for your booking will be shown before payment. Where a statutory refund is due, we will issue it using your original payment method unless you agree otherwise and within the applicable legal time limit.</p>
-      <p><strong>Model cancellation form.</strong> To Northwest Reformer Pilates Ltd, [postal address and support email]: I give notice that I cancel my contract for [membership, content or service]. Ordered on [date]. Name [your name]. Address [your address]. Date [date]. Signature [only if sending on paper].</p>
+      <p><strong>Model cancellation form.</strong> To {COMPANY.name}, {COMPANY.office}, {SUPPORT_EMAIL}: I give notice that I cancel my contract for [membership, content or service]. Ordered on [date]. Name [your name]. Address [your address]. Date [date]. Signature [only if sending on paper].</p>
 
       <h2>6. Live classes and private bookings</h2>
       <p>Live classes and private sessions are subject to availability. Your booking is confirmed when we send confirmation or display it as confirmed in your account. Booking details show the time, joining instructions and any applicable cancellation or rescheduling window.</p>
@@ -57,7 +58,7 @@ export default function Terms() {
       <p>We will give at least 28 days’ advance notice of a price increase or other materially adverse change wherever reasonably possible. If you choose to cancel before the change takes effect, you can end the membership before the change applies without a further charge arising from the ordinary notice rule. Changes required sooner by law or for an urgent safety or security reason will be communicated as soon as reasonably possible.</p>
 
       <h2>10. Refunds, complaints and legal rights</h2>
-      <p>If we charge you incorrectly or fail to provide a service or digital content as agreed, contact us through your account or at [support email]. Depending on the circumstances, your statutory remedies may include repeat performance, repair or replacement, a price reduction or a refund. Ordinary non-use of an available membership does not by itself entitle you to a refund.</p>
+      <p>If we charge you incorrectly or fail to provide a service or digital content as agreed, contact us through your account or at <a href={`mailto:${SUPPORT_EMAIL}`} className="underline">{SUPPORT_EMAIL}</a>. Depending on the circumstances, your statutory remedies may include repeat performance, repair or replacement, a price reduction or a refund. Ordinary non-use of an available membership does not by itself entitle you to a refund.</p>
       <p>We are responsible for foreseeable loss caused by our breach of these terms or failure to use reasonable care and skill. These terms do not limit liability for death or personal injury caused by negligence, fraud or fraudulent misrepresentation, or any other liability or consumer right that the law protects.</p>
       <p>English and Welsh law governs these terms, subject to the mandatory consumer protections and courts available where you live. We will provide your purchase confirmation and the applicable terms by email or another durable format.</p>
     </LegalPage>

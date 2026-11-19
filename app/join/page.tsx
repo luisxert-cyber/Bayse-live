@@ -135,7 +135,7 @@ export default async function Join({ searchParams }: { searchParams: Promise<Rec
                 </Card>
               );
             })}
-            <p className="text-xs text-muted">Pay in the app with Apple Pay, Google Pay or a card. {studioMember ? 'Your member price applies while your studio membership is active. If it ends we tell you at least 28 days ahead and never raise your payment without your agreement.' : <>Have a BAYSE code? Choose a membership, then tap <strong>Add promotion code</strong> on the payment step.</>} Manage or cancel from your account.</p>
+            <p className="text-xs text-muted">Pay in the app with Apple Pay, Google Pay or a card. {studioMember ? 'Your member price applies while your studio membership is active. If it ends we tell you at least 28 days ahead and never raise your payment without your agreement.' : <>Have a BAYSE code? Choose a membership, then tap <strong>Add promotion code</strong> on the payment step. BAYSE studio member with a studio code? Enter it under <a href="/you/membership" className="underline">You → Membership</a> for free Foundation.</>} Manage or cancel from your account.</p>
             {testFlag?.enabled === true && (
               // TEMPORARY: skip payment while the platform is being tested. Switch off the test_mode flag in Admin → Feature flags.
               <form action={enterTestMode} className="space-y-2 border-t border-stone pt-5">

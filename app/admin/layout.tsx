@@ -8,6 +8,7 @@ const NAV: { href: string; label: string; area: StaffArea }[] = [
   { href: '/admin/launch', label: 'Launch checklist', area: 'overview' },
   { href: '/admin/insights', label: 'Reports', area: 'overview' },
   { href: '/admin/members', label: 'Members', area: 'members' },
+  { href: '/admin/studio-codes', label: 'Studio member codes', area: 'plans' },
   { href: '/admin/studio-links', label: 'Studio member checks', area: 'plans' },
   { href: '/admin/staff', label: 'Staff and instructors', area: 'staff' },
   { href: '/admin/classes', label: 'Live classes', area: 'classes' },
