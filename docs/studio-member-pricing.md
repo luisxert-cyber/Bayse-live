@@ -21,8 +21,12 @@ Foundation stays at £19.99 (owner decision 19 Nov; the written brief said £14.
 
 ## Before launch
 
-1. Create the two studio Stripe prices (£19.99 and £39.99 every 28 days) in the same Stripe account as the standard prices and paste their ids into Admin → Plans and prices. Until then the studio upgrades show "Available soon".
-2. Apply migration `20261119000100_studio_member_pricing.sql` to the database.
+1. Map the two studio Stripe prices. They were created on 19 Nov 2026 in the live Bayse Education & Hot Mat account (GBP, every 4 weeks, no trial, on the existing products):
+   - BAYSE Inner Circle, studio member, £19.99: `price_1UdRHPApzDz2qzTe1sJ1JoqL`
+   - BAYSE Black, studio member, £39.99: `price_1UdRHXApzDz2qzTeFJIyQAxa`
+
+   Paste each id onto its studio row in Admin → Plans and prices **only after this code is deployed**. The previous version of the join page has no studio check: it would offer a mapped studio price to everyone. Until they are mapped the studio upgrades show "Available soon".
+2. Apply migration `20261119000100_studio_member_pricing.sql` to the database, together with the deploy (the previous join page would list the new studio rows to everyone).
 3. Switch off the `test_mode` flag (anyone can currently give themselves full access).
 4. Set up the email provider: the 28-day notice when a studio membership ends is only shown in the app until emails are on.
 5. Add the two studios missing from the list (9 of 11 are loaded).
