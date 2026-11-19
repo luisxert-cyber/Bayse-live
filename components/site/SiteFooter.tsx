@@ -13,6 +13,7 @@ export function SiteFooter() {
           <p className="eyebrow">BAYSE</p>
           <Link href="/features" className="block hover:text-ink">Features</Link>
           <Link href="/benefits" className="block hover:text-ink">Benefits</Link>
+          <Link href="/who-its-for" className="block hover:text-ink">Who it’s for</Link>
           <Link href="/free-trial" className="block hover:text-ink">7-day free trial</Link>
           <Link href="/live-classes" className="block hover:text-ink">Live classes</Link>
           <Link href="/classes" className="block hover:text-ink">On-demand classes</Link>
