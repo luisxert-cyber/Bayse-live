@@ -65,7 +65,7 @@ export default async function Membership({ searchParams }: { searchParams: Promi
         <Card className="border-ink">
           <p className="eyebrow">BAYSE studio member</p>
           <h2 className="mt-1 text-lg font-semibold">Your BAYSE Studio Membership Includes BAYSE Club</h2>
-          <p className="mt-2 text-sm text-muted">Enjoy your complimentary Foundation membership: Pilates on demand, the workout builder and the community. Add live classes, your personal plan, nutrition and progress with Inner Circle at half price.</p>
+          <p className="mt-2 text-sm text-muted">Enjoy your complimentary Foundation membership: the workout builder and the community. Add on-demand classes, live classes, your personal plan, nutrition and progress with Inner Circle at half price.</p>
           {!s && offers.length > 0 && (
             <div className="mt-4 space-y-3 border-t border-stone pt-4">
               <p className="eyebrow">Upgrade options · 50% studio member discount</p>

@@ -91,7 +91,7 @@ export default async function Join({ searchParams }: { searchParams: Promise<Rec
               <h1 className="text-xl font-semibold">{studioMember ? 'Your studio member upgrades' : freeTrial ? 'Start your 7-day free trial' : 'Choose your membership'}</h1>
               <p className="mt-2 text-muted">
                 {studioMember
-                  ? <>BAYSE Foundation is included with your studio membership. Add live classes, your personal plan, nutrition and progress with Inner Circle, or your own instructor with Black, at half the standard price.</>
+                  ? <>BAYSE Foundation is included with your studio membership. Add on-demand classes, live classes, your personal plan, nutrition and progress with Inner Circle, or your own instructor with Black, at half the standard price.</>
                   : freeTrial
                   ? <>Choose your membership and add your card. <strong className="text-ink">Nothing is taken for 7 days</strong>, and you can cancel any time before then in a couple of taps.</>
                   : <>Choose a membership to carry on where you left off. Your plan and progress are saved.</>}
@@ -103,7 +103,7 @@ export default async function Join({ searchParams }: { searchParams: Promise<Rec
               <Card>
                 <p className="eyebrow">Included with your studio membership</p>
                 <h2 className="mt-1 text-lg font-semibold">BAYSE Foundation · Free</h2>
-                <p className="mt-1 text-sm text-muted">Pilates on demand, the workout builder and the community. Nothing to pay and nothing to set up.</p>
+                <p className="mt-1 text-sm text-muted">The workout builder and the community. Nothing to pay and nothing to set up.</p>
               </Card>
             )}
             {plans.map((plan) => {

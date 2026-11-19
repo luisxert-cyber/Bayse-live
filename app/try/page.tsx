@@ -5,7 +5,7 @@ import { SiteHeader } from '@/components/site/SiteHeader';
 import { SiteFooter } from '@/components/site/SiteFooter';
 import { buttonClass } from '@/components/ui';
 import { getUser } from '@/lib/auth/session';
-import { hasOnDemand } from '@/lib/auth/access';
+import { hasBuilder } from '@/lib/auth/access';
 import { buildWorkout, STYLES, AREA_LABELS, EQUIPMENT_LABELS } from '@/lib/workouts/builder';
 import { EXERCISES, workoutMinutes } from '@/lib/workouts/catalog';
 import { MoveThumb } from '@/components/workout/MoveThumb';
@@ -32,7 +32,7 @@ const Pill = ({ on, children }: { on?: boolean; children: React.ReactNode }) => 
 
 export default async function Try() {
   const user = await getUser().catch(() => null);
-  if (user && (await hasOnDemand())) redirect('/train/build');
+  if (user && (await hasBuilder())) redirect('/train/build');
   return (
     <>
       <SiteHeader signedIn={hasAccount(user)} />

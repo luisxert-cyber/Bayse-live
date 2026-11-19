@@ -12,6 +12,19 @@ export async function hasEntitlement(key: string): Promise<boolean> {
   }
 }
 
+/** True when the signed-in person has an account with the workout builder (every plan, trial, studio link or code). */
+export async function hasBuilder(): Promise<boolean> {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user || user.is_anonymous) return false;
+    const { data } = await supabase.rpc('has_entitlement', { k: 'workout_builder' });
+    return data === true;
+  } catch {
+    return false;
+  }
+}
+
 /** True when the signed-in person has an account with on-demand access (paid, free trial or a BAYSE code). Checked in the database. */
 export async function hasOnDemand(): Promise<boolean> {
   try {

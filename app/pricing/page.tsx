@@ -37,7 +37,7 @@ const FAQ: [string, string][] = [
   ['What happens after my free trial?', 'On day 8 your chosen plan starts and you pay the first 28 days. Cancel at any point in the first 7 days from My BAYSE and you pay nothing.'],
   ['How do I cancel?', 'From My BAYSE → Membership, at any time. Cancellation needs 28 days’ notice; if your next payment falls inside that notice you pay one last period and keep everything until it ends. The terms explain this with an example.'],
   ['Can I change plan?', 'Yes, you can move up or down between plans at any time.'],
-  ['I’m a BAYSE studio member. Do I pay?', 'Active £99 and £148 studio memberships include BAYSE Foundation at no extra cost. Inner Circle is £19.99 and Black is £39.99 every 28 days, half the standard price. Link your studio membership in the app; your studio confirms it before the member price applies.'],
+  ['I’m a BAYSE studio member. Do I pay?', 'Active £99 and £148 studio memberships include BAYSE Foundation at no extra cost. Inner Circle is £19.99 and Black is £44.99 every 28 days, half the standard price. Enter the studio code your studio gives you in the app and your member prices apply straight away.'],
   ['What if my studio membership ends?', 'We tell you at least 28 days ahead. Included Foundation access then ends, and a half-price Inner Circle or Black membership is set to finish at the end of a paid period unless you choose a standard-price plan. We never raise what you pay without you agreeing to it.'],
   ['What if I don’t use my Black 1-to-1?', 'It’s for the 28 days you paid for and doesn’t carry over, so book it in that period. It unlocks after your first payment, not during the free trial. You can cancel a 1-to-1 up to 12 hours before and keep it.'],
 ];
