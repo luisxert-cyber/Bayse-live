@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/server';
 import { hasEntitlement } from '@/lib/auth/access';
 import { loadDaily } from '@/lib/daily/data';
 import { nextBestAction } from '@/lib/daily/next';
+import { InstallApp } from '@/components/member/InstallApp';
 import { computeProgress } from '@/lib/daily/progress';
 import { MoveThumb } from '@/components/workout/MoveThumb';
 import { EXERCISES } from '@/lib/workouts/catalog';
@@ -64,12 +65,12 @@ export default async function Today({ searchParams }: { searchParams: Promise<Re
           <div className="relative px-4 pb-4 pt-10">
             <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/75">BAYSE Daily · your next best move</p>
             <p className="mt-1 text-2xl font-bold uppercase leading-tight text-white">{next.title}</p>
-            <p className="text-sm text-white/80">{next.minutes} min{next.kind === 'live' ? ' · live on Zoom' : ''}</p>
+            {next.minutes > 0 && <p className="text-sm text-white/80">{next.minutes} min{next.kind === 'live' ? ' · live on Zoom' : ''}</p>}
           </div>
         </div>
         <div className="flex items-center justify-between gap-3 p-4">
           <p className="text-sm text-muted">{next.why}</p>
-          <span className="shrink-0 border border-ink px-4 py-2 text-sm font-bold uppercase group-hover:bg-ink group-hover:text-bg">{next.kind === 'live' ? 'See class' : 'Start'}</span>
+          <span className="shrink-0 border border-ink px-4 py-2 text-sm font-bold uppercase group-hover:bg-ink group-hover:text-bg">{next.kind === 'live' ? 'See class' : next.href === '/community' ? 'Open' : next.href === '/train/build' ? 'Build' : 'Start'}</span>
         </div>
       </Link>
       {!hasPlan && m.profile?.onboarding_completed_at && <p className="text-sm text-muted">Want a personal plan built around your goals, live classes, nutrition and progress? <Link href="/you/membership" className="underline">They come with Inner Circle</Link>.</p>}
@@ -96,6 +97,8 @@ export default async function Today({ searchParams }: { searchParams: Promise<Re
         <p className="mt-3 text-sm text-muted">{sessions >= goal ? `${sessions} of ${goal} this week. Goal reached, brilliant.` : `${sessions} of ${goal} this week. Each workout you finish fills a circle.`}</p>
         <Link href="/you/progress" className="mt-4 flex items-center justify-between border-t border-stone pt-3 text-sm"><span><span className="font-bold">{progress.classes}</span> classes · <span className="font-bold">{progress.streak}</span>-week streak</span><span className="text-muted">Your progress ›</span></Link>
       </Card>
+
+      <InstallApp />
 
       {/* Together, Nourish, Rewards */}
       <div className="grid grid-cols-2 gap-3">

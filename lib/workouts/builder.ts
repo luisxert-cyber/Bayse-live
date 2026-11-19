@@ -114,6 +114,8 @@ export const READY: Workout[] = READY_SPECS.map((r, i) => {
   const w = buildWorkout({ areas: r.areas, minutes: r.minutes, level: r.level, avoid: [], seed: 11 + i * 7, style: r.style, equipment: r.equipment ?? [] });
   return { ...w, key: `${r.style}-${r.minutes}-${i}`, name: r.title, summary: `${STYLES[r.style].blurb}${r.equipment?.length ? ` Uses: ${r.equipment.map((e) => EQUIPMENT_LABELS[e].toLowerCase()).join(', ')}.` : ' No equipment.'}`, focus: STYLES[r.style].label };
 });
+/** How demanding each ready-made class is: 1 beginner, 2 intermediate, 3 advanced. */
+export const READY_LEVEL: Record<string, 1 | 2 | 3> = Object.fromEntries(READY_SPECS.map((r, i) => [READY[i].key, r.level]));
 export const READY_STYLE: Record<string, Style> = Object.fromEntries(READY_SPECS.map((r, i) => [READY[i].key, r.style]));
 
 /** Any named workout: the original four or a ready-made class. */

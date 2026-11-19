@@ -237,3 +237,13 @@ test('pricing asks if you are a studio member and swaps the prices', async ({ pa
   await question.locator('[data-answer="no"]').click();
   await expect(page.locator('[data-plan-card]')).toHaveCount(3);
 });
+
+test('installable: manifest and icons are served', async ({ request }) => {
+  const res = await request.get('/manifest.webmanifest');
+  expect(res.status()).toBe(200);
+  const m = await res.json();
+  expect(m.display).toBe('standalone');
+  expect(m.start_url).toBe('/today');
+  for (const icon of m.icons) expect((await request.get(icon.src)).status(), icon.src).toBe(200);
+  expect((await request.get('/icons/apple-touch-icon.png')).status()).toBe(200);
+});

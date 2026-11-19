@@ -225,6 +225,17 @@ test('daily: live class first, recovery after training, gentle restart after a b
   assert.equal(nextBestAction({ ...base, completions: [{ key: 'core-10', minutes: 10, at: '2026-11-01T08:00:00Z' }], canLive: false }).kind, 'welcome-back');
   const c = nextBestAction({ ...base, completions: [], canLive: false });
   assert.ok(c.href.startsWith('/train/') && c.minutes > 0);
+  // Never above the member's level, and never far over the time they have.
+  for (const day of [16, 17, 18, 19, 20, 21, 22]) {
+    const now = new Date(`2026-11-${day}T10:00:00Z`);
+    const beginner = nextBestAction({ ...base, now, live: [], completions: [], canLive: false, experience: 'new' });
+    assert.notEqual(beginner.workout?.level, 'Intermediate', `beginner pick on day ${day}: ${beginner.title}`);
+    assert.ok(!/advanced/i.test(beginner.title), `beginner pick on day ${day}: ${beginner.title}`);
+    assert.ok(beginner.minutes <= 17, `10-15 minute member given ${beginner.minutes} min (${beginner.title})`);
+    const unknown = nextBestAction({ goals: [], sessionLength: null, weeklyGoal: 3, live: [], now, completions: [], canLive: false });
+    assert.ok(!/advanced/i.test(unknown.title) && unknown.minutes <= 18, `no answers: ${unknown.title} ${unknown.minutes} min`);
+    assert.match(unknown.why, /beginner-friendly/);
+  }
 });
 
 test('free trial: one per account, days left and first payment date', () => {
@@ -395,5 +406,29 @@ test('a stage programme has a session for every slot in every week', () => {
     const s = stageSchedule(p);
     assert.equal(s.length, p.weeks);
     for (const wk of s) assert.equal(wk.sessions.length, p.perWeek);
+  }
+});
+
+test('programmes progress week by week without adding moves', () => {
+  const secs = (ws: { blocks: { seconds: number }[] }[]) => ws.reduce((n, x) => n + x.blocks.reduce((m, b) => m + b.seconds, 0), 0);
+  for (const p of OPEN_STAGE_PROGRAMMES) {
+    const s = stageSchedule(p);
+    const keys = s.flatMap((wk) => wk.sessions.map((x) => x.key));
+    assert.equal(new Set(keys).size, keys.length, `${p.key}: every session has its own class`);
+    for (const k of keys) assert.ok(findAnyWorkout(k) && isStageWorkout(k), `${k} can be played`);
+    const allowed = new Set(p.classes.flatMap((c) => c.blocks.map((b) => b.ex)));
+    for (const wk of s) for (const x of wk.sessions) for (const b of x.blocks) assert.ok(allowed.has(b.ex), `${x.key} adds ${b.ex}`);
+    // Week 1 is the class as written.
+    assert.deepEqual(s[0].sessions.map((x) => x.key), p.classes.slice(0, p.perWeek).map((c) => c.key));
+    for (let i = 1; i < s.length; i++) {
+      if (p.progress === 'steady') assert.equal(secs(s[i].sessions), secs(s[0].sessions), `${p.key} stays the same`);
+      else assert.ok(secs(s[i].sessions) >= secs(s[i - 1].sessions), `${p.key} week ${i + 1} is not easier than week ${i}`);
+    }
+    if (p.progress !== 'steady') assert.ok(secs(s[s.length - 1].sessions) > secs(s[0].sessions) * 1.15, `${p.key} last week is clearly more than the first`);
+    // Pregnancy and postnatal keep each move's own wording in every week, and no class gets long.
+    if (p.key === 'prenatal' || p.key === 'postnatal') for (const wk of s) for (const x of wk.sessions) {
+      for (const b of x.blocks) assert.ok((b.cue?.length ?? 0) > 30, `${x.key}: ${b.ex} lost its cue`);
+      assert.ok(x.blocks.length === p.classes.find((c) => x.key.startsWith(c.key))!.blocks.length, `${x.key} adds rounds`);
+    }
   }
 });

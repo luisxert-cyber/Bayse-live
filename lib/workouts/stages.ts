@@ -94,6 +94,9 @@ export type StageProgramme = {
   key: string; name: string; tagline: string; about: string; weeks: number; perWeek: number;
   /** Shown above the classes. Programmes for a life stage with medical considerations must carry one. */
   note: string; open: boolean; classes: Workout[];
+  /** How the weeks change. 'build': longer holds and extra rounds each week. 'gentle': slightly longer holds only.
+   *  'steady': the same classes every week, on purpose (pregnancy is not the time to push harder). */
+  progress: 'build' | 'gentle' | 'steady';
   /** Signs to stop and get advice, listed on the programme page. */
   stop?: string[];
   /** How to adapt the general cues for this stage, listed on the programme page. */
@@ -101,24 +104,24 @@ export type StageProgramme = {
 };
 
 export const STAGE_PROGRAMMES: StageProgramme[] = [
-  { key: 'begin', name: 'BAYSE Begin', tagline: 'For beginners and women coming back to movement', weeks: 4, perWeek: 3, open: true, classes: BEGIN,
+  { key: 'begin', progress: 'build', name: 'BAYSE Begin', tagline: 'For beginners and women coming back to movement', weeks: 4, perWeek: 3, open: true, classes: BEGIN,
     about: 'Start from the very first breath. Three short classes a week teach you the basics at your own pace, so nothing later feels out of reach.',
     note: 'New to exercise, or back after a long break? Go at your own pace and take the easier option whenever you want it.' },
-  { key: 'stronger-years', name: 'BAYSE Stronger Years', tagline: 'For women over 50', weeks: 6, perWeek: 3, open: true, classes: STRONGER,
+  { key: 'stronger-years', progress: 'build', name: 'BAYSE Stronger Years', tagline: 'For women over 50', weeks: 6, perWeek: 3, open: true, classes: STRONGER,
     about: 'Strength, balance and mobility for staying active and independent. Mostly standing, with a chair within reach and plenty of rest.',
     note: 'Keep a sturdy chair or worktop within reach for balance. If you have osteoporosis, a joint replacement, a heart condition or dizziness, check with your doctor or physiotherapist first.' },
-  { key: 'midlife', name: 'BAYSE Midlife', tagline: 'Through perimenopause and menopause', weeks: 6, perWeek: 3, open: true, classes: MIDLIFE,
+  { key: 'midlife', progress: 'build', name: 'BAYSE Midlife', tagline: 'Through perimenopause and menopause', weeks: 6, perWeek: 3, open: true, classes: MIDLIFE,
     about: 'Strength for legs, glutes and core, care for your back, and a slow session for the days when sleep and energy are not on your side.',
     note: 'Energy changes from day to day in midlife. Swap any class for Unwind when you need to. This supports your wellbeing; it does not replace advice from your GP.' },
-  { key: 'at-home', name: 'BAYSE At Home', tagline: 'Low impact, in your own space', weeks: 4, perWeek: 3, open: true, classes: AT_HOME,
+  { key: 'at-home', progress: 'build', name: 'BAYSE At Home', tagline: 'Low impact, in your own space', weeks: 4, perWeek: 3, open: true, classes: AT_HOME,
     about: 'Adaptable sessions with nothing to jump over and nothing to buy. One class is all standing, for days when the floor is not for you.',
     note: 'Reduced mobility or recovering from an injury or illness? Only start once you have been cleared to exercise, and use the easier options.' },
-  { key: 'postnatal', name: 'BAYSE Postnatal', tagline: 'A gradual return after pregnancy and birth', weeks: 6, perWeek: 3, open: true, classes: withCues(POSTNATAL, POSTNATAL_CUES),
+  { key: 'postnatal', progress: 'gentle', name: 'BAYSE Postnatal', tagline: 'A gradual return after pregnancy and birth', weeks: 6, perWeek: 3, open: true, classes: withCues(POSTNATAL, POSTNATAL_CUES),
     about: 'A gentle, gradual return to movement after having a baby. Very short sessions, with no planks or sit-up style moves.',
     note: 'Only start after your postnatal check and once your GP, midwife or pelvic health physiotherapist has cleared you to exercise. After a caesarean or a difficult birth this is often later than six weeks.',
     adapt: ['Every move has its own instructions written for after birth. Follow those, not what you may know from other classes.', 'Go slower and smaller than you think you need to. There is no rush.', 'Breathe out gently as you make the effort. Never hold your breath or bear down.', 'Feeding or holding your baby a lot? Do the posture session as often as you like.'],
     stop: ['Your tummy bulges or domes down the middle', 'Leaking, or heaviness or dragging in your pelvis', 'Pain in your tummy, scar, back or pelvis', 'Bleeding that gets heavier or starts again', 'Feeling dizzy or unwell'] },
-  { key: 'prenatal', name: 'BAYSE Prenatal', tagline: 'Staying strong through pregnancy', weeks: 6, perWeek: 3, open: true, classes: withCues(PRENATAL, PRENATAL_CUES),
+  { key: 'prenatal', progress: 'steady', name: 'BAYSE Prenatal', tagline: 'Staying strong through pregnancy', weeks: 6, perWeek: 3, open: true, classes: withCues(PRENATAL, PRENATAL_CUES),
     about: 'Gentle strength and mobility through pregnancy. Everything is standing or on hands and knees: nothing lying on your back or front, no twists and no planks.',
     note: 'Only with agreement from your midwife or doctor that exercise is right for you in this pregnancy. If you have been told not to exercise, or have any complication, do not use this programme.',
     adapt: ['Every move has its own instructions written for pregnancy. Follow those, not what you may know from other classes.', 'Work at a level where you can still hold a conversation.', 'Keep a chair within reach, squat only as low as is comfortable, and keep your knees wide in child’s pose.', 'Drink water, keep cool and take longer rests whenever you want them.'],
@@ -126,15 +129,51 @@ export const STAGE_PROGRAMMES: StageProgramme[] = [
 ];
 
 export const OPEN_STAGE_PROGRAMMES = STAGE_PROGRAMMES.filter((p) => p.open);
-/** Classes members can play: only those in an open programme. */
-export const STAGE_WORKOUTS: Workout[] = OPEN_STAGE_PROGRAMMES.flatMap((p) => p.classes);
+
+// ---- Week-by-week progression ---------------------------------------------------------------------
+// The moves never change from week to week (every one has a demo and, for pregnancy and postnatal, its own
+// wording). What changes is how much of them there is: each week holds a little longer, and 'build'
+// programmes add an extra round of the main moves. Week 1 is the class exactly as written above.
+export type WeekPlan = { week: number; label: string; detail: string; sessions: Workout[] };
+
+const round5 = (n: number) => Math.round(n / 5) * 5;
+
+function weekClass(p: StageProgramme, base: Workout, week: number): { w: Workout; extraSeconds: number; extraMoves: number } {
+  if (week === 1 || p.progress === 'steady') return { w: week === 1 ? base : { ...base, key: `${base.key}-w${week}` }, extraSeconds: 0, extraMoves: 0 };
+  const f = (week - 1) / Math.max(1, p.weeks - 1); // 0 in week 1, 1 in the last week
+  const extraSeconds = round5(f * (p.progress === 'gentle' ? 10 : 15));
+  // Main moves are everything between the first (warm-up) and last (cool-down). Repeat up to half of them.
+  const main = base.blocks.slice(1, -1);
+  const extraMoves = p.progress === 'build' ? Math.round(f * Math.ceil(main.length / 2)) : 0;
+  const longer = (b: Workout['blocks'][number]) => ({ ...b, seconds: b.seconds + extraSeconds });
+  const blocks = [longer(base.blocks[0]), ...main.map(longer), ...main.slice(0, extraMoves).map(longer), longer(base.blocks[base.blocks.length - 1])];
+  const how = [extraSeconds ? `${extraSeconds} seconds longer on every move` : null, extraMoves ? `a second round of ${extraMoves} move${extraMoves > 1 ? 's' : ''}` : null].filter(Boolean).join(' and ');
+  return { w: { ...base, key: `${base.key}-w${week}`, summary: `Week ${week}: ${how || 'the same class'}. ${base.summary}`, blocks }, extraSeconds, extraMoves };
+}
+
+const PHASE = ['Learn the moves', 'Hold a little longer', 'Add a second round', 'Longer and stronger', 'Build', 'Your strongest week'];
+
+/** The class for each session of the programme, in order, week by week. Later weeks are longer versions of the same classes. */
+export function stageSchedule(p: StageProgramme): WeekPlan[] {
+  return Array.from({ length: p.weeks }, (_, i) => {
+    const week = i + 1;
+    const made = Array.from({ length: p.perWeek }, (_, s) => weekClass(p, p.classes[(i * p.perWeek + s) % p.classes.length], week));
+    const { extraSeconds, extraMoves } = made[0];
+    const rounds = made.some((m) => m.extraMoves > 0);
+    const label = p.progress === 'steady' ? 'Keep moving'
+      : week === 1 ? PHASE[0]
+      : p.progress === 'gentle' ? (week === p.weeks ? 'Steady and confident' : extraSeconds ? PHASE[1] : 'Settle in')
+      : week === p.weeks ? PHASE[5] : !rounds ? PHASE[1] : extraMoves > 1 ? PHASE[3] : PHASE[2];
+    const detail = p.progress === 'steady' ? 'The same three classes, at your own pace'
+      : week === 1 ? 'Short classes, plenty of rest'
+      : [extraSeconds ? `+${extraSeconds}s on every move` : null, rounds ? (extraMoves > 1 ? 'a longer second round' : 'a short second round') : null].filter(Boolean).join(' · ') || 'The same classes again, a little more familiar';
+    return { week, label, detail, sessions: made.map((m) => m.w) };
+  });
+}
+
+/** Classes members can play: every week's version of every class in an open programme. */
+export const STAGE_WORKOUTS: Workout[] = [...new Map(OPEN_STAGE_PROGRAMMES.flatMap((p) => stageSchedule(p).flatMap((wk) => wk.sessions)).map((x) => [x.key, x])).values()];
 export const findStageProgramme = (key: string) => OPEN_STAGE_PROGRAMMES.find((p) => p.key === key);
 export const isStageWorkout = (key: string) => STAGE_WORKOUTS.some((x) => x.key === key);
-
-/** The class for each session of the programme, in order: the programme's classes in rotation, week by week. */
-export function stageSchedule(p: StageProgramme) {
-  return Array.from({ length: p.weeks }, (_, week) => ({
-    week: week + 1,
-    sessions: Array.from({ length: p.perWeek }, (_, s) => p.classes[(week * p.perWeek + s) % p.classes.length]),
-  }));
-}
+/** The programme a class belongs to, so the player can lead back to it. */
+export const programmeOfWorkout = (key: string) => OPEN_STAGE_PROGRAMMES.find((p) => stageSchedule(p).some((wk) => wk.sessions.some((x) => x.key === key)));

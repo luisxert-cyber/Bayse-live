@@ -19,12 +19,13 @@ export default async function StageProgrammePage({ params }: { params: Promise<{
     return <UpgradeGate title={p.name}>{p.tagline}. {p.about}</UpgradeGate>;
   }
   const supabase = await createClient();
-  const { data: rows } = await supabase.from('workout_completions').select('workout_key').eq('user_id', user.id).in('workout_key', p.classes.map((c) => c.key));
-  // How many times each class has been finished, so sessions tick off in order as the member works through the weeks.
-  const left = new Map<string, number>();
-  for (const r of rows ?? []) left.set(r.workout_key as string, (left.get(r.workout_key as string) ?? 0) + 1);
-  const schedule = stageSchedule(p).map((wk) => ({ ...wk, sessions: wk.sessions.map((c) => { const n = left.get(c.key) ?? 0; if (n > 0) left.set(c.key, n - 1); return { c, done: n > 0 }; }) }));
+  const plan = stageSchedule(p);
+  const { data: rows } = await supabase.from('workout_completions').select('workout_key').eq('user_id', user.id).in('workout_key', plan.flatMap((wk) => wk.sessions.map((c) => c.key)));
+  // Each week has its own version of each class, so a session is done once that week's class has been finished.
+  const finished = new Set((rows ?? []).map((r) => r.workout_key as string));
+  const schedule = plan.map((wk) => ({ ...wk, sessions: wk.sessions.map((c) => ({ c, done: finished.has(c.key) })) }));
   const total = p.weeks * p.perWeek, done = schedule.reduce((n, wk) => n + wk.sessions.filter((s) => s.done).length, 0);
+  const current = schedule.find((wk) => wk.sessions.some((s) => !s.done));
   const next = schedule.flatMap((wk) => wk.sessions).find((s) => !s.done);
   return (
     <main className="page space-y-5">
@@ -54,12 +55,15 @@ export default async function StageProgrammePage({ params }: { params: Promise<{
       <div className="border border-stone p-4">
         <div className="flex items-center justify-between text-sm"><span className="font-bold">{done} of {total} sessions done</span>{done >= total && <span className="text-xs font-bold uppercase">Programme complete</span>}</div>
         <div className="mt-2 h-1.5 bg-stone"><div className="h-full bg-white" style={{ width: `${Math.min(100, (done / total) * 100)}%` }} /></div>
-        {next && <Link href={`/train/${next.c.key}`} className="mt-4 inline-flex min-h-[44px] items-center bg-ink px-5 text-sm font-bold uppercase text-bg">Start next session: {next.c.name}</Link>}
+        <p className="mt-3 text-sm text-muted">{p.progress === 'steady' ? 'These classes stay the same each week on purpose: in pregnancy the aim is to keep moving comfortably, not to push harder.' : p.progress === 'gentle' ? 'Each week holds every move a little longer. Nothing new is added, so you always know what is coming.' : 'Each week builds on the last: the same moves, held a little longer, with an extra round as you get stronger.'}</p>
+        {next && <Link href={`/train/${next.c.key}`} className="mt-4 inline-flex min-h-[44px] items-center bg-ink px-5 text-sm font-bold uppercase text-bg">{done ? 'Next session' : 'Start'}: {next.c.name}{current ? ` · Week ${current.week}` : ''}</Link>}
       </div>
       <ol className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
         {schedule.map((wk) => (
-          <li key={wk.week} className="border border-stone p-4">
-            <p className="font-bold uppercase tracking-[0.06em]">Week {wk.week}</p>
+          <li key={wk.week} className={`border p-4 ${current?.week === wk.week ? 'border-ink' : 'border-stone'}`} data-programme-week>
+            <p className="flex items-baseline justify-between gap-2"><span className="font-bold uppercase tracking-[0.06em]">Week {wk.week}</span>{current?.week === wk.week && <span className="text-[10px] font-bold uppercase tracking-[0.1em]">You are here</span>}</p>
+            <p className="mt-0.5 text-sm font-semibold" data-week-label>{wk.label}</p>
+            <p className="text-xs text-muted">{wk.detail}</p>
             <ul className="mt-2 divide-y divide-stone">
               {wk.sessions.map((s, i) => (
                 <li key={i}>

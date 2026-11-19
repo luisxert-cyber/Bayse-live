@@ -11,6 +11,9 @@ export const metadata: Metadata = {
   title: { default: 'The BAYSE Club · Pilates, nutrition & personal coaching for women', template: '%s · The BAYSE Club' },
   description: 'The BAYSE Club: Pilates, nutrition & personal coaching for women. Your plan, live and on-demand classes, recipes, 1-to-1s and a community, from the BAYSE studio team.',
   applicationName: 'The BAYSE Club',
+  // Home-screen app: icon, name and full-screen display on iPhone (Android uses app/manifest.ts).
+  appleWebApp: { capable: true, title: 'BAYSE', statusBarStyle: 'black-translucent' },
+  icons: { icon: [{ url: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' }, { url: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' }], apple: [{ url: '/icons/apple-touch-icon.png', sizes: '180x180' }] },
   robots: { index: false, follow: false }, // switched on at launch, with Luis's approval
 };
 
