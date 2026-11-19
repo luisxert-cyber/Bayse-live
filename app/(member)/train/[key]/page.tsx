@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
-import { hasOnDemand } from '@/lib/auth/access';
+import { hasOnDemand, hasEntitlement } from '@/lib/auth/access';
+import { isStageWorkout } from '@/lib/workouts/stages';
 import { requireUser } from '@/lib/auth/session';
 import { requireHealthCheck } from '@/lib/health/gate';
 import { workoutMinutes } from '@/lib/workouts/catalog';
@@ -16,6 +17,8 @@ export default async function WorkoutPage({ params }: { params: Promise<{ key: s
   await requireHealthCheck(`/train/${key}`);
   // Only the free class plays without a membership or free trial.
   if (!w.free && !(await hasOnDemand())) redirect('/you/membership');
+  // Stage-of-life programme classes are part of the personal plan, which not every plan includes.
+  if (isStageWorkout(key) && !(await hasEntitlement('programmes'))) redirect('/you/membership');
   return (
     <main className="page space-y-4">
       <Link href="/train" className="text-sm text-muted hover:text-ink">← Train</Link>

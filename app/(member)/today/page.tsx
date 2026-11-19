@@ -4,6 +4,7 @@ import { loadMember, greeting, fmtDate } from '@/lib/data/member';
 import { currentProgramme } from '@/lib/data/recommendation';
 import { Card, Notice, buttonClass, Wordmark } from '@/components/ui';
 import { createClient } from '@/lib/supabase/server';
+import { hasEntitlement } from '@/lib/auth/access';
 import { loadDaily } from '@/lib/daily/data';
 import { nextBestAction } from '@/lib/daily/next';
 import { computeProgress } from '@/lib/daily/progress';
@@ -19,7 +20,9 @@ export const dynamic = 'force-dynamic';
 export default async function Today({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const sp = await searchParams;
   const user = await requireUser('/today');
-  const [m, programme, daily] = await Promise.all([loadMember(user.id), currentProgramme(user.id), loadDaily(user.id)]);
+  const [m, plan, daily, hasPlan] = await Promise.all([loadMember(user.id), currentProgramme(user.id), loadDaily(user.id), hasEntitlement('programmes')]);
+  // The personal plan is part of Foundation, Inner Circle and Black. Members without it still get BAYSE Daily and on-demand classes.
+  const programme = hasPlan ? plan : null;
   const next = nextBestAction(daily);
   const progress = computeProgress(daily.completions);
   const cover = next.workout ? EXERCISES[(next.workout.blocks[1] ?? next.workout.blocks[0]).ex]?.move : 'birddog';
@@ -69,8 +72,9 @@ export default async function Today({ searchParams }: { searchParams: Promise<Re
           <span className="shrink-0 border border-ink px-4 py-2 text-sm font-bold uppercase group-hover:bg-ink group-hover:text-bg">{next.kind === 'live' ? 'See class' : 'Start'}</span>
         </div>
       </Link>
+      {!hasPlan && m.profile?.onboarding_completed_at && <p className="text-sm text-muted">Want a personal plan built around your goals? <Link href="/you/membership" className="underline">Add it with a membership</Link>.</p>}
       {programme?.programmes && <p className="text-sm text-muted">Your programme: <span className="text-ink">{programme.programmes.name}</span> · {programme.weeks} weeks · {programme.sessions_per_week} a week</p>}
-      {!programme?.programmes && (
+      {hasPlan && !programme?.programmes && (
         <Card className="p-5">
           <p className="eyebrow">Your plan</p>
           <p className="mt-1 text-sm text-muted">A few quick questions and we will recommend a programme.</p>
