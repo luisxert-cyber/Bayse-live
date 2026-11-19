@@ -4,7 +4,8 @@
 export type Area = 'core' | 'glutes' | 'back' | 'mobility' | 'full' | 'upper';
 export type Style = 'mat' | 'sculpt' | 'standing' | 'cardio' | 'flow' | 'gentle';
 export type Exercise = { key: string; move: string; name: string; cue: string; easier: string; areas: Area[]; level: 1 | 2 | 3; loads?: ('knees' | 'wrists')[]; role?: 'warmup' | 'cooldown'; styles?: Style[]; prop?: 'weights' | 'band' | 'ball'; variantOf?: string };
-export type Block = { ex: string; seconds: number };
+/** `cue` and `easier` replace the move's general wording for this class, where a programme needs its own (pregnancy, postnatal). */
+export type Block = { ex: string; seconds: number; cue?: string; easier?: string };
 export type Workout = { key: string; name: string; summary: string; level: 'Beginner' | 'All levels' | 'Intermediate'; focus: string; rest: number; blocks: Block[]; free?: boolean };
 
 import { LIB_EXERCISES } from './library';

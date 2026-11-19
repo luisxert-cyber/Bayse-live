@@ -363,7 +363,7 @@ test('UK days and level names', () => {
 // ---------- Stage-of-life programmes ----------
 import { AVAILABLE } from '../../lib/workouts/catalog';
 import { findAnyWorkout } from '../../lib/workouts/builder';
-import { STAGE_PROGRAMMES, OPEN_STAGE_PROGRAMMES, stageSchedule, isStageWorkout } from '../../lib/workouts/stages';
+import { STAGE_PROGRAMMES, OPEN_STAGE_PROGRAMMES, stageSchedule, isStageWorkout, PRENATAL_CUES } from '../../lib/workouts/stages';
 
 test('stage programmes only use beginner moves that have a demo', () => {
   for (const p of STAGE_PROGRAMMES) {
@@ -382,6 +382,9 @@ test('prenatal has nothing lying down, no twists and no planks; postnatal has no
   // Only standing and all-fours moves in pregnancy.
   for (const ex of used(pre)) assert.ok(['march', 'arm-circles', 'squat', 'good-morning', 'catcow', 'quad-hip-circle', 'birddog', 'childs'].includes(ex), `prenatal uses ${ex}`);
   for (const ex of used(post)) assert.ok(!['plank', 'bear-hold', 'bear-hold-hold', 'singleleg', 'deadbug', 'roll-back'].includes(ex), `postnatal uses ${ex}`);
+  // Every move in both programmes has wording written for that stage, never the general cue.
+  for (const p of [pre, post]) for (const c of p.classes) for (const b of c.blocks) assert.ok((b.cue?.length ?? 0) > 30 && (b.easier?.length ?? 0) > 10, `${c.key}: ${b.ex} has no specific cue`);
+  assert.ok(!Object.values(PRENATAL_CUES).some(([cue]) => /belly in|on your back|lie /i.test(cue)), 'prenatal cues never ask for lying down or drawing the belly in');
   for (const p of [pre, post]) assert.ok((p.stop?.length ?? 0) >= 4 && (p.adapt?.length ?? 0) >= 3, `${p.key} lists when to stop and how to adapt`);
   assert.ok(findAnyWorkout('begin-first-steps'));
   assert.ok(isStageWorkout('midlife-strong') && !isStageWorkout('core-10'));
