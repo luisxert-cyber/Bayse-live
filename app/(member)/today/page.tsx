@@ -21,7 +21,7 @@ export default async function Today({ searchParams }: { searchParams: Promise<Re
   const sp = await searchParams;
   const user = await requireUser('/today');
   const [m, plan, daily, hasPlan] = await Promise.all([loadMember(user.id), currentProgramme(user.id), loadDaily(user.id), hasEntitlement('programmes')]);
-  // The personal plan is part of Foundation, Inner Circle and Black. Members without it still get BAYSE Daily and on-demand classes.
+  // The personal plan is part of Inner Circle and Black. Members without it still get BAYSE Daily and on-demand classes.
   const programme = hasPlan ? plan : null;
   const next = nextBestAction(daily);
   const progress = computeProgress(daily.completions);
@@ -72,7 +72,7 @@ export default async function Today({ searchParams }: { searchParams: Promise<Re
           <span className="shrink-0 border border-ink px-4 py-2 text-sm font-bold uppercase group-hover:bg-ink group-hover:text-bg">{next.kind === 'live' ? 'See class' : 'Start'}</span>
         </div>
       </Link>
-      {!hasPlan && m.profile?.onboarding_completed_at && <p className="text-sm text-muted">Want a personal plan built around your goals? <Link href="/you/membership" className="underline">Add it with a membership</Link>.</p>}
+      {!hasPlan && m.profile?.onboarding_completed_at && <p className="text-sm text-muted">Want a personal plan built around your goals, live classes, nutrition and progress? <Link href="/you/membership" className="underline">They come with Inner Circle</Link>.</p>}
       {programme?.programmes && <p className="text-sm text-muted">Your programme: <span className="text-ink">{programme.programmes.name}</span> · {programme.weeks} weeks · {programme.sessions_per_week} a week</p>}
       {hasPlan && !programme?.programmes && (
         <Card className="p-5">

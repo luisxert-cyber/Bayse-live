@@ -88,34 +88,33 @@ export const FAQS = [
 export const STRAPLINE = 'More than Pilates. Your community, your movement, your BAYSE.';
 
 // Membership tiers. Billed every 28 days: 13 payments a year.
-// Owner decision 19 Nov 2026: verified £99 and £148 studio members get on-demand classes and the community
-// included (not the whole of Foundation) and half price on Inner Circle and Black (studioPrice).
-// The amounts charged live in the database (public.prices).
-export const STUDIO_INCLUDED = {
-  name: 'On demand and community',
-  bestFor: 'Pilates at home between studio sessions, and the BAYSE community in your pocket.',
-  items: ['On-demand Pilates for beginner, intermediate and advanced', 'The BAYSE Club community and your studio’s own group', 'General Chat, Circles and member-led walking, padel and social groups'],
-} as const;
-/** What a studio member adds by upgrading, on top of what their studio membership includes. */
-export const STUDIO_UPGRADE_EXTRAS = ['Your personal plan, 4 to 12 weeks', 'Recipes, your weekly food plan and food diary', 'Member challenges'] as const;
+// Owner decisions 19 Nov 2026: Foundation is on-demand classes, the workout builder and the community.
+// Everything else is Inner Circle and Black. Verified £99 and £148 studio members get Foundation free and
+// half price on Inner Circle and Black (studioPrice). The amounts charged live in the database (public.prices).
 export const STUDIO_NOTE = 'Studio member prices are for active £99 and £148 BAYSE studio memberships, checked by your studio before they apply.';
 export const BILLING = 'every 28 days';
 export const PRIVATE_SESSION_PRICE = '£44.99';
 export const TIERS = [
   {
-    key: 'essential', name: 'BAYSE Foundation', price: '£19.99', studioPrice: 'Not sold to studio members', tagline: 'Your community and your Pilates',
-    bestFor: 'For you if you want Pilates on your terms and people to do it with.',
-    items: ['The BAYSE Club community, General Chat and member-led walking, padel and social groups', 'On-demand Pilates for beginner, intermediate and advanced', 'Your personal plan, 4 to 12 weeks', 'Recipes with videos, a weekly food plan and an optional food diary', 'Daily recovery, sleep and effort scores, no watch needed', 'Member challenges, levels and the weekly league'],
+    key: 'essential', name: 'BAYSE Foundation', price: '£19.99', studioPrice: 'Free', tagline: 'Classes and community',
+    bestFor: 'For you if you want Pilates classes to follow in your own time, and people to do it with.',
+    items: ['On-demand Pilates for beginner, intermediate and advanced', 'Workout builder: a class made for your time and kit in seconds', 'Reformer at home classes, if you have a bed', 'The BAYSE Club community: the feed, General Chat, Circles and Clubs', 'Find BAYSE members near you, wherever you live'],
+    not: ['Live classes', 'Your personal plan and programmes', 'Nutrition, food plan and diary', 'Progress scores and the weekly league'],
+    highlight: '', studioHighlight: 'Included with your studio membership',
   },
   {
-    key: 'club', name: 'BAYSE Inner Circle', price: '£39.99', studioPrice: '£19.99', tagline: 'Train live, together', featured: true,
-    bestFor: 'For you if you want real instructors, a timetable to show up for and people who notice when you do.',
-    items: ['Everything in Foundation', `${LIVE_CLASSES_PER_WEEK} live Zoom classes a week`, 'Extra structured programmes and premium classes', 'More coaching resources and support'],
+    key: 'club', name: 'BAYSE Inner Circle', price: '£39.99', studioPrice: '£19.99', tagline: 'Most popular', featured: true,
+    bestFor: 'For you if you want a plan that is yours, live instructors and everything BAYSE has to help you keep going.',
+    items: ['Everything in Foundation', `${LIVE_CLASSES_PER_WEEK} live Zoom classes a week with BAYSE instructors`, 'Your personal plan, built from your answers', 'Six programmes for your stage of life, from Begin to Midlife', 'Nutrition: recipes with videos, a weekly food plan and a food diary', 'Daily recovery, sleep and effort scores, no watch needed', 'Levels, the weekly league, challenges and member rewards'],
+    not: [],
+    highlight: 'The full BAYSE Club for £1.43 a day', studioHighlight: 'The full BAYSE Club for 71p a day',
   },
   {
-    key: 'coaching', name: 'BAYSE Black', price: '£79.99', studioPrice: '£39.99', tagline: 'One-to-one with your instructor',
-    bestFor: 'For you if you want time with an instructor who knows you: form, progress and a plan that changes with you.',
-    items: ['Everything in Inner Circle', 'One 45-minute private Zoom session per paid 28 days, subject to availability', 'Unused session carries over one extra period', `Extra 1-to-1s any time (${PRIVATE_SESSION_PRICE})`],
+    key: 'coaching', name: 'BAYSE Black', price: '£79.99', studioPrice: '£39.99', tagline: 'Your own instructor',
+    bestFor: 'For you if you want an instructor who knows you: your form, your progress and a plan that changes with you.',
+    items: ['Everything in Inner Circle', 'A private 45-minute Zoom session with your instructor every paid 28 days, subject to availability', 'An unused session carries over one extra period', `Extra 1-to-1s any time (${PRIVATE_SESSION_PRICE})`],
+    not: [],
+    highlight: `Includes a ${PRIVATE_SESSION_PRICE} private session every 28 days, for £40 more than Inner Circle`, studioHighlight: `Includes a ${PRIVATE_SESSION_PRICE} private session every 28 days: the session alone costs more`,
   },
 ] as const;
 

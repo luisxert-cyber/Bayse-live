@@ -39,8 +39,7 @@ on conflict (key) do nothing;
 insert into public.plan_entitlements (plan_id, entitlement_key)
 select p.id, k.key from public.plans p
 join (values
-  ('essential','on_demand'),('essential','programmes'),('essential','nutrition'),
-  ('essential','meal_planning'),('essential','progress'),('essential','community'),
+  ('essential','on_demand'),('essential','community'),
   ('club','on_demand'),('club','programmes'),('club','nutrition'),('club','meal_planning'),
   ('club','progress'),('club','community'),('club','challenges'),('club','live_classes'),
   ('club','group_coaching'),
@@ -63,9 +62,7 @@ select p.id, '28_days', v.amount, 0, 'studio' from public.plans p
 join (values ('club',1999),('coaching',3999)) as v(plan, amount) on v.plan = p.key
 where not exists (select 1 from public.prices x where x.plan_id = p.id and x.audience = 'studio');
 
--- Foundation includes member challenges.
-insert into public.plan_entitlements (plan_id, entitlement_key)
-select id, 'challenges' from public.plans where key = 'essential' on conflict do nothing;
+-- Foundation is on-demand classes and the community only (owner decision 19 Nov 2026). Everything else is Inner Circle and Black.
 
 -- Studio-tier access (owner decision 19 Nov 2026): £99 and £148 studio members get on-demand classes and
 -- the community at no charge. Everything else comes with the half-price Inner Circle and Black upgrades.

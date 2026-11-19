@@ -36,7 +36,7 @@ export default async function ReformerAtHome() {
         ) : (
           <p className="mt-5 border border-dashed border-stone p-8 text-center text-muted">Our first reformer classes are being filmed in the studio now. They’ll appear here, and in the app, as soon as they’re ready.</p>
         )}
-        <p className="mt-3 text-sm text-muted">Included in every plan, alongside the mat classes, your plan and everything else. <Link href="/pricing" className="underline">See pricing</Link></p>
+        <p className="mt-3 text-sm text-muted">Included in every plan, alongside the mat classes and the workout builder. <Link href="/pricing" className="underline">See pricing</Link></p>
       </section>
 
       <section className={`${wrap} pb-12`}>

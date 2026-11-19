@@ -91,7 +91,7 @@ export default async function Join({ searchParams }: { searchParams: Promise<Rec
               <h1 className="text-xl font-semibold">{studioMember ? 'Your studio member upgrades' : freeTrial ? 'Start your 7-day free trial' : 'Choose your membership'}</h1>
               <p className="mt-2 text-muted">
                 {studioMember
-                  ? <>On-demand classes and the community are included with your studio membership. Add your personal plan, recipes, live classes or private coaching at your exclusive member price, half the standard price.</>
+                  ? <>BAYSE Foundation is included with your studio membership. Add live classes, your personal plan, nutrition and progress with Inner Circle, or your own instructor with Black, at half the standard price.</>
                   : freeTrial
                   ? <>Choose your membership and add your card. <strong className="text-ink">Nothing is taken for 7 days</strong>, and you can cancel any time before then in a couple of taps.</>
                   : <>Choose a membership to carry on where you left off. Your plan and progress are saved.</>}
@@ -102,8 +102,8 @@ export default async function Join({ searchParams }: { searchParams: Promise<Rec
             {studioMember && (
               <Card>
                 <p className="eyebrow">Included with your studio membership</p>
-                <h2 className="mt-1 text-lg font-semibold">On demand and community · Free</h2>
-                <p className="mt-1 text-sm text-muted">Pilates on demand, the community feed, General Chat, Circles and Clubs. Nothing to pay and nothing to set up.</p>
+                <h2 className="mt-1 text-lg font-semibold">BAYSE Foundation · Free</h2>
+                <p className="mt-1 text-sm text-muted">Pilates on demand, the workout builder and the community. Nothing to pay and nothing to set up.</p>
               </Card>
             )}
             {plans.map((plan) => {
@@ -121,7 +121,8 @@ export default async function Join({ searchParams }: { searchParams: Promise<Rec
                   </div>
                   {was && <p className="mt-1 text-sm"><strong>50% studio member discount.</strong> <span className="text-muted">Standard price <span className="line-through">{formatPence(was.amount_pence, was.currency)}</span>.</span></p>}
                   <p className="mt-1 text-sm text-muted">{tier?.bestFor ?? plan.description}</p>
-                  {tier && <ul className="mt-3 space-y-1 text-sm">{tier.items.map((i) => <li key={i}>· {i}</li>)}</ul>}
+                  {tier && (studioMember ? tier.studioHighlight : tier.highlight) && <p className="mt-3 border border-stone px-3 py-2 text-sm font-bold">{studioMember ? tier.studioHighlight : tier.highlight}</p>}
+                  {tier && <ul className="mt-3 space-y-1 text-sm">{(tier.items as readonly string[]).map((i) => <li key={i}>· {i}</li>)}{(tier.not as readonly string[]).map((i) => <li key={i} className="text-muted">– Not included: {i.toLowerCase()}</li>)}</ul>}
                   <div className="mt-4 space-y-2">
                     {mine.map((p, i) => p.stripe_price_id && ready ? (
                       <Link key={p.id} href={`/join?price=${p.id}`} className={buttonClass(featured && i === 0 ? 'solid' : 'primary', true)}>

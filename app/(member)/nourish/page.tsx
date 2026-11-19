@@ -25,7 +25,7 @@ export default async function Nourish({ searchParams }: { searchParams: Promise<
     return (
       <main className="page space-y-4">
         <h1 className="text-[30px] leading-none">Nourish</h1>
-        <p className="text-muted">Recipes with videos, a weekly food plan built around your goals, an optional food diary and a shopping list that fills itself. Part of BAYSE Foundation, Inner Circle and Black, and the free trial. Studio members add it with a half-price upgrade.</p>
+        <p className="text-muted">Recipes with videos, a weekly food plan built around your goals, an optional food diary and a shopping list that fills itself. Part of BAYSE Inner Circle and BAYSE Black, including their 7-day free trial.</p>
         <Link href="/you/membership" className={buttonClass('primary')}>See memberships</Link>
       </main>
     );

@@ -4,8 +4,7 @@ Owner brief, 19 November 2026. All paid plans bill every 28 days.
 
 | Plan | Standard | Verified £99 / £148 studio member |
 | --- | --- | --- |
-| On-demand classes and community | part of every plan | Included free |
-| BAYSE Foundation | £19.99 (7-day trial) | Not sold: Inner Circle costs the same |
+| BAYSE Foundation | £19.99 (7-day trial) | Included free |
 | BAYSE Inner Circle | £39.99 (7-day trial) | £19.99, no trial |
 | BAYSE Black | £79.99 (7-day trial) | £39.99, no trial |
 
@@ -13,7 +12,7 @@ Foundation stays at £19.99 (owner decision 19 Nov; the written brief said £14.
 
 ## How it works
 
-- **What a studio membership includes (owner decision 19 Nov, later the same day).** On-demand classes and the community only, not the whole of Foundation. Recipes and the food plan, challenges, live classes and 1-to-1s come with the half-price upgrades. Set in `studio_tier_entitlements` (migration `20261119000600`).
+- **What Foundation is (owner decision 19 Nov, evening).** On-demand classes, the workout builder and the community only, for everyone: £19.99 with a 7-day trial for online customers, free for verified studio members. The personal plan and programmes, nutrition, progress, challenges and live classes are Inner Circle and Black. Set in `plan_entitlements` (migration `20261119000800`) and `studio_tier_entitlements` (migration `20261119000600`).
 - **Community for everyone.** Every plan and every verified studio membership includes the community.
 - **Verification.** A member asks to link their studio in You → Membership. The request is always saved as pending. A studio manager (`/studio`) or admin (Admin → Studio member checks) confirms it against the booking system. A matching email or a tick box is never enough.
 - **Re-check.** A verified link must be re-confirmed every 90 days. If it is not, included access stops 28 days after the re-check date.
