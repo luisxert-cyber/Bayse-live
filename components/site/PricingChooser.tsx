@@ -1,11 +1,13 @@
+'use client';
+
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { TIERS, BILLING, STUDIO_NOTE } from '@/lib/site/offer';
 
-// Pricing for everyone first: The BAYSE Club is a national online membership.
-// Inner Circle and Black are where the value is, so their cards carry a highlight line and stand out;
-// Foundation says plainly what it does not include.
-// BAYSE studio members get their own section underneath. `studio="summary"` (home page) keeps that to
-// one box that links to the full section on the pricing page.
+// Pricing asks one question first: are you a BAYSE studio member? (owner's choice, 19 Nov 2026)
+// The answer swaps the three cards between standard and studio member prices, so nobody reads both.
+// Before anyone answers (and without JavaScript) the standard prices show.
+// Inner Circle and Black carry a highlight line; Foundation says plainly what it does not include.
 
 const Tick = () => (
   <svg viewBox="0 0 16 16" aria-hidden className="mt-[3px] h-4 w-4 shrink-0"><circle cx="8" cy="8" r="8" fill="rgb(var(--muted))" /><path d="M4.5 8.2l2.2 2.2 4.8-4.8" fill="none" stroke="#000" strokeWidth="1.8" /></svg>
@@ -34,50 +36,77 @@ export function PlanCard({ t, studio = false }: { t: Tier; studio?: boolean }) {
         {(t.items as readonly string[]).map((i) => <li key={i} className="flex gap-3"><Tick />{i}</li>)}
         {(t.not as readonly string[]).map((i) => <li key={i} className="flex gap-3 text-muted"><Cross /><span>{i} <span className="text-xs">(Inner Circle and Black)</span></span></li>)}
       </ul>
-      {!studio && <Link href="/start/welcome" className={`mt-2 inline-flex min-h-[48px] items-center justify-center px-5 text-sm font-bold uppercase ${featured ? 'bg-white text-black hover:opacity-90' : 'border border-white hover:bg-white hover:text-black'}`}>{featured ? 'Start Inner Circle free for 7 days' : 'Start 7 days free'}</Link>}
+      <Link href="/start/welcome" className={`mt-2 inline-flex min-h-[48px] items-center justify-center px-5 text-sm font-bold uppercase ${featured ? 'bg-white text-black hover:opacity-90' : 'border border-white hover:bg-white hover:text-black'}`}>
+        {free ? 'Create my free account' : featured ? 'Start Inner Circle free for 7 days' : 'Start 7 days free'}
+      </Link>
     </div>
   );
 }
 
-export function PricingChooser({ studio = 'full' }: { studio?: 'full' | 'summary' }) {
+type Answer = 'yes' | 'no' | null;
+
+const choice = (on: boolean) =>
+  `flex min-h-[64px] flex-col items-center justify-center px-4 py-2 text-center uppercase ${on ? 'bg-white text-black' : 'border border-white hover:bg-white hover:text-black'}`;
+
+/** `studio` is kept for older callers; both pages now show the same question. */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function PricingChooser({ studio: _layout = 'full' }: { studio?: 'full' | 'summary' }) {
+  const [answer, setAnswer] = useState<Answer>(null);
+
+  // A link straight to member prices (/pricing#studio-members) opens on them.
+  useEffect(() => {
+    if (window.location.hash === '#studio-members') setAnswer('yes');
+    if (window.location.hash === '#new') setAnswer('no');
+  }, []);
+
+  const studio = answer === 'yes';
+
   return (
     <section id="prices" className="mx-auto w-full max-w-5xl scroll-mt-28 px-4 py-12 sm:px-6">
-      <div id="new">
-        <p className="eyebrow">Membership</p>
-        <h2 className="mt-2 text-[30px] sm:text-[40px]">7 days free, then from £19.99</h2>
-        <p className="mt-3 max-w-[60ch] text-muted">Join from anywhere in the UK. Billed {BILLING}, cancel any time. Most members choose Inner Circle: it is the one with live classes, your plan, nutrition and progress.</p>
-        <div className="mt-8 grid gap-4 md:grid-cols-3 md:items-stretch">
-          {TIERS.map((t) => <PlanCard key={t.key} t={t} />)}
+      <p className="eyebrow">Membership</p>
+      <div className="mt-3 border border-stone p-5 sm:p-6" data-studio-question>
+        <h2 className="text-[26px] sm:text-[34px]">Are you a BAYSE studio member?</h2>
+        <p className="mt-2 max-w-[60ch] text-sm text-muted">That’s a £99 or £148 membership at one of our reformer studios. It changes what you pay here.</p>
+        <div className="mt-4 grid grid-cols-2 gap-3" role="group" aria-label="Are you a BAYSE studio member?">
+          <button type="button" aria-pressed={studio} onClick={() => setAnswer('yes')} className={choice(studio)} data-answer="yes">
+            <span className="text-base font-bold">Yes</span>
+            <span className="text-[11px] normal-case opacity-80">I train at a BAYSE studio</span>
+          </button>
+          <button type="button" aria-pressed={answer === 'no'} onClick={() => setAnswer('no')} className={choice(answer === 'no')} data-answer="no">
+            <span className="text-base font-bold">No</span>
+            <span className="text-[11px] normal-case opacity-80">I’m new to BAYSE</span>
+          </button>
         </div>
-        <p className="mt-6 text-xs text-muted">13 payments a year. <Link href="/free-trial" className="underline">What’s in the free trial</Link> · <Link href="/terms" className="underline">Terms</Link></p>
       </div>
 
-      {studio === 'summary' ? (
-        <div className="mt-10 grid gap-5 border border-stone p-6 md:grid-cols-[1fr_auto] md:items-center" data-studio-summary>
-          <div>
-            <p className="eyebrow">Already train at a BAYSE studio?</p>
-            <h3 className="mt-2 text-xl font-bold uppercase">Foundation is on us. The rest is half price.</h3>
-            <p className="mt-2 max-w-[60ch] text-sm text-muted">For active £99 and £148 studio memberships. Inner Circle is {TIERS[1].studioPrice} and Black is {TIERS[2].studioPrice} {BILLING}.</p>
+      <div aria-live="polite" className="mt-10">
+        {studio ? (
+          <div id="studio-members" className="scroll-mt-28">
+            <p className="eyebrow">Studio member prices</p>
+            <h2 className="mt-2 text-[30px] sm:text-[40px]">Foundation is on us. The rest is half price.</h2>
+            <p className="mt-3 max-w-[60ch] text-muted">For as long as your studio membership is active. Inner Circle and Black still start with 7 days free.</p>
+            <div className="mt-8 grid gap-4 md:grid-cols-3 md:items-stretch">
+              {TIERS.map((t) => <PlanCard key={t.key} t={t} studio />)}
+            </div>
+            <ol className="mt-8 grid gap-3 text-sm sm:grid-cols-3">
+              {['Create your free account.', 'Enter the studio code your studio gives you in You → Membership.', 'Foundation switches on free and your member prices appear.'].map((step, i) => (
+                <li key={step} className="flex gap-3 border border-stone p-4"><span className="font-bold">{i + 1}</span><span className="text-muted">{step}</span></li>
+              ))}
+            </ol>
+            <p className="mt-3 text-xs text-muted">No code? Ask at your studio, or pick your studio in You → Membership and your studio team will confirm you. {STUDIO_NOTE} Promotion codes can’t be added to member prices.</p>
           </div>
-          <Link href="/pricing#studio-members" className="inline-flex min-h-[48px] items-center justify-center border border-white px-6 text-sm font-bold uppercase hover:bg-white hover:text-black">Studio member prices</Link>
-        </div>
-      ) : (
-        <div id="studio-members" className="mt-14 scroll-mt-28 border-t border-stone pt-12">
-          <p className="eyebrow">For BAYSE studio members</p>
-          <h2 className="mt-2 text-[30px] sm:text-[40px]">Foundation is included. The rest is half price.</h2>
-          <p className="mt-3 max-w-[60ch] text-muted">If you train at a BAYSE reformer studio on a £99 or £148 membership, this is what you get for as long as it is active.</p>
-          <div className="mt-8 grid gap-4 md:grid-cols-3 md:items-stretch">
-            {TIERS.map((t) => <PlanCard key={t.key} t={t} studio />)}
+        ) : (
+          <div id="new" className="scroll-mt-28">
+            <p className="eyebrow">{answer === 'no' ? 'New to BAYSE' : 'Online membership'}</p>
+            <h2 className="mt-2 text-[30px] sm:text-[40px]">7 days free, then from £19.99</h2>
+            <p className="mt-3 max-w-[60ch] text-muted">Join from anywhere in the UK. Billed {BILLING}, cancel any time. Most members choose Inner Circle: it is the one with live classes, your plan, nutrition and progress.</p>
+            <div className="mt-8 grid gap-4 md:grid-cols-3 md:items-stretch">
+              {TIERS.map((t) => <PlanCard key={t.key} t={t} />)}
+            </div>
+            <p className="mt-6 text-xs text-muted">13 payments a year. <Link href="/free-trial" className="underline">What’s in the free trial</Link> · <Link href="/terms" className="underline">Terms</Link></p>
           </div>
-          <ol className="mt-8 grid gap-3 text-sm sm:grid-cols-3">
-            {['Create your free account.', 'Pick your studio in You → Membership.', 'Your studio confirms it and your member prices appear.'].map((step, i) => (
-              <li key={step} className="flex gap-3 border border-stone p-4"><span className="font-bold">{i + 1}</span><span className="text-muted">{step}</span></li>
-            ))}
-          </ol>
-          <p className="mt-3 text-xs text-muted">{STUDIO_NOTE} There’s no free trial on member prices and codes can’t be added to them.</p>
-          <Link href="/start/welcome" className="mt-5 inline-flex min-h-[52px] items-center justify-center border border-white px-6 text-sm font-bold uppercase hover:bg-white hover:text-black">Create my account and link my studio</Link>
-        </div>
-      )}
+        )}
+      </div>
     </section>
   );
 }

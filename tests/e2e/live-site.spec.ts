@@ -225,3 +225,15 @@ test('stripe webhook rejects unsigned requests', async ({ request }) => {
   const res = await request.post('/api/stripe/webhook', { data: { id: 'evt_fake', type: 'customer.subscription.created' } });
   expect([400, 500, 503]).toContain(res.status());
 });
+
+test('pricing asks if you are a studio member and swaps the prices', async ({ page }) => {
+  await page.goto('/pricing');
+  const question = page.locator('[data-studio-question]');
+  await expect(question.getByRole('heading', { name: 'Are you a BAYSE studio member?' })).toBeVisible();
+  await expect(page.locator('[data-plan-card]').first()).toContainText('£19.99');
+  await question.locator('[data-answer="yes"]').click();
+  await expect(page.getByRole('heading', { name: 'Foundation is on us. The rest is half price.' })).toBeVisible();
+  await expect(page.locator('[data-studio-plan-card]').first()).toContainText('Free');
+  await question.locator('[data-answer="no"]').click();
+  await expect(page.locator('[data-plan-card]')).toHaveCount(3);
+});
