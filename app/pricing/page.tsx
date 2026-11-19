@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { PricingChooser } from '@/components/site/PricingChooser';
 import { StudioFinder } from '@/components/site/StudioFinder';
+import { ReviewsBadge } from '@/components/site/ReviewsBadge';
 import { SitePage } from '@/components/site/SitePage';
 import { PageHero, Check } from '@/components/site/PageHero';
 import { wrap, PHOTO, CodesSection, TrialCta } from '@/components/site/sections';
@@ -39,6 +40,7 @@ export default function Pricing() {
       <PageHero eyebrow="Pricing" title="7 days free. Then from £19.99." intro={`${STRAPLINE} Three plans, billed ${BILLING}. New to BAYSE? Try any of them free for 7 days.`} image={PHOTO.core} cta={false} />
 
       <PricingChooser />
+      <ReviewsBadge />
 
       <section className={`${wrap} pb-12`}>
         <h2 className="text-[30px] sm:text-[40px]">Compare plans</h2>

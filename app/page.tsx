@@ -10,6 +10,7 @@ import { PhoneTour } from '@/components/site/PhoneTour';
 import { FreeClassButton } from '@/components/site/FreeClassButton';
 import { Icon } from '@/components/site/Graphics';
 import { StudioFinder } from '@/components/site/StudioFinder';
+import { ReviewsBadge } from '@/components/site/ReviewsBadge';
 import { PHOTO, wrap, Tick, ClassesSection, FeaturesSection, MembershipSection, FaqSection, TrialCta } from '@/components/site/sections';
 
 // Home: what The BAYSE Club is, then a taste of each part. Each part has its own page for the detail.
@@ -57,6 +58,8 @@ export default async function Home() {
           ))}
           </div>
         </section>
+
+        <ReviewsBadge />
 
         {/* Your programme. Your coach. Your people. + app tour */}
         <section className={`${wrap} py-10`}>
