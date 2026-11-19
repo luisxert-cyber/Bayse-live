@@ -25,3 +25,16 @@ export async function grantCredit(f: FormData) {
   revalidatePath('/admin/sessions');
   redirect(`/admin/sessions?${error ? 'error=denied' : 'ok=credit'}`);
 }
+
+// BAYSE Black: choose the member's coach (the instructor who answers their questions and reviews).
+export async function assignCoach(f: FormData) {
+  await requireStaff('sessions');
+  const member = z.string().uuid().parse(f.get('user_id'));
+  const coach = String(f.get('instructor_id') ?? '');
+  const supabase = await createClient();
+  const { error } = coach
+    ? await supabase.from('black_coaches').upsert({ user_id: member, instructor_id: z.string().uuid().parse(coach) })
+    : await supabase.from('black_coaches').delete().eq('user_id', member);
+  revalidatePath('/admin/sessions');
+  redirect(`/admin/sessions?${error ? 'error=denied' : 'ok=coach'}#black`);
+}

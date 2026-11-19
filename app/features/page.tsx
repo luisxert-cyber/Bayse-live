@@ -3,7 +3,7 @@ import { SitePage } from '@/components/site/SitePage';
 import { PageHero } from '@/components/site/PageHero';
 import { SixFeatures } from '@/components/site/SixFeatures';
 import { wrap, PHOTO, TrialCta } from '@/components/site/sections';
-import { LIVE_CLASSES_PER_WEEK, PRIVATE_SESSION_PRICE, ON_DEMAND_CLASSES, BUILDER_MOVES } from '@/lib/site/offer';
+import { LIVE_CLASSES_PLANNED, PRIVATE_SESSION_PRICE, ON_DEMAND_CLASSES, BUILDER_MOVES } from '@/lib/site/offer';
 
 export const metadata = { title: 'Features', description: 'Everything in The BAYSE Club app: your plan, BAYSE Daily, on-demand and live classes, the workout builder, 1-to-1s, Nourish, progress and community.' };
 
@@ -21,7 +21,7 @@ const GROUPS: { id: string; title: string; plan: string; items: [string, string]
     ['Programmes for your stage of life', 'BAYSE Begin, Stronger Years, Midlife, At Home, Postnatal and Prenatal: short guided classes, week by week.'],
   ] },
   { id: 'live', title: 'Live and 1-to-1', plan: 'Inner Circle and Black', items: [
-    ['Live Zoom classes', `${LIVE_CLASSES_PER_WEEK} classes a week now, 10 more coming soon, 40 minutes each, with an instructor who can watch your form.`],
+    ['Live Zoom classes', `Up to ${LIVE_CLASSES_PLANNED} classes a week (see the timetable for what’s running now), 40 minutes each, with an instructor who can watch your form.`],
     ['Private 1-to-1s', `40 minutes on Zoom with the instructor you choose. One every 28 days with Black, or ${PRIVATE_SESSION_PRICE} each on any plan.`],
     ['Meet the instructors', 'Every instructor has a page with photos, what they specialise in and the times you can book them.'],
   ] },

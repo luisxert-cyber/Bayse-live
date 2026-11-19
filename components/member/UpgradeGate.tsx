@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { buttonClass } from '@/components/ui';
-import { TIERS, LIVE_CLASSES_PER_WEEK } from '@/lib/site/offer';
+import { TIERS, LIVE_CLASSES_PLANNED } from '@/lib/site/offer';
 
 /** Shown when a member opens a part of BAYSE their plan does not include. Says what it is and where to add it. */
 export function UpgradeGate({ title, children }: { title: string; children: React.ReactNode }) {
@@ -13,7 +13,7 @@ export function UpgradeGate({ title, children }: { title: string; children: Reac
         <div className="border border-ink p-4">
           <p className="font-bold uppercase">It comes with BAYSE Inner Circle</p>
           <ul className="mt-2 list-disc space-y-1 pl-5 text-sm">
-            <li>{LIVE_CLASSES_PER_WEEK} live Zoom classes a week with BAYSE instructors</li>
+            <li>Up to {LIVE_CLASSES_PLANNED} live Zoom classes a week with BAYSE instructors</li>
             <li>Your personal plan and six programmes for your stage of life</li>
             <li>Nutrition: recipes with videos, a weekly food plan and a food diary</li>
             <li>Daily recovery, sleep and effort scores, levels and the weekly league</li>

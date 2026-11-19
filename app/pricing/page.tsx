@@ -5,7 +5,7 @@ import { ReviewsBadge } from '@/components/site/ReviewsBadge';
 import { SitePage } from '@/components/site/SitePage';
 import { PageHero, Check } from '@/components/site/PageHero';
 import { wrap, PHOTO, CodesSection, TrialCta } from '@/components/site/sections';
-import { TIERS, BILLING, PRIVATE_SESSION_PRICE, LIVE_CLASSES_PER_WEEK, LIVE_CLASSES_PLANNED, STRAPLINE } from '@/lib/site/offer';
+import { TIERS, BILLING, PRIVATE_SESSION_PRICE, LIVE_CLASSES_PLANNED, STRAPLINE } from '@/lib/site/offer';
 
 export const metadata = { title: 'Pricing', description: 'The BAYSE Club pricing: Foundation £19.99, Inner Circle £39.99 and Black £89.99 every 28 days, after 7 days free. BAYSE studio members get Foundation included and half price on Inner Circle and Black.' };
 
@@ -14,13 +14,14 @@ const ROWS: [string, boolean, boolean, boolean][] = [
   ['Reformer at home classes', true, true, true],
   ['The BAYSE Club community, General Chat, Circles and your studio’s group', true, true, true],
   ['Member-led walking, padel and social groups, and members near you', true, true, true],
-  [`Up to ${LIVE_CLASSES_PLANNED} live Zoom classes a week (${LIVE_CLASSES_PER_WEEK} running now)`, false, true, true],
+  [`Up to ${LIVE_CLASSES_PLANNED} live Zoom classes a week`, false, true, true],
   ['Your personal plan, 4 to 12 weeks', false, true, true],
   ['Six programmes for your stage of life', false, true, true],
   ['Nutrition: recipes with videos, a weekly food plan, food diary and shopping lists', false, true, true],
   ['Daily recovery, sleep and effort scores', false, true, true],
   ['Levels, the weekly league, challenges and member rewards', false, true, true],
   ['One 40-minute private Zoom session per paid 28 days', false, false, true],
+  ['Your own coach: priority Q&A and a progress review every 28 days', false, false, true],
   [`Book extra 1-to-1s (${PRIVATE_SESSION_PRICE} each)`, true, true, true],
 ];
 

@@ -13,6 +13,7 @@ export const metadata = { title: 'You' };
 export const dynamic = 'force-dynamic';
 
 const ROWS = [
+  { href: '/you/coaching', label: 'My coach (BAYSE Black)' },
   { href: '/you/progress', label: 'Progress, points and rewards' },
   { href: '/nourish', label: 'Nutrition: recipes and shopping list' },
   { href: '/you/personalise', label: 'Personalise BAYSE' },

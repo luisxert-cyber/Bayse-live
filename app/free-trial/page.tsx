@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { SitePage } from '@/components/site/SitePage';
 import { PageHero, Check } from '@/components/site/PageHero';
 import { wrap, PHOTO, TrialCta } from '@/components/site/sections';
-import { TIERS, BILLING, LIVE_CLASSES_PER_WEEK } from '@/lib/site/offer';
+import { TIERS, BILLING, LIVE_CLASSES_PLANNED } from '@/lib/site/offer';
 
 export const metadata = { title: '7-day free trial', description: 'What’s included in The BAYSE Club 7-day free trial, how it works and what happens on day 8.' };
 
@@ -10,7 +10,7 @@ export const metadata = { title: '7-day free trial', description: 'What’s incl
 const INCLUDED = [
   'Every on-demand class, filmed class and the workout builder, on every plan',
   'The community, General Chat, Circles and Clubs, on every plan',
-  `Live Zoom classes (${LIVE_CLASSES_PER_WEEK} a week) with Inner Circle or Black`,
+  `Live Zoom classes (up to ${LIVE_CLASSES_PLANNED} a week) with Inner Circle or Black`,
   'Your personal plan and stage-of-life programmes with Inner Circle or Black',
   'Nutrition: recipes with videos, your food plan and diary, with Inner Circle or Black',
   'Daily scores, levels and the weekly league with Inner Circle or Black',

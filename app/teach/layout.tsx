@@ -8,6 +8,7 @@ export const dynamic = 'force-dynamic';
 const NAV = [
   ['/teach', 'Today'],
   ['/teach/sessions', '1-to-1s'],
+  ['/teach/coaching', 'Black members'],
   ['/teach/classes', 'My classes'],
   ['/teach/availability', 'Availability'],
   ['/teach/profile', 'My profile'],

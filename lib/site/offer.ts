@@ -8,7 +8,7 @@ export const LIVE_CLASS_MINUTES = 40;
 export const LIVE_CLASSES_PLANNED = 27;
 export const LIVE_CLASS_STRUCTURE = '5-minute warm-up, 30-minute main class, 5-minute cool-down';
 
-// Classes live now (bookable). Update when a coming-soon class is launched in Admin → Live classes.
+// Fallback only: the live count shown to visitors comes from the database timetable, so launching a class updates it.
 export const LIVE_CLASSES_PER_WEEK = 17;
 
 export const ON_DEMAND = [
@@ -99,14 +99,14 @@ export const TIERS = [
   {
     key: 'club', name: 'BAYSE Inner Circle', price: '£39.99', studioPrice: '£19.99', tagline: 'Most popular', featured: true,
     bestFor: 'For you if you want a plan that is yours, live instructors and everything BAYSE has to help you keep going.',
-    items: ['Everything in Foundation', `Up to ${LIVE_CLASSES_PLANNED} live Zoom classes a week with BAYSE instructors (${LIVE_CLASSES_PER_WEEK} running now)`, 'Your personal plan, built from your answers', 'Six programmes for your stage of life, from Begin to Midlife', 'Nutrition: recipes with videos, a weekly food plan and a food diary', 'Daily recovery, sleep and effort scores, no watch needed', 'Levels, the weekly league, challenges and member rewards'],
+    items: ['Everything in Foundation', `Up to ${LIVE_CLASSES_PLANNED} live Zoom classes a week with BAYSE instructors`, 'Your personal plan, built from your answers', 'Six programmes for your stage of life, from Begin to Midlife', 'Nutrition: recipes with videos, a weekly food plan and a food diary', 'Daily recovery, sleep and effort scores, no watch needed', 'Levels, the weekly league, challenges and member rewards'],
     not: [],
     highlight: 'The full BAYSE Club for £1.43 a day', studioHighlight: 'The full BAYSE Club for 71p a day',
   },
   {
     key: 'coaching', name: 'BAYSE Black', price: '£89.99', studioPrice: '£44.99', tagline: 'Your own instructor',
     bestFor: 'For you if you want an instructor who knows you: your form, your progress and a plan that changes with you.',
-    items: ['Everything in Inner Circle', 'A private 40-minute Zoom session with your instructor every paid 28 days, subject to availability', 'Bookable from your first payment; use it within its 28 days (no carry-over)', `Extra 1-to-1s any time (${PRIVATE_SESSION_PRICE})`],
+    items: ['Everything in Inner Circle', 'A private 40-minute Zoom session with your instructor every paid 28 days, subject to availability', 'Bookable from your first payment; use it within its 28 days (no carry-over)', 'Your own coach: priority questions answered within 2 working days', 'A progress review every 28 days, with your coach’s focus for the next period', `Extra 1-to-1s any time (${PRIVATE_SESSION_PRICE})`],
     not: [],
     highlight: `Includes a ${PRIVATE_SESSION_PRICE} private session every 28 days, for £50 more than Inner Circle`, studioHighlight: `Includes a ${PRIVATE_SESSION_PRICE} private session every 28 days: the session alone costs more`,
   },

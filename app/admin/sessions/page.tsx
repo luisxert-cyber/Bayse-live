@@ -2,7 +2,8 @@ import { requireStaff } from '@/lib/auth/session';
 import { createClient } from '@/lib/supabase/server';
 import { Notice } from '@/components/ui';
 import { STATUS, PAYMENT, money, ukDateTime, input, btn, btnSolid } from '@/lib/teach/format';
-import { markRefunded, grantCredit } from './actions';
+import { markRefunded, grantCredit, assignCoach } from './actions';
+import { COACH_REPLY_TARGET, when } from '@/lib/coaching';
 import { respondSession, cancelSessionAsStaff } from '@/app/teach/actions';
 
 export const metadata = { title: '1-to-1 sessions' };
@@ -11,7 +12,7 @@ export const dynamic = 'force-dynamic';
 type S = { id: string; starts_at: string; status: string; payment: string; price_pence: number; member_note: string | null; cancel_reason: string | null;
   instructors: { display_name: string } | null; member: { display_name: string | null; email: string | null } | null };
 
-const OK: Record<string, string> = { refunded: 'Marked as refunded.', credit: 'Credit added. The member can now book a free 1-to-1.', accepted: 'Confirmed.', declined: 'Declined.', cancelled: 'Cancelled.' };
+const OK: Record<string, string> = { coach: 'Coach saved.', refunded: 'Marked as refunded.', credit: 'Credit added. The member can now book a free 1-to-1.', accepted: 'Confirmed.', declined: 'Declined.', cancelled: 'Cancelled.' };
 
 export default async function Sessions({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   await requireStaff('sessions');
@@ -20,11 +21,14 @@ export default async function Sessions({ searchParams }: { searchParams: Promise
   await supabase.rpc('expire_unpaid_sessions');
   const since = new Date(Date.now() - 7 * 864e5).toISOString();
   const sel = 'id, starts_at, status, payment, price_pence, member_note, cancel_reason, instructors(display_name), member:profiles!private_sessions_member_id_fkey(display_name, email)';
-  const [{ data: upcoming }, { data: refunds }, { data: credits }] = await Promise.all([
+  const [{ data: upcoming }, { data: refunds }, { data: credits }, { data: blackRows }, { data: team }] = await Promise.all([
     supabase.from('private_sessions').select(sel).gte('starts_at', since).order('starts_at').limit(200),
     supabase.from('private_sessions').select(sel).eq('payment', 'refund_due').order('starts_at'),
     supabase.from('coaching_credits').select('id, session_id, expires_at').gt('expires_at', new Date().toISOString()),
+    supabase.rpc('black_members'),
+    supabase.from('instructors').select('id, display_name').eq('active', true).order('display_name'),
   ]);
+  const black = (blackRows ?? []) as { user_id: string; name: string; instructor_id: string | null; waiting: boolean; waiting_since: string | null; reviews: number }[];
   const list = (upcoming ?? []) as unknown as S[];
   const due = (refunds ?? []) as unknown as S[];
   const unused = (credits ?? []).filter((c) => !c.session_id).length;
@@ -63,6 +67,23 @@ export default async function Sessions({ searchParams }: { searchParams: Promise
       )}
       <section><p className="mb-2 font-bold">This week and coming up</p>
         <ul className="divide-y divide-stone border border-stone">{list.map((s) => <Row key={s.id} s={s} />)}{!list.length && <li className="p-6 text-center text-sm text-muted">No 1-to-1s booked yet.</li>}</ul>
+      </section>
+      <section id="black" className="scroll-mt-16">
+        <p className="mb-1 font-bold">BAYSE Black members and coaches</p>
+        <p className="mb-2 text-xs text-muted">Each Black member gets a coach who answers questions {COACH_REPLY_TARGET} and replies to their progress review each 28 days.</p>
+        <ul className="divide-y divide-stone border border-stone">
+          {black.map((b) => (
+            <li key={b.user_id} className="flex flex-wrap items-center justify-between gap-2 p-3 text-sm">
+              <span><b>{b.name}</b>{b.waiting && b.waiting_since ? <span className="ml-2 bg-white px-1.5 text-[10px] font-bold uppercase text-black">Waiting since {when(b.waiting_since)}</span> : null}<br /><span className="text-xs text-muted">{b.reviews} progress reviews</span></span>
+              <form action={assignCoach} className="flex items-center gap-2">
+                <input type="hidden" name="user_id" value={b.user_id} />
+                <select name="instructor_id" defaultValue={b.instructor_id ?? ''} className={`${input} w-auto`}><option value="">No coach yet</option>{team?.map((t) => <option key={t.id} value={t.id}>{t.display_name}</option>)}</select>
+                <button className={btn}>Save</button>
+              </form>
+            </li>
+          ))}
+          {!black.length && <li className="p-4 text-center text-sm text-muted">No BAYSE Black members yet.</li>}
+        </ul>
       </section>
       <form action={grantCredit} className="grid gap-3 border border-stone p-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
         <p className="font-bold sm:col-span-3">Give a free 1-to-1 credit</p>
