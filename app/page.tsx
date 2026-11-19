@@ -107,11 +107,11 @@ export default async function Home() {
           <p className="eyebrow">Programmes for where you are</p>
           <h2 className="mt-2 text-[28px] sm:text-[36px]">Built for your stage of life</h2>
           <ul className="mt-6 grid gap-px border border-stone bg-stone sm:grid-cols-2 lg:grid-cols-3">
-            {[['BAYSE Begin', 'Beginners and women coming back to movement.'], ['BAYSE Stronger Years', 'Women over 50: strength, balance and staying independent.'], ['BAYSE Midlife', 'Support through perimenopause and menopause.'], ['BAYSE At Home', 'Low-impact, adaptable sessions for your own space.'], ['BAYSE Personal', 'Private one-to-one Pilates and accountability.'], ['BAYSE Postnatal and Prenatal', 'Before and after having a baby. Opening soon.']].map(([name, body]) => (
+            {[['BAYSE Begin', 'Beginners and women coming back to movement.'], ['BAYSE Stronger Years', 'Women over 50: strength, balance and staying independent.'], ['BAYSE Midlife', 'Support through perimenopause and menopause.'], ['BAYSE At Home', 'Low-impact, adaptable sessions for your own space.'], ['BAYSE Personal', 'Private one-to-one Pilates and accountability.'], ['BAYSE Postnatal and Prenatal', 'Gentle sessions before and after having a baby.']].map(([name, body]) => (
               <li key={name} className="bg-bg p-5"><p className="font-bold uppercase">{name}</p><p className="mt-1 text-sm text-muted">{body}</p></li>
             ))}
           </ul>
-          <p className="mt-3 text-sm text-muted">Begin, Stronger Years, Midlife and At Home are open now. Postnatal and Prenatal open once our specialist instructors have signed them off. <Link href="/who-its-for" className="underline">More about each</Link></p>
+          <p className="mt-3 text-sm text-muted">All open now. Postnatal and Prenatal are for after you have been cleared to exercise by your midwife or doctor. <Link href="/who-its-for" className="underline">More about each</Link></p>
         </section>
 
         <StudioFinder />

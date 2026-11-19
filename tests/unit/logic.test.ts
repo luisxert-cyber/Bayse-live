@@ -376,10 +376,13 @@ test('stage programmes only use beginner moves that have a demo', () => {
   }
 });
 
-test('prenatal and postnatal stay closed until an instructor has reviewed them', () => {
-  assert.deepEqual(OPEN_STAGE_PROGRAMMES.map((p) => p.key), ['begin', 'stronger-years', 'midlife', 'at-home']);
-  assert.equal(findAnyWorkout('prenatal-standing'), undefined);
-  assert.equal(findAnyWorkout('postnatal-reconnect'), undefined);
+test('prenatal has nothing lying down, no twists and no planks; postnatal has no planks', () => {
+  const pre = STAGE_PROGRAMMES.find((p) => p.key === 'prenatal')!, post = STAGE_PROGRAMMES.find((p) => p.key === 'postnatal')!;
+  const used = (p: typeof pre) => new Set(p.classes.flatMap((c) => c.blocks.map((b) => b.ex)));
+  // Only standing and all-fours moves in pregnancy.
+  for (const ex of used(pre)) assert.ok(['march', 'arm-circles', 'squat', 'good-morning', 'catcow', 'quad-hip-circle', 'birddog', 'childs'].includes(ex), `prenatal uses ${ex}`);
+  for (const ex of used(post)) assert.ok(!['plank', 'bear-hold', 'bear-hold-hold', 'singleleg', 'deadbug', 'roll-back'].includes(ex), `postnatal uses ${ex}`);
+  for (const p of [pre, post]) assert.ok((p.stop?.length ?? 0) >= 4 && (p.adapt?.length ?? 0) >= 3, `${p.key} lists when to stop and how to adapt`);
   assert.ok(findAnyWorkout('begin-first-steps'));
   assert.ok(isStageWorkout('midlife-strong') && !isStageWorkout('core-10'));
 });

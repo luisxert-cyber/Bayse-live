@@ -34,7 +34,23 @@ export default async function StageProgrammePage({ params }: { params: Promise<{
         <h1 className="mt-2 text-[30px] leading-none">{p.name}</h1>
         <p className="mt-2 text-muted">{p.tagline}. {p.about}</p>
       </div>
-      <p className="border-l-2 border-ink pl-3 text-sm">{p.note}</p>
+      <p className="border-l-2 border-ink pl-3 text-sm"><span className="font-bold">Read this first.</span> {p.note}</p>
+      {(p.adapt || p.stop) && (
+        <div className="grid gap-3 md:grid-cols-2">
+          {p.adapt && (
+            <div className="border border-stone p-4">
+              <p className="eyebrow">How to do these classes</p>
+              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm">{p.adapt.map((a) => <li key={a}>{a}</li>)}</ul>
+            </div>
+          )}
+          {p.stop && (
+            <div className="border border-ink p-4">
+              <p className="eyebrow">Stop and speak to your midwife or doctor if you notice</p>
+              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm">{p.stop.map((a) => <li key={a}>{a}</li>)}</ul>
+            </div>
+          )}
+        </div>
+      )}
       <div className="border border-stone p-4">
         <div className="flex items-center justify-between text-sm"><span className="font-bold">{done} of {total} sessions done</span>{done >= total && <span className="text-xs font-bold uppercase">Programme complete</span>}</div>
         <div className="mt-2 h-1.5 bg-stone"><div className="h-full bg-white" style={{ width: `${Math.min(100, (done / total) * 100)}%` }} /></div>

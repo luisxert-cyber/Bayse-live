@@ -2,8 +2,12 @@
 // Each class is built only from moves that already have a demo, at beginner level, with an easier
 // option on every move. BAYSE supports wellbeing and movement: this is not medical or rehabilitation care.
 //
-// Postnatal and Prenatal are written here as DRAFTS and are not shown or playable (`open: false`).
-// They open only after a suitably qualified pre and postnatal instructor has checked every move and cue.
+// Postnatal and Prenatal were opened on the owner's instruction (19 Nov 2026) before a specialist review.
+// They have NOT yet been checked by a qualified pre and postnatal instructor: that review is still wanted.
+// Until then they are kept deliberately cautious: Prenatal has nothing lying on the back or front, no
+// twists, no planks and no curl-ups; Postnatal has no planks or curl-ups. Both show the checks to make
+// first and the signs to stop, and neither says it has been approved by a specialist.
+// Set `open: false` on a programme to take it down again.
 import type { Workout } from './catalog';
 
 const w = (key: string, name: string, summary: string, focus: string, blocks: [string, number][], rest = 12): Workout =>
@@ -45,7 +49,7 @@ const AT_HOME = [
     [['march', 45], ['squat', 45], ['good-morning', 45], ['bridge', 45], ['birddog', 45], ['roll-back', 40], ['figure-four', 45], ['knee-hug', 45]]),
 ];
 
-// DRAFTS, not open. Awaiting review by a qualified pre and postnatal instructor before any member sees them.
+// Cautious first versions. See the note at the top of this file.
 const POSTNATAL = [
   w('postnatal-reconnect', 'Reconnect', 'Breath and the gentlest core work, lying comfortably.', 'Core', [['heel-slides', 45], ['knee-hug', 45], ['bridge', 40], ['heel-slides', 45], ['knee-hug', 60]], 15),
   w('postnatal-steady', 'Steady Strength', 'Easy all-fours and bridge work as you rebuild.', 'Strength', [['catcow', 45], ['birddog', 40], ['bridge', 45], ['heel-slides', 45], ['childs', 60]], 15),
@@ -54,13 +58,17 @@ const POSTNATAL = [
 const PRENATAL = [
   w('prenatal-standing', 'Standing Strength', 'Upright strength for legs and posture. Keep a chair within reach.', 'Strength', [['march', 45], ['arm-circles', 45], ['squat', 40], ['good-morning', 40], ['march', 45]], 20),
   w('prenatal-all-fours', 'All-fours Ease', 'Take the weight off your back on hands and knees.', 'Mobility', [['catcow', 60], ['quad-hip-circle', 45], ['birddog', 40], ['childs', 60]], 20),
-  w('prenatal-shoulders', 'Shoulders & Breath', 'Seated and standing work for the upper back, with slow breathing.', 'Posture', [['arm-circles', 45], ['spine-twist', 40], ['march', 45], ['arm-circles', 45]], 20),
+  w('prenatal-shoulders', 'Shoulders & Breath', 'Standing work for the upper back and posture, with slow breathing.', 'Posture', [['arm-circles', 45], ['march', 45], ['good-morning', 35], ['arm-circles', 45], ['march', 40]], 20),
 ];
 
 export type StageProgramme = {
   key: string; name: string; tagline: string; about: string; weeks: number; perWeek: number;
   /** Shown above the classes. Programmes for a life stage with medical considerations must carry one. */
   note: string; open: boolean; classes: Workout[];
+  /** Signs to stop and get advice, listed on the programme page. */
+  stop?: string[];
+  /** How to adapt the general cues for this stage, listed on the programme page. */
+  adapt?: string[];
 };
 
 export const STAGE_PROGRAMMES: StageProgramme[] = [
@@ -76,12 +84,16 @@ export const STAGE_PROGRAMMES: StageProgramme[] = [
   { key: 'at-home', name: 'BAYSE At Home', tagline: 'Low impact, in your own space', weeks: 4, perWeek: 3, open: true, classes: AT_HOME,
     about: 'Adaptable sessions with nothing to jump over and nothing to buy. One class is all standing, for days when the floor is not for you.',
     note: 'Reduced mobility or recovering from an injury or illness? Only start once you have been cleared to exercise, and use the easier options.' },
-  { key: 'postnatal', name: 'BAYSE Postnatal', tagline: 'A gradual return after pregnancy and birth', weeks: 6, perWeek: 3, open: false, classes: POSTNATAL,
-    about: 'A gentle, gradual return to movement after having a baby.',
-    note: 'Only after your postnatal check and clearance to exercise from your GP, midwife or pelvic health physiotherapist.' },
-  { key: 'prenatal', name: 'BAYSE Prenatal', tagline: 'Staying strong through pregnancy', weeks: 6, perWeek: 3, open: false, classes: PRENATAL,
-    about: 'Gentle strength and mobility through pregnancy.',
-    note: 'Only with agreement from your midwife or doctor that exercise is right for you in this pregnancy.' },
+  { key: 'postnatal', name: 'BAYSE Postnatal', tagline: 'A gradual return after pregnancy and birth', weeks: 6, perWeek: 3, open: true, classes: POSTNATAL,
+    about: 'A gentle, gradual return to movement after having a baby. Very short sessions, with no planks or sit-up style moves.',
+    note: 'Only start after your postnatal check and once your GP, midwife or pelvic health physiotherapist has cleared you to exercise. After a caesarean or a difficult birth this is often later than six weeks.',
+    adapt: ['Go slower and smaller than the instructions say. There is no rush.', 'Breathe out gently as you make the effort. Never hold your breath or bear down.', 'Feeding or holding your baby a lot? Do the posture session as often as you like.'],
+    stop: ['Your tummy bulges or domes down the middle', 'Leaking, or heaviness or dragging in your pelvis', 'Pain in your tummy, scar, back or pelvis', 'Bleeding that gets heavier or starts again', 'Feeling dizzy or unwell'] },
+  { key: 'prenatal', name: 'BAYSE Prenatal', tagline: 'Staying strong through pregnancy', weeks: 6, perWeek: 3, open: true, classes: PRENATAL,
+    about: 'Gentle strength and mobility through pregnancy. Everything is standing or on hands and knees: nothing lying on your back or front, no twists and no planks.',
+    note: 'Only with agreement from your midwife or doctor that exercise is right for you in this pregnancy. If you have been told not to exercise, or have any complication, do not use this programme.',
+    adapt: ['Work at a level where you can still hold a conversation.', 'Where an instruction says to draw your belly in, simply stand or kneel tall and breathe normally instead.', 'Keep a chair within reach, squat only as low as is comfortable, and keep your knees wide in child’s pose.', 'Drink water, keep cool and take longer rests whenever you want them.'],
+    stop: ['Bleeding or fluid leaking', 'Pain in your tummy, pelvis or chest, or regular tightenings', 'Feeling dizzy, faint or unusually short of breath', 'A bad headache, or pain or swelling in your calf', 'Your baby is moving less than usual'] },
 ];
 
 export const OPEN_STAGE_PROGRAMMES = STAGE_PROGRAMMES.filter((p) => p.open);
