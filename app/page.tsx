@@ -11,7 +11,8 @@ import { FreeClassButton } from '@/components/site/FreeClassButton';
 import { Icon } from '@/components/site/Graphics';
 import { StudioFinder } from '@/components/site/StudioFinder';
 import { ReviewsBadge } from '@/components/site/ReviewsBadge';
-import { PHOTO, wrap, Tick, ClassesSection, FeaturesSection, MembershipSection, FaqSection, TrialCta } from '@/components/site/sections';
+import { PricingChooser } from '@/components/site/PricingChooser';
+import { PHOTO, wrap, Tick, ClassesSection, FeaturesSection, FaqSection, TrialCta } from '@/components/site/sections';
 
 // Home: what The BAYSE Club is, then a taste of each part. Each part has its own page for the detail.
 
@@ -82,7 +83,7 @@ export default async function Home() {
 
         <ClassesSection member={member} />
         <FeaturesSection />
-        <MembershipSection />
+        <div id="membership" className="scroll-mt-28"><PricingChooser /></div>
         <FaqSection limit={4} />
         <p className="-mt-8 pb-6 text-center"><Link href="/faq" className="text-sm underline">All questions</Link></p>
         {/* Who it's for */}

@@ -24,6 +24,13 @@ const ROWS: [string, boolean, boolean, boolean][] = [
   [`Book extra 1-to-1s (${PRIVATE_SESSION_PRICE} each)`, true, true, true],
 ];
 
+// The same rows, grouped by the first plan that includes them (for phones).
+const COMPARE_GROUPS = [
+  { title: 'Every plan', note: 'Foundation, Inner Circle and Black', rows: ROWS.filter(([, f]) => f).map(([label]) => label) },
+  { title: 'Inner Circle and Black', note: 'Everything above, plus', rows: ROWS.filter(([, f, ic]) => !f && ic).map(([label]) => label) },
+  { title: 'Black only', note: 'Everything above, plus', rows: ROWS.filter(([, f, ic, b]) => !f && !ic && b).map(([label]) => label) },
+];
+
 const FAQ: [string, string][] = [
   ['Why every 28 days and not monthly?', 'Every billing period is exactly the same length, so you always get the same value. It means 13 payments in a year, and some calendar months have two.'],
   ['What happens after my free trial?', 'On day 8 your chosen plan starts and you pay the first 28 days. Cancel at any point in the first 7 days from My BAYSE and you pay nothing.'],
@@ -44,7 +51,17 @@ export default function Pricing() {
 
       <section className={`${wrap} pb-12`}>
         <h2 className="text-[30px] sm:text-[40px]">Compare plans</h2>
-        <div className="mt-5 overflow-x-auto">
+        {/* Phones: the same comparison as three short lists, so nothing runs off the screen */}
+        <div className="mt-5 space-y-4 md:hidden" data-compare-mobile>
+          {COMPARE_GROUPS.map((g) => (
+            <div key={g.title} className="border border-stone p-5">
+              <p className="text-lg font-bold uppercase">{g.title}</p>
+              <p className="text-xs text-muted">{g.note}</p>
+              <ul className="mt-3 space-y-2 text-[15px]">{g.rows.map((label) => <li key={label} className="flex gap-3"><span className="shrink-0"><Check /></span><span>{label}</span></li>)}</ul>
+            </div>
+          ))}
+        </div>
+        <div className="mt-5 hidden overflow-x-auto md:block">
           <table className="w-full min-w-[620px] border border-stone text-sm">
             <thead>
               <tr className="border-b border-stone text-left"><th className="p-3 font-normal text-muted">What you get</th>{TIERS.map((t) => <th key={t.key} className="p-3 text-center font-bold uppercase">{t.name.replace('BAYSE ', '')}<br /><span className="text-xs font-normal normal-case text-muted">{t.price}</span></th>)}</tr>

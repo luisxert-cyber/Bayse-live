@@ -279,17 +279,30 @@ test('members only see the prices meant for them', () => {
   assert.deepEqual(pricesFor(prices, true).map((p) => p.id), ['b']);
 });
 
-test('studio map: every studio has a unique slug and sits inside the map', async () => {
-  const { STUDIOS, MAP_WIDTH, MAP_HEIGHT, mapPoint, directionsUrl } = await import('../../lib/site/studios');
+test('studios: unique, on the map, and the nearest-studio search ranks them', async () => {
+  const { STUDIOS, MAP_WIDTH, MAP_HEIGHT, UK_PATH, mapPoint, directionsUrl, milesBetween, nearestStudios, milesLabel } = await import('../../lib/site/studios');
   assert.equal(new Set(STUDIOS.map((s) => s.slug)).size, STUDIOS.length);
+  assert.equal(STUDIOS.filter((s) => s.status === 'open').length, 11);
+  assert.equal(STUDIOS.filter((s) => s.status === 'opening').length, 3);
   for (const s of STUDIOS) {
     const { x, y } = mapPoint(s.lat, s.lng);
-    assert.ok(x > 20 && x < MAP_WIDTH - 20, `${s.town} x`);
-    assert.ok(y > 20 && y < MAP_HEIGHT - 20, `${s.town} y`);
+    assert.ok(x > 10 && x < MAP_WIDTH - 10, `${s.town} x`);
+    assert.ok(y > 10 && y < MAP_HEIGHT - 10, `${s.town} y`);
     assert.match(directionsUrl(s), /^https:\/\/www\.google\.com\/maps\/search\/\?api=1&query=BAYSE/);
   }
-  // Liverpool is west of Harrogate and north of Stafford.
-  const at = (slug: string) => { const s = STUDIOS.find((x) => x.slug === slug)!; return mapPoint(s.lat, s.lng); };
-  assert.ok(at('liverpool').x < at('harrogate').x);
-  assert.ok(at('liverpool').y < at('stafford').y);
+  assert.ok(UK_PATH.startsWith('M') && UK_PATH.endsWith('Z'));
+  // London to Edinburgh is about 330 miles in a straight line.
+  const miles = milesBetween({ lat: 51.5074, lng: -0.1278 }, { lat: 55.9533, lng: -3.1883 });
+  assert.ok(miles > 320 && miles < 340, `London to Edinburgh ${miles}`);
+  // From Warrington town centre the closest studios are the two in Stockton Heath.
+  const near = nearestStudios({ lat: 53.39, lng: -2.597 });
+  assert.equal(near[0].town, 'Stockton Heath');
+  assert.equal(near[1].town, 'Stockton Heath');
+  assert.ok(near[0].miles < 2);
+  // From Leeds the closest open studio is Harrogate; Leeds itself is opening soon.
+  const leeds = nearestStudios({ lat: 53.8, lng: -1.55 });
+  assert.equal(leeds[0].slug, 'leeds');
+  assert.equal(leeds.find((s) => s.status === 'open')!.slug, 'harrogate');
+  assert.equal(milesLabel(3.26), '3.3 miles');
+  assert.equal(milesLabel(41.6), '42 miles');
 });

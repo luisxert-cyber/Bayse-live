@@ -6,7 +6,8 @@ const securityHeaders = [
   // Only BAYSE itself may show its pages in a window (the free-trial sign-up window). Other sites cannot.
   { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
   { key: 'Content-Security-Policy', value: "frame-ancestors 'self'" },
-  { key: 'Permissions-Policy', value: 'camera=(self), microphone=(self), geolocation=()' },
+  // Location is only for "find my closest studio", and only when the visitor taps the button.
+  { key: 'Permissions-Policy', value: 'camera=(self), microphone=(self), geolocation=(self)' },
   { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
 ];
 

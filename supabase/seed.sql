@@ -10,8 +10,13 @@ insert into public.studios (slug, name, town, status) values
   ('stafford',       'BAYSE Stafford',       'Stafford',       'open'),
   ('stoke',          'BAYSE Stoke',          'Stoke-on-Trent', 'open'),
   ('wilmslow',       'BAYSE Wilmslow',       'Wilmslow',       'open'),
-  ('chester',        'BAYSE Chester',        'Chester',        'opening'),
-  ('harrogate',      'BAYSE Harrogate',      'Harrogate',      'opening')
+  ('chester',        'BAYSE Chester',        'Chester',        'open'),
+  ('harrogate',      'BAYSE Harrogate',      'Harrogate',      'open'),
+  ('mega-reformer-stockton-heath', 'BAYSE Mega Reformer Stockton Heath', 'Stockton Heath', 'open'),
+  ('mega-reformer-liverpool',      'BAYSE Mega Reformer Liverpool',      'Liverpool',      'open'),
+  ('manchester-northern-quarter',  'BAYSE Manchester Northern Quarter',  'Manchester',     'opening'),
+  ('leeds',                        'BAYSE Leeds',                        'Leeds',          'opening'),
+  ('cheltenham',                   'BAYSE Cheltenham',                   'Cheltenham',     'opening')
 on conflict (slug) do nothing;
 
 insert into public.entitlement_keys (key, label, description) values
