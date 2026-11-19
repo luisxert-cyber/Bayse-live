@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic';
 
 const INTEREST: Record<string, string> = { padel: 'Padel', walk: 'Walks', social: 'Socials', pilates_friends: 'Pilates friends', accountability: 'Accountability' };
 const KIND_FOR: Record<string, string> = { padel: 'padel', walk: 'walk', social: 'social' };
-type Person = { id: string; display_name: string; shared: string[] };
+type Person = { id: string; display_name: string; shared: string[]; near?: boolean };
 type Circle = { id: string; name: string; description: string | null; max_members: number; member_count: number; is_member: boolean; official: boolean };
 
 export default async function Together() {
@@ -19,7 +19,7 @@ export default async function Together() {
   if (status !== 'ok') return <Gate status={status} />;
   const supabase = await createClient();
   const [{ data: prefs }, { data: people }, { data: circles }] = await Promise.all([
-    supabase.from('discovery_prefs').select('discoverable, interests').eq('user_id', user.id).maybeSingle(),
+    supabase.from('discovery_prefs').select('discoverable, interests, town').eq('user_id', user.id).maybeSingle(),
     supabase.rpc('suggest_members'),
     supabase.rpc('list_circles'),
   ]);
@@ -30,25 +30,28 @@ export default async function Together() {
     : { data: [] as { id: string; kind: string; title: string; starts_at: string; venue_area: string | null }[] };
   const openCircles = ((circles ?? []) as Circle[]).filter((c) => !c.is_member && c.member_count < c.max_members).slice(0, 4);
   const matches = (people ?? []) as Person[];
+  const town = ((prefs?.town as string | null) ?? '').trim() || null;
 
   return (
     <CommunityShell active="/community/together" title="BAYSE Together" intro="Meet members who share your interests, then train, walk, play or grab a coffee together.">
       {!interests.length || !prefs?.discoverable ? (
         <div className="border-2 border-white p-4">
           <p className="font-bold">{interests.length ? 'Let others find you too' : 'Tell us what you’d enjoy'}</p>
-          <p className="mt-1 text-sm text-muted">Pick your interests and switch on &ldquo;Let other members find me&rdquo;. Only your display name and shared interests are shown. You can switch it off at any time.</p>
+          <p className="mt-1 text-sm text-muted">Add your town or city to find members near you, wherever you live. Pick your interests and switch on &ldquo;Let other members find me&rdquo;. Only your display name and shared interests are shown. You can switch it off at any time.</p>
           <Link href="/community/settings" className="mt-3 inline-block border border-ink px-4 py-2 text-sm font-bold uppercase">Set up in Privacy</Link>
         </div>
       ) : null}
 
       <section className="space-y-2">
-        <h2 className="text-sm font-bold uppercase tracking-[0.1em]">People like you</h2>
+        <h2 className="text-sm font-bold uppercase tracking-[0.1em]">{town ? `People near ${town} and people like you` : 'People like you'}</h2>
+        {!town && interests.length > 0 && prefs?.discoverable && <p className="text-sm text-muted"><Link href="/community/settings" className="underline">Add your town or city</Link> to see members near you.</p>}
         {matches.length ? (
           <ul className="divide-y divide-stone border-y border-stone">
             {matches.map((p) => (
               <li key={p.id} className="flex items-center gap-3 py-3">
                 <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-stone font-bold">{p.display_name.slice(0, 1).toUpperCase()}</span>
-                <span className="min-w-0"><span className="block font-semibold">{p.display_name}</span><span className="block text-sm text-muted">Also into {p.shared.map((s) => INTEREST[s] ?? s).join(', ').toLowerCase()}</span></span>
+                <span className="min-w-0"><span className="block font-semibold">{p.display_name}</span><span className="block text-sm text-muted">{[p.near && town ? `Also in ${town}` : null, p.shared.length ? `${p.near && town ? 'into' : 'Also into'} ${p.shared.map((s) => INTEREST[s] ?? s).join(', ').toLowerCase()}` : null].filter(Boolean).join(' · ')}</span></span>
+                {p.near && <span className="ml-auto shrink-0 rounded-full border border-ink px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide">Near you</span>}
               </li>
             ))}
           </ul>

@@ -67,13 +67,11 @@ where not exists (select 1 from public.prices x where x.plan_id = p.id and x.aud
 insert into public.plan_entitlements (plan_id, entitlement_key)
 select id, 'challenges' from public.plans where key = 'essential' on conflict do nothing;
 
--- Studio-tier access (owner brief 19 Nov 2026): £99 and £148 studio members get Foundation at no charge.
--- Live classes and private sessions come with the half-price Inner Circle and Black upgrades.
+-- Studio-tier access (owner decision 19 Nov 2026): £99 and £148 studio members get on-demand classes and
+-- the community at no charge. Everything else comes with the half-price Inner Circle and Black upgrades.
 insert into public.studio_tier_entitlements (tier, entitlement_key) values
-  ('studio_99','on_demand'),('studio_99','programmes'),('studio_99','nutrition'),('studio_99','meal_planning'),
-  ('studio_99','progress'),('studio_99','community'),('studio_99','challenges'),
-  ('studio_148','on_demand'),('studio_148','programmes'),('studio_148','nutrition'),('studio_148','meal_planning'),
-  ('studio_148','progress'),('studio_148','community'),('studio_148','challenges'),
+  ('studio_99','on_demand'),('studio_99','community'),
+  ('studio_148','on_demand'),('studio_148','community'),
   ('other','community'),('other','progress')
 on conflict do nothing;
 

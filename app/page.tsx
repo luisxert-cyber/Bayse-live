@@ -32,8 +32,9 @@ export default async function Home() {
           </div>
           <div className={`${wrap} relative flex flex-col pb-10 pt-2 sm:min-h-[640px] sm:justify-center sm:py-20`}>
             <p className="eyebrow !text-white/80">The BAYSE Club · Pilates, nutrition &amp; personal coaching for women</p>
-            <h1 className="mt-4 max-w-[14ch] text-[42px] leading-[0.98] sm:text-[68px]">Online Pilates coaching from the BAYSE team</h1>
-            <p className="mt-5 max-w-[40ch] text-[17px] text-white/85 sm:text-lg">Your plan, your classes, your food and your people. All in one app.</p>
+            <h1 className="mt-4 max-w-[14ch] text-[42px] leading-[0.98] sm:text-[68px]">Online Pilates and wellness, wherever you live</h1>
+            <p className="mt-5 max-w-[40ch] text-[17px] text-white/85 sm:text-lg">Your plan, your classes, your food and your people. All in one app, wherever you live in the UK.</p>
+            <p className="mt-4 text-[15px] font-bold uppercase tracking-[0.04em]">From £19.99 every 28 days</p>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
               <Link href="/start/welcome" className="inline-flex min-h-[52px] items-center justify-center bg-white px-7 text-[15px] font-bold uppercase tracking-[0.02em] text-black hover:opacity-90">Start my 7-day free trial</Link>
               <FreeClassButton className="inline-flex min-h-[52px] items-center justify-center border border-white/70 px-7 text-[15px] font-bold uppercase tracking-[0.02em] hover:bg-white hover:text-black">▶ Play a free class</FreeClassButton>
@@ -49,7 +50,7 @@ export default async function Home() {
             [Icon.live, 'Live coached classes', `${LIVE_CLASSES_PER_WEEK} a week, taught live by the BAYSE team`, '/live-classes'],
             [Icon.plan, 'Your personal plan', '4 to 12 weeks, built from your answers', '/programmes'],
             [Icon.play, 'On-demand library', 'Follow-along classes and a workout builder', '/classes'],
-            [Icon.people, 'Community', 'Circles, Clubs and members near you', '/the-community'],
+            [Icon.people, 'Community', 'Optional: Circles, Clubs and members near you, in any town', '/the-community'],
           ].map(([icon, t, d, href]) => (
             <Link key={t as string} href={href as string} className="group bg-bg px-4 py-5 hover:bg-surface sm:px-6">
               <span className="block h-6 w-6">{icon}</span>
@@ -86,7 +87,7 @@ export default async function Home() {
 
         <ClassesSection member={member} />
         <FeaturesSection />
-        <div id="membership" className="scroll-mt-28"><PricingChooser /></div>
+        <div id="membership" className="scroll-mt-28"><PricingChooser studio="summary" /></div>
         <FaqSection limit={4} />
         <p className="-mt-8 pb-6 text-center"><Link href="/faq" className="text-sm underline">All questions</Link></p>
         {/* Who it's for */}
@@ -99,6 +100,18 @@ export default async function Home() {
             </div>
             <Link href="/who-its-for" className="inline-flex min-h-[48px] items-center justify-center border border-white px-6 text-sm font-bold uppercase hover:bg-white hover:text-black">See who we help</Link>
           </div>
+        </section>
+
+        {/* Programmes for different stages of life: a reason to choose BAYSE from anywhere in the country */}
+        <section className={`${wrap} pb-12`}>
+          <p className="eyebrow">Programmes for where you are</p>
+          <h2 className="mt-2 text-[28px] sm:text-[36px]">Built for your stage of life</h2>
+          <ul className="mt-6 grid gap-px border border-stone bg-stone sm:grid-cols-2 lg:grid-cols-3">
+            {[['BAYSE Begin', 'Beginners and women coming back to movement.'], ['BAYSE Stronger Years', 'Women over 50: strength, balance and staying independent.'], ['BAYSE Postnatal', 'A gradual return after pregnancy and birth.'], ['BAYSE Midlife', 'Support through perimenopause and menopause.'], ['BAYSE At Home', 'Low-impact, adaptable sessions for your own space.'], ['BAYSE Personal', 'Private one-to-one Pilates and accountability.']].map(([name, body]) => (
+              <li key={name} className="bg-bg p-5"><p className="font-bold uppercase">{name}</p><p className="mt-1 text-sm text-muted">{body}</p></li>
+            ))}
+          </ul>
+          <p className="mt-3 text-sm text-muted">Programmes open in stages. <Link href="/who-its-for" className="underline">See which are open now</Link></p>
         </section>
 
         <StudioFinder />

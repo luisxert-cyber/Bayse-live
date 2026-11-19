@@ -7,17 +7,17 @@ import { PageHero, Check } from '@/components/site/PageHero';
 import { wrap, PHOTO, CodesSection, TrialCta } from '@/components/site/sections';
 import { TIERS, BILLING, PRIVATE_SESSION_PRICE, LIVE_CLASSES_PER_WEEK, STRAPLINE } from '@/lib/site/offer';
 
-export const metadata = { title: 'Pricing', description: 'The BAYSE Club pricing: Foundation £19.99, Inner Circle £39.99 and Black £79.99 every 28 days, after 7 days free. BAYSE studio members get Foundation included and half price on Inner Circle and Black.' };
+export const metadata = { title: 'Pricing', description: 'The BAYSE Club pricing: Foundation £19.99, Inner Circle £39.99 and Black £79.99 every 28 days, after 7 days free. BAYSE studio members get on-demand classes and the community included and half price on Inner Circle and Black.' };
 
 const ROWS: [string, boolean, boolean, boolean][] = [
-  ['The BAYSE Club community, your studio’s group and chat rooms', true, true, true],
+  ['The BAYSE Club community, General Chat and your studio’s group', true, true, true],
   ['Member-led walking, padel and social groups and meetups', true, true, true],
   ['Member challenges', true, true, true],
   ['Your personal plan, 4 to 12 weeks', true, true, true],
   ['On-demand classes, filmed classes and the workout builder', true, true, true],
   ['BAYSE Daily: your next best move each day', true, true, true],
-  ['Recipes, shopping lists and allergy filters', true, true, true],
-  ['Progress, milestones and member rewards', true, true, true],
+  ['Recipes with videos, a weekly food plan, optional food diary and shopping lists', true, true, true],
+  ['Daily recovery, sleep and effort scores, levels, the weekly league and rewards', true, true, true],
   [`${LIVE_CLASSES_PER_WEEK} live Zoom classes a week`, false, true, true],
   ['Extra structured programmes and premium classes', false, true, true],
   ['One 45-minute private Zoom session per paid 28 days', false, false, true],
@@ -36,8 +36,8 @@ const FAQ: [string, string][] = [
   ['What happens after my free trial?', 'On day 8 your chosen plan starts and you pay the first 28 days. Cancel at any point in the first 7 days from My BAYSE and you pay nothing.'],
   ['How do I cancel?', 'From My BAYSE → Membership, at any time. Cancellation needs 28 days’ notice; if your next payment falls inside that notice you pay one last period and keep everything until it ends. The terms explain this with an example.'],
   ['Can I change plan?', 'Yes, you can move up or down between plans at any time.'],
-  ['I’m a BAYSE studio member. Do I pay?', 'Active £99 and £148 studio memberships include BAYSE Foundation at no extra cost. Inner Circle is £19.99 and Black is £39.99 every 28 days, half the standard price. Link your studio membership in the app; your studio confirms it before the member price applies.'],
-  ['What if my studio membership ends?', 'We tell you at least 28 days ahead. Included Foundation access then ends, and a half-price Inner Circle or Black membership is set to finish at the end of a paid period unless you choose a standard-price plan. We never raise what you pay without you agreeing to it.'],
+  ['I’m a BAYSE studio member. Do I pay?', 'Active £99 and £148 studio memberships include on-demand classes and the community at no extra cost. For everything else, Inner Circle is £19.99 and Black is £39.99 every 28 days, half the standard price. Link your studio membership in the app; your studio confirms it before the member price applies.'],
+  ['What if my studio membership ends?', 'We tell you at least 28 days ahead. Your included on-demand and community access then ends, and a half-price Inner Circle or Black membership is set to finish at the end of a paid period unless you choose a standard-price plan. We never raise what you pay without you agreeing to it.'],
   ['What if I don’t use my Black 1-to-1?', 'It carries over for one more 28-day period, then expires. You can cancel a 1-to-1 up to 12 hours before and keep it.'],
 ];
 

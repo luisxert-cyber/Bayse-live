@@ -28,6 +28,9 @@ export default async function Settings({ searchParams }: { searchParams: Promise
         <input type="hidden" name="back" value="/community/settings" />
         <label className="flex items-start gap-3 text-sm"><input type="checkbox" name="discoverable" defaultChecked={prefs?.discoverable ?? false} className="mt-0.5 h-4 w-4 accent-ink" />
           <span><span className="font-semibold">Let other members find me</span><span className="block text-muted">Off by default. When on, members can see your display name and interests when looking for people to train with.</span></span></label>
+        <label className="grid gap-1 text-sm"><span className="font-semibold">My town or city (optional)</span>
+          <input name="town" maxLength={60} defaultValue={prefs?.town ?? ''} placeholder="e.g. Birmingham" autoComplete="address-level2" className="min-h-[44px] rounded-[10px] border border-stone bg-bg px-3 text-base" />
+          <span className="text-muted">Wherever you live, add it to find BAYSE members near you. Only shown to others when &ldquo;Let other members find me&rdquo; is on, and never more exact than the town.</span></label>
         <fieldset>
           <legend className="text-sm font-semibold">I&rsquo;m interested in</legend>
           <div className="mt-2 flex flex-wrap gap-2">

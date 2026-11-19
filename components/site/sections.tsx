@@ -210,7 +210,7 @@ export function MembershipSection() {
               );
             })}
           </div>
-          <p className="mt-3 text-xs text-muted">Billed every 28 days (13 payments a year). 7 days free first, cancel during the trial and you pay nothing. Qualifying £99 and £148 studio members get Foundation free. <Link href="/pricing" className="underline">Full pricing</Link></p>
+          <p className="mt-3 text-xs text-muted">Billed every 28 days (13 payments a year). 7 days free first, cancel during the trial and you pay nothing. Qualifying £99 and £148 studio members get on-demand classes and the community free. <Link href="/pricing" className="underline">Full pricing</Link></p>
         </section>
 
     </>
