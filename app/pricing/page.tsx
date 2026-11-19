@@ -14,7 +14,7 @@ const ROWS: [string, boolean, boolean, boolean][] = [
   ['Reformer at home classes', true, true, true],
   ['The BAYSE Club community, General Chat, Circles and your studio’s group', true, true, true],
   ['Member-led walking, padel and social groups, and members near you', true, true, true],
-  [`${LIVE_CLASSES_PER_WEEK} live Zoom classes a week now, ${LIVE_CLASSES_PLANNED} coming soon`, false, true, true],
+  [`Up to ${LIVE_CLASSES_PLANNED} live Zoom classes a week (${LIVE_CLASSES_PER_WEEK} running now)`, false, true, true],
   ['Your personal plan, 4 to 12 weeks', false, true, true],
   ['Six programmes for your stage of life', false, true, true],
   ['Nutrition: recipes with videos, a weekly food plan, food diary and shopping lists', false, true, true],

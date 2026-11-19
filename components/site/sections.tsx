@@ -42,7 +42,7 @@ export async function LiveSection() {
           <div className="grid items-start gap-10 md:grid-cols-2">
             <div>
               <Eyebrow>Live classes</Eyebrow>
-              <h2 className="mt-3 text-[32px] sm:text-[40px]">{total} live classes per week, coming soon</h2>
+              <h2 className="mt-3 text-[32px] sm:text-[40px]">Up to {total} live classes per week</h2>
               <p className="mt-4 text-muted">Enjoy {live} live instructor-led classes every week right now. We’re growing to {total} weekly sessions, with even more Pilates, strength, mobility and specialist classes to fit your lifestyle.</p>
               <ul className="mt-5 space-y-2.5 text-[15px]">
                 {[`${live} classes a week available now, ${LIVE_CLASS_MINUTES} minutes each`, LIVE_CLASS_STRUCTURE, 'Early mornings, lunchtimes, afternoons and evenings', 'Camera on for feedback, or off', 'Most classes need just a mat'].map((t) => <li key={t} className="flex gap-3"><Tick />{t}</li>)}

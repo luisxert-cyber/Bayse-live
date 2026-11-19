@@ -90,9 +90,8 @@ export default async function Home() {
           <Link href="/live-classes" className="group grid items-center gap-4 border-2 border-white p-6 sm:grid-cols-[1fr_auto] sm:p-8" data-live-teaser>
             <div>
               <p className="eyebrow">Live on Zoom · 40 minutes · from anywhere</p>
-              <p className="mt-2 text-[28px] font-bold uppercase leading-tight sm:text-[36px]">{LIVE_CLASSES_PER_WEEK} live classes every week</p>
-              <p className="mt-1 text-lg font-bold uppercase text-muted">{LIVE_CLASSES_PLANNED} weekly live classes · coming soon</p>
-              <p className="mt-3 max-w-[56ch] text-sm text-muted">Early mornings, lunchtimes, afternoons and evenings, with strength, mobility, 50+, prenatal and postnatal classes on the way. See which are live now and tap Notify me for the rest.</p>
+              <p className="mt-2 text-[28px] font-bold uppercase leading-tight sm:text-[36px]">Up to {LIVE_CLASSES_PLANNED} live classes per week</p>
+              <p className="mt-3 max-w-[56ch] text-sm text-muted">Early mornings, lunchtimes, afternoons and evenings, with strength, mobility, 50+, prenatal and postnatal classes on the way. The timetable shows which are running now and which are launching soon.</p>
             </div>
             <span className="inline-flex min-h-[48px] items-center justify-center bg-white px-6 text-sm font-bold uppercase text-black group-hover:opacity-90">See the timetable</span>
           </Link>

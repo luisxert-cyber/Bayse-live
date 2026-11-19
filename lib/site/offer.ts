@@ -99,7 +99,7 @@ export const TIERS = [
   {
     key: 'club', name: 'BAYSE Inner Circle', price: '£39.99', studioPrice: '£19.99', tagline: 'Most popular', featured: true,
     bestFor: 'For you if you want a plan that is yours, live instructors and everything BAYSE has to help you keep going.',
-    items: ['Everything in Foundation', `${LIVE_CLASSES_PER_WEEK} live Zoom classes a week with BAYSE instructors, growing to ${LIVE_CLASSES_PLANNED}`, 'Your personal plan, built from your answers', 'Six programmes for your stage of life, from Begin to Midlife', 'Nutrition: recipes with videos, a weekly food plan and a food diary', 'Daily recovery, sleep and effort scores, no watch needed', 'Levels, the weekly league, challenges and member rewards'],
+    items: ['Everything in Foundation', `Up to ${LIVE_CLASSES_PLANNED} live Zoom classes a week with BAYSE instructors (${LIVE_CLASSES_PER_WEEK} running now)`, 'Your personal plan, built from your answers', 'Six programmes for your stage of life, from Begin to Midlife', 'Nutrition: recipes with videos, a weekly food plan and a food diary', 'Daily recovery, sleep and effort scores, no watch needed', 'Levels, the weekly league, challenges and member rewards'],
     not: [],
     highlight: 'The full BAYSE Club for £1.43 a day', studioHighlight: 'The full BAYSE Club for 71p a day',
   },
