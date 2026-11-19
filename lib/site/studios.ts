@@ -3,8 +3,9 @@
 // (the list members pick from when they link their studio).
 // Open studios use the position of their Google listing and its place id, so "Directions" opens the
 // studio itself. Studios opening soon sit on the town centre and have no directions yet.
-// Mega Reformer Liverpool is in the same building as BAYSE Liverpool and is the same membership: it is
-// a location on the website, but not a separate studio in public.studios.
+// The two Mega Reformer studios are the same membership as their reformer studio (Liverpool: same building;
+// Stockton Heath: round the corner at 19a London Road). They are locations on the website, but not
+// separate studios in public.studios.
 
 import { GREAT_BRITAIN, NORTHERN_IRELAND } from './uk-outline';
 
