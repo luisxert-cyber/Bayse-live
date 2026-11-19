@@ -7,6 +7,7 @@ import { HeroInstructor } from '@/components/site/HeroInstructor';
 import { SixFeatures } from '@/components/site/SixFeatures';
 import { LiveTimetable } from '@/components/site/LiveTimetable';
 import { Icon } from '@/components/site/Graphics';
+import { PlanCard } from '@/components/site/PricingChooser';
 import { recordCompletion } from '@/app/(member)/train/actions';
 
 // Website sections, shared by the home page and the dedicated pages (Live, Classes, Programmes, Community, Membership, Questions).
@@ -131,7 +132,7 @@ export function FeaturesSection() {
           <p className="mt-2 text-sm text-muted sm:hidden">Swipe to see all six →</p>
           <SixFeatures />
           <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
-            <p className="text-sm text-muted">All six included in your 7-day free trial.</p>
+            <p className="text-sm text-muted">All six come with Inner Circle and Black, free for your first 7 days.</p>
             <Link href="/start/welcome" className={buttonClass('solid')}>Start my 7-day free trial</Link>
           </div>
         </section>
@@ -196,21 +197,10 @@ export function MembershipSection() {
         <section id="membership" className={`${wrap} scroll-mt-28 py-14`}>
           <Eyebrow>Membership</Eyebrow>
           <h2 className="mt-3 text-[32px] sm:text-[40px]">Start with 7 days free</h2>
-          <div className="mt-7 grid gap-4 md:grid-cols-3">
-            {TIERS.map((t) => {
-              const featured = 'featured' in t && t.featured;
-              return (
-                <div key={t.key} className={`flex min-w-0 flex-col gap-3 p-6 ${featured ? 'border-2 border-white' : 'border border-stone'}`}>
-                  {featured && <p className="text-xs font-bold uppercase italic">Most popular</p>}
-                  <p className="text-xl font-bold">{t.name}</p>
-                  <p><span className="font-display text-[34px] font-bold leading-none">{t.price}</span> <span className="text-sm text-muted">every 28 days</span></p>
-                  <ul className="flex-1 space-y-2 text-[15px]">{t.items.map((i) => <li key={i} className="flex gap-3"><Tick />{i}</li>)}</ul>
-                  <Link href="/start/welcome" className={`${buttonClass(featured ? 'primary' : 'solid', true)} mt-2`}>Start free trial</Link>
-                </div>
-              );
-            })}
+          <div className="mt-8 grid gap-4 md:grid-cols-3 md:items-stretch">
+            {TIERS.map((t) => <PlanCard key={t.key} t={t} />)}
           </div>
-          <p className="mt-3 text-xs text-muted">Billed every 28 days (13 payments a year). 7 days free first, cancel during the trial and you pay nothing. Qualifying £99 and £148 studio members get on-demand classes and the community free. <Link href="/pricing" className="underline">Full pricing</Link></p>
+          <p className="mt-6 text-xs text-muted">Billed every 28 days (13 payments a year). 7 days free first, cancel during the trial and you pay nothing. Qualifying £99 and £148 studio members get Foundation free. <Link href="/pricing" className="underline">Full pricing</Link></p>
         </section>
 
     </>

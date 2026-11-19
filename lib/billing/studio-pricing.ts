@@ -1,13 +1,13 @@
 // Pure rules for studio-member pricing. No imports, so they can be unit-tested without a network.
 //
-// Verified £99 and £148 studio members get on-demand classes and the community included, and pay half
-// price for Inner Circle and Black. They are never sold Foundation: Inner Circle at half price costs the same. Whether someone is eligible is decided by the database
+// Verified £99 and £148 studio members get BAYSE Foundation included and pay half price for
+// Inner Circle and Black. Whether someone is eligible is decided by the database
 // (studio_price_eligible), never by the browser. These helpers only apply that answer.
 
 export type Audience = 'standard' | 'studio';
 export type PricedRow = { id: string; plan_id: string; audience?: Audience | null };
 
-/** The plan that is never sold to an eligible studio member (their half-price Inner Circle costs the same and includes it). */
+/** The plan a qualifying studio membership already includes. It is never sold to an eligible member. */
 export const INCLUDED_PLAN_KEY = 'essential';
 
 export type CheckoutRule = 'ok' | 'included' | 'not_eligible' | 'use_studio_price';

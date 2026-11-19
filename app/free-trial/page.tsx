@@ -6,19 +6,20 @@ import { TIERS, BILLING, LIVE_CLASSES_PER_WEEK } from '@/lib/site/offer';
 
 export const metadata = { title: '7-day free trial', description: 'What’s included in The BAYSE Club 7-day free trial, how it works and what happens on day 8.' };
 
+// What the free week includes depends on the plan chosen. Inner Circle is the one that shows off everything.
 const INCLUDED = [
-  'Your personal plan, built in a couple of minutes',
-  'Every on-demand class, filmed class and the workout builder',
-  'BAYSE Daily, progress and milestones',
-  'Recipes and your shopping list',
-  'The community, Circles, Clubs and chat rooms',
-  `Live Zoom classes (${LIVE_CLASSES_PER_WEEK} a week) if you choose Inner Circle or Black`,
+  'Every on-demand class, filmed class and the workout builder, on every plan',
+  'The community, General Chat, Circles and Clubs, on every plan',
+  `Live Zoom classes (${LIVE_CLASSES_PER_WEEK} a week) with Inner Circle or Black`,
+  'Your personal plan and stage-of-life programmes with Inner Circle or Black',
+  'Nutrition: recipes with videos, your food plan and diary, with Inner Circle or Black',
+  'Daily scores, levels and the weekly league with Inner Circle or Black',
 ];
 
 const STEPS: [string, string][] = [
   ['Build your plan', 'Three quick questions about your goals, experience and time. About a minute.'],
   ['Health check', 'A few yes or no questions and our safety terms, so we can keep you safe.'],
-  ['Create your account and pick a plan', 'Choose Foundation, Inner Circle or Black. Your 7 days start now.'],
+  ['Create your account and pick a plan', 'Choose Foundation, Inner Circle or Black. Most people try Inner Circle, so the week includes everything. Your 7 days start now.'],
   ['Train', 'Start today’s class straight away. Try live classes, the builder, recipes and the community.'],
 ];
 

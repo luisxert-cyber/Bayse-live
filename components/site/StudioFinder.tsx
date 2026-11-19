@@ -16,7 +16,7 @@ export function StudioFinder() {
       <h2 className="mt-2 text-[30px] sm:text-[40px]">Find your local studio</h2>
       <p className="mt-3 max-w-[60ch] text-muted">
         {open.length} BAYSE studios open{opening.length ? `, with ${list(opening.map((s) => s.name.replace('BAYSE ', '')))} opening soon` : ''}.
-        Train in a studio on a £99 or £148 membership and on-demand classes and the BAYSE Club community are included.
+        Train in a studio on a £99 or £148 membership and BAYSE Foundation is included.
       </p>
       <StudioLocator />
     </section>

@@ -49,7 +49,7 @@ export default function TheCommunity() {
           <div>
             <p className="eyebrow">Included</p>
             <h2 className="mt-2 text-2xl font-bold uppercase">Every plan includes the community</h2>
-            <p className="mt-3 max-w-[60ch] text-muted">It’s part of BAYSE Foundation, not an extra. If you train at a BAYSE studio on a £99 or £148 membership, the community and on-demand classes are included, so the community is yours already.</p>
+            <p className="mt-3 max-w-[60ch] text-muted">It’s part of BAYSE Foundation, not an extra. If you train at a BAYSE studio on a £99 or £148 membership, Foundation is included, so the community is yours already.</p>
           </div>
           <Link href="/pricing" className="inline-flex min-h-[48px] items-center justify-center border border-white px-6 text-sm font-bold uppercase hover:bg-white hover:text-black">See pricing</Link>
         </div>
