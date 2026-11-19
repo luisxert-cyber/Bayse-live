@@ -1,0 +1,42 @@
+name: Publish to Netlify
+# Builds the site and publishes it to the live Netlify project (thebayseclub) on every push to main,
+# and on demand (Actions → Publish to Netlify → Run workflow).
+# Needs one repository secret: NETLIFY_AUTH_TOKEN (Netlify → User settings → Applications → Personal access tokens).
+# The site's own settings (Supabase, Stripe keys) stay in Netlify and are used by the build; nothing secret lives here.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+concurrency:
+  group: netlify-production
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      NETLIFY_SITE_ID: fb29ee02-dd5f-43c9-9516-9868f8958388
+    steps:
+      - name: Check the Netlify token is set
+        id: token
+        run: |
+          if [ -z "$NETLIFY_AUTH_TOKEN" ]; then
+            echo "::warning::NETLIFY_AUTH_TOKEN is not set, so the site was not published. Add it in GitHub → Settings → Secrets and variables → Actions."
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.token.outputs.ok == 'true'
+      - uses: actions/setup-node@v4
+        if: steps.token.outputs.ok == 'true'
+        with:
+          node-version: 22
+      - name: Install
+        if: steps.token.outputs.ok == 'true'
+        run: npm ci --no-audit --no-fund || npm install --no-audit --no-fund
+      - name: Build on Netlify's build system and publish to production
+        if: steps.token.outputs.ok == 'true'
+        # --build runs the Netlify build here with the project's environment variables from Netlify.
+        run: npx -y netlify-cli@17 deploy --build --prod --site "$NETLIFY_SITE_ID" --message "GitHub ${GITHUB_SHA::7}: ${{ github.event.head_commit.message && 'push' || 'manual' }}"

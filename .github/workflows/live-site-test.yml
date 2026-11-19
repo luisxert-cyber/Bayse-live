@@ -16,9 +16,9 @@ jobs:
           node-version: 22
       - run: npm install --no-audit --no-fund
       - run: npx playwright install --with-deps chromium
-      - name: Wait for Netlify to publish this commit
+      - name: Wait for the Publish to Netlify workflow to finish
         if: github.event_name == 'push'
-        run: sleep 150
+        run: sleep 360
       - name: Test the live site
         env:
           E2E_BASE_URL: https://thebayseclub.netlify.app
