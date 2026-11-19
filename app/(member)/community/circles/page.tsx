@@ -36,10 +36,10 @@ export default async function Circles({ searchParams }: { searchParams: Promise<
   return (
     <CommunityShell active="/community/circles" title="Circles" intro="Small groups who train at similar times, share wins and keep each other going." e={sp.e}>
       <img src="/images/community-friends.webp" alt="BAYSE members together" className="aspect-[16/7] w-full rounded-card object-cover" />
-      {mine.length > 0 && <section className="space-y-2"><h2 className="text-sm font-bold uppercase tracking-[0.1em]">Your Circles</h2><ul className="space-y-2">{mine.map((c) => <Row key={c.id} c={c} />)}</ul></section>}
+      {mine.length > 0 && <section className="space-y-2"><h2 className="text-sm font-bold uppercase tracking-[0.1em]">Your Circles</h2><ul className="grid gap-2 lg:grid-cols-2">{mine.map((c) => <Row key={c.id} c={c} />)}</ul></section>}
       <section className="space-y-2">
         <h2 className="text-sm font-bold uppercase tracking-[0.1em]">Find a Circle</h2>
-        {open.length ? <ul className="space-y-2">{open.map((c) => <Row key={c.id} c={c} />)}</ul>
+        {open.length ? <ul className="grid gap-2 lg:grid-cols-2">{open.map((c) => <Row key={c.id} c={c} />)}</ul>
           : <p className="rounded-card border border-dashed border-stone px-4 py-6 text-center text-muted">No open Circles yet. Start the first one.</p>}
       </section>
       <details className="rounded-card border border-stone bg-surface p-4" open={!circles.length}>

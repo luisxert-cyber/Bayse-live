@@ -55,7 +55,8 @@
   .panel { border: 1px solid rgb(var(--stone)); }
   .rule { border-color: rgb(var(--stone)); }
   .eyebrow { @apply text-xs font-medium uppercase text-muted; letter-spacing: 0.16em; }
-  .page { @apply mx-auto w-full max-w-xl px-4 pb-28 pt-6 sm:px-6; }
+  /* Member pages: phone width on phones, then widen so tablets and laptops are filled rather than left with empty sides. */
+  .page { @apply mx-auto w-full max-w-xl px-4 pb-28 pt-6 sm:px-6 md:max-w-3xl md:px-8 lg:max-w-5xl; }
   .page-wide { @apply mx-auto w-full max-w-5xl px-4 pb-16 pt-6 sm:px-6; }
 }
 

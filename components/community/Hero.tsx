@@ -4,7 +4,7 @@ import Link from 'next/link';
 export function CommunityHero({ circles, upcoming }: { circles: number; upcoming: number }) {
   return (
     <div className="overflow-hidden rounded-card bg-ink text-bg">
-      <div className="grid grid-cols-[1.5fr_1fr] gap-1">
+      <div className="grid max-h-[420px] grid-cols-[1.5fr_1fr] gap-1 overflow-hidden">
         <img src="/images/community-selfie.webp" alt="BAYSE members laughing together after a class" className="aspect-[4/3] h-full w-full object-cover" style={{ objectPosition: '50% 45%' }} />
         <div className="grid gap-1">
           <img src="/images/community-studio-sign.webp" alt="BAYSE members in front of the BAYSE sign" className="h-full w-full object-cover" style={{ objectPosition: '50% 35%' }} />

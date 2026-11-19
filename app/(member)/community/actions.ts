@@ -61,7 +61,7 @@ export async function deleteComment(f: FormData) {
 }
 
 const REASONS = ['harassment', 'unsafe', 'spam', 'inappropriate', 'privacy', 'other'];
-const TARGETS = ['post', 'comment', 'activity', 'activity_message', 'profile'];
+const TARGETS = ['post', 'comment', 'activity', 'activity_message', 'profile', 'room_message'];
 export async function report(f: FormData) {
   const { supabase, me } = await db();
   const reason = str(f, 'reason'), type = str(f, 'target_type');
@@ -154,6 +154,22 @@ export async function savePrefs(f: FormData) {
     allow_messages: false,
     interests: f.getAll('interests').map(String).filter((i) => INTERESTS.includes(i)),
     notify_new_activities: f.get('notify') === 'on',
+    show_in_rankings: f.get('rankings') === 'on',
   });
   done(f, error, error ? undefined : '/community/settings?ok=saved');
+}
+
+
+// General Chat. Row-level security only lets members of the room read and write, and only people who can take part in the community join.
+export async function sendChat(f: FormData) {
+  const { supabase, me } = await db();
+  const body = str(f, 'body');
+  if (!body) done(f, { message: 'Write a message first.' });
+  const { error } = await supabase.from('room_messages').insert({ group_id: str(f, 'group_id'), author_id: me, body: body.slice(0, 1000) });
+  done(f, error);
+}
+export async function deleteChat(f: FormData) {
+  const { supabase, me } = await db();
+  const { error } = await supabase.from('room_messages').delete().eq('id', str(f, 'id')).eq('author_id', me);
+  done(f, error);
 }

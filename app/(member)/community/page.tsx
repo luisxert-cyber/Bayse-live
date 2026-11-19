@@ -3,7 +3,7 @@ import { requireUser } from '@/lib/auth/session';
 import { createClient } from '@/lib/supabase/server';
 import { communityStatus, loadFeed, loadPins, communityPulse } from '@/lib/community/data';
 import { CommunityHero } from '@/components/community/Hero';
-import { CommunityShell, Gate } from '@/components/community/Shell';
+import { CommunityShell, Gate, TABS } from '@/components/community/Shell';
 import { Composer, Feed, Pins } from '@/components/community/Feed';
 
 export const metadata = { title: 'Community' };
@@ -27,6 +27,16 @@ export default async function Community({ searchParams }: { searchParams: Promis
   return (
     <CommunityShell active="/community" title="Community" intro="Wins, questions, recipes and encouragement from BAYSE members." e={sp.e} ok={sp.ok}>
       <CommunityHero circles={pulse.circles} upcoming={pulse.upcoming} />
+      <section className="space-y-2">
+        <h2 className="text-sm font-bold uppercase tracking-[0.1em]">What&rsquo;s where</h2>
+        <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          {TABS.filter(([href]) => href !== '/community' && href !== '/community/settings').map(([href, label, about]) => (
+            <li key={href}><Link href={href} className="block h-full border border-stone bg-surface p-3 hover:border-ink"><span className="block font-bold">{label} →</span><span className="mt-0.5 block text-sm text-muted">{about}</span></Link></li>
+          ))}
+          <li><Link href="/you/progress#league" className="block h-full border border-stone bg-surface p-3 hover:border-ink"><span className="block font-bold">Weekly league →</span><span className="mt-0.5 block text-sm text-muted">Friendly ranking of who has moved most this week. Resets every Monday.</span></Link></li>
+        </ul>
+      </section>
+      <h2 className="text-sm font-bold uppercase tracking-[0.1em]">The feed</h2>
       <div className="flex flex-wrap gap-2">
         {list.map((g) => (
           <Link key={g.id} href={`/community?g=${g.slug}`} aria-current={g.id === current?.id ? 'true' : undefined}

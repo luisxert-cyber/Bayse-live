@@ -306,3 +306,56 @@ test('studios: unique, on the map, and the nearest-studio search ranks them', as
   assert.equal(milesLabel(3.26), '3.3 miles');
   assert.equal(milesLabel(41.6), '42 miles');
 });
+
+// ---------- Nourish plan, daily scores and levels ----------
+import { RECIPES } from '../../lib/nourish/recipes';
+import { buildPlan, diaryTotals, goalScore } from '../../lib/nourish/plan';
+import { recoveryScore, sleepScore, effortScore, zoneFor, checkinStreak } from '../../lib/daily/readiness';
+import { ukToday, shiftDay, isDay } from '../../lib/daily/day';
+import { levelFor } from '../../lib/daily/game';
+
+test('every recipe has nutrition and a video', () => {
+  for (const r of RECIPES) {
+    assert.ok(r.per.kcal > 0 && r.per.protein >= 0, r.key);
+    assert.match(r.video?.id ?? '', /^[\w-]{11}$/, r.key);
+  }
+});
+
+test('weekly plan fills seven days and does not repeat a meal two days running', () => {
+  const plan = buildPlan(RECIPES, ['protein', 'quick'], 3);
+  assert.equal(plan.length, 7);
+  for (let d = 0; d < 7; d++) {
+    assert.equal(plan[d].meals.length, 4);
+    if (d > 0) plan[d].meals.forEach((m, i) => assert.notEqual(m.recipe.key, plan[d - 1].meals[i].recipe.key));
+  }
+  assert.equal(goalScore(RECIPES[0], ['protein', 'quick', 'family']), 2);
+  assert.deepEqual(buildPlan([], ['protein'], 0).map((d) => d.meals.length), [0, 0, 0, 0, 0, 0, 0]);
+});
+
+test('diary totals treat missing numbers as zero', () => {
+  assert.deepEqual(diaryTotals([{ calories: 100, protein_g: 10, carbs_g: null, fat_g: 2 }, { calories: null, protein_g: 5, carbs_g: 3, fat_g: null }]), { calories: 100, protein: 15, carbs: 3, fat: 2 });
+});
+
+test('recovery, sleep and effort scores run from 0 to 100', () => {
+  const best = { day: '2026-11-19', sleep_hours: 8, sleep_quality: 5, energy: 5, soreness: 1, stress: 1, mood: 5 };
+  const worst = { day: '2026-11-19', sleep_hours: 0, sleep_quality: 1, energy: 1, soreness: 5, stress: 5, mood: 1 };
+  assert.equal(recoveryScore(best), 100);
+  assert.equal(recoveryScore(worst), 0);
+  assert.equal(sleepScore({ sleep_hours: 12, sleep_quality: 5 }), 100); // a lie-in does not score extra
+  assert.equal(effortScore(60, 3), 100);
+  assert.equal(effortScore(30, 3), 50);
+  assert.equal(zoneFor(67), 'ready');
+  assert.equal(zoneFor(66), 'steady');
+  assert.equal(zoneFor(33), 'restore');
+  assert.equal(checkinStreak(['2026-11-17', '2026-11-18'], '2026-11-19'), 2);
+  assert.equal(checkinStreak(['2026-11-16'], '2026-11-19'), 0);
+});
+
+test('UK days and level names', () => {
+  assert.equal(ukToday(new Date('2026-07-01T23:30:00Z')), '2026-07-02'); // British Summer Time
+  assert.equal(shiftDay('2026-03-01', -1), '2026-02-28');
+  assert.ok(isDay('2026-11-19') && !isDay('2026-13-45'));
+  assert.deepEqual(levelFor(0), { name: 'Starter', number: 1 });
+  assert.equal(levelFor(160).name, 'Flow Finder');
+  assert.equal(levelFor(99999).name, 'BAYSE Legend');
+});

@@ -53,7 +53,7 @@ export default async function Clubs({ searchParams }: { searchParams: Promise<{ 
       </section>
       <h2 className="text-sm font-bold uppercase tracking-[0.1em]">Coming up</h2>
       {(acts ?? []).length ? (
-        <ul className="space-y-3">
+        <ul className="grid gap-3 lg:grid-cols-2">
           {(acts ?? []).map((a) => {
             const c = count.get(a.id), me = myStatus.get(a.id);
             const details = [a.kind === 'walk' && a.distance_km ? `${a.distance_km} km` : null, a.kind === 'walk' && a.pace ? `${a.pace} pace` : null, a.level ? LEVEL[a.level] : null, a.kind === 'padel' && a.padel_format ? a.padel_format : null].filter(Boolean);

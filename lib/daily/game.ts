@@ -6,9 +6,15 @@ export type LiveJoin = { minutes: number; at: string };
 
 export const POINTS = { session: 10, live: 15, goalWeek: 25 } as const;
 export const LEVELS = [
-  { name: 'Starter', at: 0 }, { name: 'Mover', at: 50 }, { name: 'Regular', at: 150 }, { name: 'Committed', at: 300 },
-  { name: 'Strong', at: 500 }, { name: 'Dedicated', at: 800 }, { name: 'Elite', at: 1200 }, { name: 'Icon', at: 1800 }, { name: 'Legend', at: 2500 },
+  { name: 'Starter', at: 0 }, { name: 'Mover', at: 50 }, { name: 'Flow Finder', at: 150 }, { name: 'Core Crusher', at: 300 },
+  { name: 'Powerhouse', at: 500 }, { name: 'Trailblazer', at: 800 }, { name: 'Elite', at: 1200 }, { name: 'Icon', at: 1800 }, { name: 'BAYSE Legend', at: 2500 },
 ] as const;
+
+/** The level a number of points earns. Used beside names in the community and in the weekly league. */
+export function levelFor(points: number) {
+  const index = LEVELS.reduce((best, l, i) => (points >= l.at ? i : best), 0);
+  return { name: LEVELS[index].name as string, number: index + 1 };
+}
 
 export function computeGame(sessions: Completion[], live: LiveJoin[], weeklyGoal: number, now = new Date()) {
   const goal = Math.max(1, weeklyGoal);
