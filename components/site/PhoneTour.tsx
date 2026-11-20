@@ -21,9 +21,24 @@ const Btn = ({ children, ghost }: { children: ReactNode; ghost?: boolean }) => (
 const Avatar = ({ i, n }: { i: number; n: string }) => (
   <span className={`grid h-6 w-6 shrink-0 place-items-center rounded-full border-2 border-white text-[8px] font-bold ${['bg-[#E6DCCF]', 'bg-[#D4C7B7]', 'bg-[#BFB1A0]', 'bg-[#1A1714] text-white'][i % 4]}`}>{n}</span>
 );
+// The same seven tabs, in the same order and with the same icons, as the real app's menu (components/member/BottomNav.tsx).
+const TABS: [label: string, icon: string][] = [
+  ['Today', 'M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z'],
+  ['Train', 'M8 5v14l11-7z'],
+  ['Live', 'M15 10l5-3v10l-5-3M4 6h11v12H4z'],
+  ['Nutrition', 'M7 3v8a3 3 0 006 0V3M10 3v18M17 3c-1.5 2-2 4-2 7h4V3zm2 7v11'],
+  ['Progress', 'M12 3a9 9 0 109 9M12 7a5 5 0 105 5M12 12l7-7'],
+  ['Community', 'M8 11a3 3 0 100-6 3 3 0 000 6zm8 0a3 3 0 100-6 3 3 0 000 6zM2 20c0-3 3-5 6-5s6 2 6 5m2-5c3 0 6 2 6 5'],
+  ['You', 'M12 12a4 4 0 100-8 4 4 0 000 8zm-8 9c0-4 4-6 8-6s8 2 8 6'],
+];
 const Tab = ({ active }: { active: number }) => (
-  <div className="absolute inset-x-0 bottom-0 flex justify-around border-t border-black/[0.06] bg-[#FBF8F4]/95 pb-3 pt-2 text-[8.5px] text-black/40">
-    {['Today', 'Train', 'Live', 'Community', 'You'].map((t, i) => <span key={t} className={i === active ? `font-semibold ${INK}` : ''}>{t}</span>)}
+  <div data-tour-tabs className="absolute inset-x-0 bottom-0 grid grid-cols-7 border-t border-black/[0.06] bg-[#FBF8F4]/95 px-1 pb-3 pt-1.5 text-[5.5px] text-black/40">
+    {TABS.map(([t, icon], i) => (
+      <span key={t} className={`flex flex-col items-center gap-0.5 ${i === active ? `font-bold ${INK}` : ''}`}>
+        <svg viewBox="0 0 24 24" className="h-[13px] w-[13px]" fill="none" stroke="currentColor" strokeWidth={i === active ? 2.2 : 1.7} strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d={icon} /></svg>
+        {t}
+      </span>
+    ))}
   </div>
 );
 function Screen({ children, tab }: { children: ReactNode; tab: number }) {
@@ -66,8 +81,8 @@ export function PhoneTour({ photos }: { photos: TourPhotos }) {
 
               {/* 1 Today */}
               <Screen tab={0}>
-                <div className="flex items-center justify-between"><span className="text-[10px] font-bold tracking-[0.3em]">BAYSE</span><Avatar i={3} n="S" /></div>
-                <div className="mt-3"><Title script="Sophie">Good morning,</Title></div>
+                <div className="flex items-center justify-between"><span className="text-[10px] font-bold tracking-[0.3em]">BAYSE</span><Avatar i={3} n="B" /></div>
+                <div className="mt-3"><Title script="BAYSE Legend">Good morning,</Title></div>
                 <div className="relative mt-3 h-[118px] overflow-hidden rounded-2xl">
                   <img src={photos.a} alt="" className="h-full w-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
@@ -90,7 +105,7 @@ export function PhoneTour({ photos }: { photos: TourPhotos }) {
               </Screen>
 
               {/* 2 Near you */}
-              <Screen tab={3}>
+              <Screen tab={5}>
                 <Label>Near you · Altrincham</Label>
                 <div className="mt-1"><Title script="this week">What&rsquo;s on</Title></div>
                 <div className="relative mt-3 h-[92px] overflow-hidden rounded-2xl">
@@ -103,7 +118,7 @@ export function PhoneTour({ photos }: { photos: TourPhotos }) {
               </Screen>
 
               {/* 3 Your Circle */}
-              <Screen tab={3}>
+              <Screen tab={5}>
                 <div className="flex items-center gap-2"><div className="flex -space-x-2">{['A', 'L', 'J', '+'].map((n, i) => <Avatar key={n} i={i} n={n} />)}</div><div><p className="text-[13px] font-bold">7am Crew</p><p className="text-black/50">Your Circle · 14 members</p></div></div>
                 <Card className="mt-3 text-center"><Label>This month&rsquo;s challenge</Label><p className="mt-0.5 text-[13px] font-bold">12 sessions in November</p><Bar v={62} className="mt-2" /><p className="mt-1 text-black/50">Circle total: 104 of 168</p></Card>
                 <div className="mt-3 space-y-2 text-[11px]">
@@ -137,7 +152,7 @@ export function PhoneTour({ photos }: { photos: TourPhotos }) {
                   <span className="absolute left-3 top-9 flex items-center gap-1 rounded-full bg-black/70 px-2 py-0.5 text-[9.5px] font-semibold text-white"><span className="h-1.5 w-1.5 rounded-full bg-white" />LIVE · 38</span>
                 </div>
                 <div className="relative -mt-14 space-y-2">
-                  <Card><Label>Spotter · Hannah</Label><p className="mt-0.5">Lovely, Sophie. Long through the back of the neck.</p></Card>
+                  <Card><Label>Spotter · Hannah</Label><p className="mt-0.5">Lovely work. Long through the back of the neck.</p></Card>
                   <div className="flex gap-1.5 text-[14px]">{['👏', '💪', '🔥'].map((e) => <span key={e} className="grid h-8 w-8 place-items-center rounded-full bg-white">{e}</span>)}</div>
                 </div>
               </Screen>
@@ -178,7 +193,7 @@ export function PhoneTour({ photos }: { photos: TourPhotos }) {
               </Screen>
 
               {/* 8 Coach */}
-              <Screen tab={4}>
+              <Screen tab={6}>
                 <div className="flex items-center gap-2"><span className="grid h-9 w-9 place-items-center rounded-full bg-[#1A1714] text-[12px] font-bold text-white">E</span><div><p className="text-[13px] font-bold">Emma</p><p className="text-black/50">Your coach · replies within a day</p></div></div>
                 <div className="mt-4 space-y-2 text-[11px]">
                   <p className="max-w-[85%] rounded-2xl rounded-tl-md bg-white px-3 py-2">How did week 1 feel? Anything sore?</p>
@@ -190,7 +205,7 @@ export function PhoneTour({ photos }: { photos: TourPhotos }) {
               </Screen>
 
               {/* 9 Food and wellness */}
-              <Screen tab={4}>
+              <Screen tab={3}>
                 <Title script="for you">This week,</Title>
                 <Card className="mt-3"><Label>Tonight&rsquo;s dinner</Label><p className="mt-0.5 text-[12.5px] font-bold">Lemon chicken traybake</p><p className="text-black/50">30 min · serves 2 · on your shopping list</p></Card>
                 <Card className="mt-2">
@@ -212,7 +227,7 @@ export function PhoneTour({ photos }: { photos: TourPhotos }) {
                   <Label>Sessions per week</Label>
                   <div className="mt-2 flex h-20 items-end gap-1.5">{[1, 2, 2, 3, 2, 3, 3, 4].map((v, i) => <div key={i} className={`flex-1 rounded-t-md ${i === 7 ? 'bg-[#1A1714]' : 'bg-black/[0.12]'}`} style={{ height: `${v * 25}%` }} />)}</div>
                 </Card>
-                <Card className="mt-2 flex items-center gap-3"><span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#1A1714] text-[12px] font-extrabold text-white">25</span><div><p className="font-semibold">25 classes, Sophie!</p><p className="text-black/50">Share it with your Circle?</p></div></Card>
+                <Card className="mt-2 flex items-center gap-3"><span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#1A1714] text-[12px] font-extrabold text-white">25</span><div><p className="font-semibold">25 classes, legend!</p><p className="text-black/50">Share it with your Circle?</p></div></Card>
               </Screen>
 
             </div>

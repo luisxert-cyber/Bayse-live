@@ -49,9 +49,9 @@ export function TodayPhone() {
       <div className="px-4 pb-4 pt-10 text-[11px] text-white">
         <div className="flex items-center justify-between">
           <span className="text-[10px] font-semibold tracking-[0.3em]">BAYSE</span>
-          <span className="grid h-6 w-6 place-items-center rounded-full bg-white/10 text-[10px]">S</span>
+          <span className="grid h-6 w-6 place-items-center rounded-full bg-white/10 text-[10px]">B</span>
         </div>
-        <p className="mt-4 text-[17px] font-extrabold uppercase leading-tight">Good morning,<br />Sophie</p>
+        <p className="mt-4 text-[17px] font-extrabold uppercase leading-tight">Good morning,<br />BAYSE Legend</p>
         <p className="mt-1 text-white/60">Week 2 · Strong &amp; Sculpt</p>
         <div className="mt-3 flex gap-1">{['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
           <div key={i} className="flex-1 text-center"><div className={`mx-auto mb-1 h-5 w-5 rounded-full ${i < 2 ? 'silver-fill' : i === 2 ? 'border border-white' : 'border border-white/20'}`} /><span className="text-[9px] text-white/50">{d}</span></div>
@@ -72,7 +72,7 @@ export function TodayPhone() {
         </div>
         <div className="mt-2 rounded-2xl bg-white/[0.06] p-3">
           <p className="text-white/60">Your coach</p>
-          <p className="mt-0.5">&ldquo;Brilliant start, Sophie. Keep the ribs soft in the hundreds.&rdquo;</p>
+          <p className="mt-0.5">&ldquo;Brilliant start. Keep the ribs soft in the hundreds.&rdquo;</p>
         </div>
       </div>
     </Phone>
@@ -91,7 +91,7 @@ export function LiveClassGraphic({ photo }: { photo: string }) {
         <div className="absolute bottom-3 left-3 right-3 space-y-1.5">
           <div className="max-w-[78%] rounded-2xl rounded-bl-md bg-white px-3 py-2 text-[12px] text-black shadow">
             <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-black/50">Spotter · Hannah</p>
-            Lovely, Sophie. Lengthen through the back of the neck.
+            Lovely work. Lengthen through the back of the neck.
           </div>
           <div className="flex gap-1.5 text-[15px]">{['👏', '💪', '🔥'].map((e) => <span key={e} className="grid h-8 w-8 place-items-center rounded-full bg-black/60 backdrop-blur">{e}</span>)}</div>
         </div>
