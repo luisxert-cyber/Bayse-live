@@ -17,7 +17,16 @@ export async function resolveUserId(admin: Admin, customerId: string, hint: stri
 export async function upsertSubscription(admin: Admin, sub: StripeSubscriptionLike) {
   const row = mapSubscription(sub);
   const userId = await resolveUserId(admin, row.stripe_customer_id, row.user_id_hint);
-  if (!userId) throw new Error(`No BAYSE user for customer ${row.stripe_customer_id}`);
+  if (!userId) {
+    // The Stripe account is shared with other BAYSE products (courses and their payment plans), so events
+    // arrive for subscriptions that are nothing to do with The BAYSE Club. Those are acknowledged and left
+    // alone. Only a BAYSE Club price with no member behind it is a real problem.
+    const { data: ours } = row.stripe_price_id
+      ? await admin.from('prices').select('id').eq('stripe_price_id', row.stripe_price_id).maybeSingle()
+      : { data: null };
+    if (!ours) return;
+    throw new Error(`No BAYSE user for customer ${row.stripe_customer_id}`);
+  }
 
   await admin.from('stripe_customers').upsert({ user_id: userId, stripe_customer_id: row.stripe_customer_id }, { onConflict: 'user_id' });
 
