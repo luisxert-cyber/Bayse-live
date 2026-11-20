@@ -5,7 +5,7 @@ import { test, expect, type Page } from '@playwright/test';
 // 2. Every interactive control on the home page responds (menu, phone tour, FAQs).
 // 3. The whole sign-up journey works, from "Build my plan" to Today and Personalise.
 
-const PUBLIC = ['/', '/live-classes', '/classes', '/programmes', '/the-community', '/who-its-for', '/faq', '/try', '/pricing', '/features', '/benefits', '/free-trial', '/reformer', '/instructors', '/sign-in', '/start/welcome', '/privacy', '/terms', '/community-guidelines', '/staff'];
+const PUBLIC = ['/', '/live-classes', '/classes', '/programmes', '/the-community', '/who-its-for', '/faq', '/try', '/pricing', '/features', '/benefits', '/free-trial', '/reformer', '/instructors', '/sign-in', '/start/welcome', '/privacy', '/terms', '/community-guidelines', '/staff', '/blog', '/blog/pilates-for-beginners-at-home'];
 
 async function linksOn(page: Page) {
   return page.$$eval('a[href]', (as) => as.map((a) => (a as HTMLAnchorElement).getAttribute('href') || ''));
@@ -261,4 +261,15 @@ test('search engines: public pages are listed, private areas are not', async ({ 
   expect(await page.locator('meta[property="og:image"]').getAttribute('content')).toContain('/og.jpg');
   expect(await page.locator('script[type="application/ld+json"]').count()).toBeGreaterThan(0);
   expect((await request.get('/sign-in')).headers()['x-robots-tag']).toContain('noindex');
+});
+
+test('blog: guides and articles open, with search data', async ({ page, request }) => {
+  await page.goto('/blog');
+  await expect(page.locator('[data-guide-card]')).toHaveCount(3);
+  expect(await page.locator('[data-post-card]').count()).toBeGreaterThanOrEqual(3);
+  await page.locator('[data-guide-card]').first().click();
+  await expect(page.locator('[data-article] h1')).toBeVisible();
+  expect(await page.locator('script[type="application/ld+json"]').first().textContent()).toContain('"Article"');
+  expect(await (await request.get('/sitemap.xml')).text()).toContain('/blog/pilates-for-menopause');
+  expect((await request.get('/blog/not-a-real-article')).status()).toBe(404);
 });

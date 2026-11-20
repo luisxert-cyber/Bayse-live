@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { TrialWindow, FrameBridge } from '@/components/site/TrialWindow';
-import { SITE } from '@/lib/site/seo';
+import { SITE, GOOGLE_SITE_VERIFICATION } from '@/lib/site/seo';
 
 // One family, like the studio brand: Inter for headings (bold, uppercase) and text.
 const inter = Inter({ subsets: ['latin'], variable: '--font-body', display: 'swap' });
@@ -18,6 +18,7 @@ export const metadata: Metadata = {
   // Search engines switched on 20 Nov 2026, on Luis's instruction. Private areas are kept out in
   // app/robots.ts and by an X-Robots-Tag header (next.config.ts).
   metadataBase: new URL(SITE),
+  ...(GOOGLE_SITE_VERIFICATION ? { verification: { google: GOOGLE_SITE_VERIFICATION } } : {}),
   alternates: { canonical: './' },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 } },
   keywords: ['online Pilates', 'Pilates classes online', 'Pilates for women', 'live Pilates classes', 'on-demand Pilates', 'Pilates at home', 'reformer Pilates at home', 'Pilates app UK', 'Pilates nutrition', 'online Pilates coaching', 'BAYSE'],

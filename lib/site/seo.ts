@@ -17,12 +17,16 @@ export const PUBLIC_PAGES: { path: string; priority: number; changes: 'daily' | 
   { path: '/instructors', priority: 0.7, changes: 'weekly' },
   { path: '/the-community', priority: 0.7, changes: 'monthly' },
   { path: '/who-its-for', priority: 0.7, changes: 'monthly' },
+  { path: '/blog', priority: 0.8, changes: 'daily' },
   { path: '/try', priority: 0.6, changes: 'monthly' },
   { path: '/faq', priority: 0.6, changes: 'monthly' },
   { path: '/terms', priority: 0.2, changes: 'monthly' },
   { path: '/privacy', priority: 0.2, changes: 'monthly' },
   { path: '/community-guidelines', priority: 0.2, changes: 'monthly' },
 ];
+
+/** Paste the code from Google Search Console here (the content="..." value of its HTML tag) to verify the site. */
+export const GOOGLE_SITE_VERIFICATION = '';
 
 /** Signed-in, staff and sign-up areas: never listed in search. */
 export const PRIVATE_PATHS = ['/today', '/train', '/live', '/community', '/nourish', '/you', '/admin', '/teach', '/studio', '/staff', '/join', '/start', '/auth', '/sign-in', '/devices', '/api'];

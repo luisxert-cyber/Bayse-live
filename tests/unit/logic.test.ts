@@ -432,3 +432,35 @@ test('programmes progress week by week without adding moves', () => {
     }
   }
 });
+
+// ---------- Blog ----------
+import { ALL_ARTICLES, publishedArticles } from '../../lib/blog';
+import { PUBLIC_PAGES } from '../../lib/site/seo';
+
+test('blog: articles are complete, unique and only link to pages that exist when they go out', () => {
+  const slugs = ALL_ARTICLES.map((a) => a.slug);
+  assert.equal(new Set(slugs).size, slugs.length, 'slugs are unique');
+  const pages = new Set([...PUBLIC_PAGES.map((p) => p.path), '/start/welcome']);
+  for (const a of ALL_ARTICLES) {
+    assert.match(a.slug, /^[a-z0-9-]+$/);
+    assert.ok(a.title.length >= 20 && a.title.length <= 70, `${a.slug}: title length ${a.title.length}`);
+    assert.ok(a.description.length >= 90 && a.description.length <= 165, `${a.slug}: description length ${a.description.length}`);
+    assert.ok(a.body.split(/\s+/).length >= 350, `${a.slug}: too short`);
+    assert.ok(!/[\u2014\u2013]/.test(a.title + a.description + a.body), `${a.slug}: no dashes`);
+    assert.ok(pages.has(a.cta.href), `${a.slug}: cta ${a.cta.href}`);
+    for (const m of a.body.matchAll(/\]\((\/[^)\s]*)\)/g)) {
+      const href = m[1];
+      if (href.startsWith('/blog/')) {
+        const target = ALL_ARTICLES.find((x) => `/blog/${x.slug}` === href);
+        assert.ok(target, `${a.slug} links to missing ${href}`);
+        assert.ok(target!.publishAt <= a.publishAt, `${a.slug} links to ${href} before it is published`);
+      } else assert.ok(pages.has(href), `${a.slug} links to unknown page ${href}`);
+    }
+    // Pregnancy, postnatal and other health pieces carry a note to check with a professional.
+    if (a.category === 'Life stages') assert.ok((a.healthNote?.length ?? 0) > 40, `${a.slug}: health note`);
+  }
+  // Three a week: scheduled posts fall on Monday, Wednesday and Friday.
+  for (const a of ALL_ARTICLES.filter((x) => x.kind === 'post')) assert.ok([1, 3, 5].includes(new Date(a.publishAt).getUTCDay()), `${a.slug} is not on Mon/Wed/Fri`);
+  assert.equal(publishedArticles(new Date('2026-11-20T12:00:00Z')).length, 6);
+  assert.equal(publishedArticles(new Date('2026-12-12T12:00:00Z')).length, ALL_ARTICLES.length);
+});
