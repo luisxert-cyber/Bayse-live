@@ -18,7 +18,13 @@ const nextConfig: NextConfig = {
     remotePatterns: [{ protocol: 'https', hostname: '*.supabase.co' }, { protocol: 'https', hostname: 'image.mux.com' }],
   },
   async headers() {
-    return [{ source: '/:path*', headers: securityHeaders }];
+    // Signed-in, staff, sign-up and payment areas are never listed in search results.
+    const hidden = ['today', 'train', 'live', 'community', 'nourish', 'you', 'admin', 'teach', 'studio', 'staff', 'join', 'start', 'auth', 'sign-in', 'devices', 'api'];
+    const noIndex = [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }];
+    return [
+      { source: '/:path*', headers: securityHeaders },
+      ...hidden.flatMap((p) => [{ source: `/${p}`, headers: noIndex }, { source: `/${p}/:path*`, headers: noIndex }]),
+    ];
   },
 };
 

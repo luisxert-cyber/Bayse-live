@@ -11,7 +11,7 @@ import { EXERCISES, workoutMinutes } from '@/lib/workouts/catalog';
 import { MoveThumb } from '@/components/workout/MoveThumb';
 import { HeroInstructor } from '@/components/site/HeroInstructor';
 
-export const metadata = { title: 'The BAYSE workout builder' };
+export const metadata = { title: 'Pilates workout builder', description: 'Build a Pilates class for the time and kit you have in seconds. Choose your focus, level and length, and follow along with guided moves. Part of every BAYSE Club plan.' };
 export const dynamic = 'force-dynamic';
 
 // Showcase of the workout builder. Members and free-trial members go straight to the real builder;

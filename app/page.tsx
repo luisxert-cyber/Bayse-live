@@ -1,3 +1,5 @@
+import type { Metadata } from 'next';
+import { organisationJsonLd, jsonLd } from '@/lib/site/seo';
 import { hasAccount } from '@/lib/auth/account';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/site/SiteHeader';
@@ -17,12 +19,17 @@ import { PHOTO, wrap, Tick, ClassesSection, FeaturesSection, FaqSection, TrialCt
 
 // Home: what The BAYSE Club is, then a taste of each part. Each part has its own page for the detail.
 
+export const metadata: Metadata = {
+  title: { absolute: 'The BAYSE Club · Online Pilates, nutrition & personal coaching for women' },
+};
+
 export default async function Home() {
   const user = await getUser().catch(() => null);
   const member = user ? await hasOnDemand() : false;
   return (
     <>
       <SiteHeader signedIn={hasAccount(user)} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(organisationJsonLd)} />
       <main>
         {/* Hero: what The BAYSE Club is, in one look */}
         <section className="relative overflow-hidden">

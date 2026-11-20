@@ -6,6 +6,7 @@ import { SitePage } from '@/components/site/SitePage';
 import { PageHero, Check } from '@/components/site/PageHero';
 import { wrap, PHOTO, CodesSection, TrialCta } from '@/components/site/sections';
 import { TIERS, BILLING, PRIVATE_SESSION_PRICE, LIVE_CLASSES_PLANNED, STRAPLINE } from '@/lib/site/offer';
+import { pricingJsonLd, jsonLd } from '@/lib/site/seo';
 
 export const metadata = { title: 'Pricing', description: 'The BAYSE Club pricing: Foundation £19.99, Inner Circle £39.99 and Black £89.99 every 28 days, after 7 days free. BAYSE studio members get Foundation included and half price on Inner Circle and Black.' };
 
@@ -45,6 +46,7 @@ const FAQ: [string, string][] = [
 export default function Pricing() {
   return (
     <SitePage>
+      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(pricingJsonLd)} />
       <PageHero eyebrow="Pricing" title="7 days free. Then from £19.99." intro={`${STRAPLINE} Three plans, billed ${BILLING}. New to BAYSE? Try any of them free for 7 days.`} image={PHOTO.core} cta={false} />
 
       <PricingChooser />

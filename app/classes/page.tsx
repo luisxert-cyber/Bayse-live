@@ -3,7 +3,7 @@ import { ClassesSection, TrialCta } from '@/components/site/sections';
 import { getUser } from '@/lib/auth/session';
 import { hasOnDemand } from '@/lib/auth/access';
 
-export const metadata = { title: 'On-demand classes' };
+export const metadata = { title: 'On-demand Pilates classes', description: 'On-demand Pilates classes for beginner, intermediate and advanced, plus a workout builder that makes a class for your time and kit in seconds. From the BAYSE studio team.' };
 export const dynamic = 'force-dynamic';
 
 export default async function ClassesPage() {

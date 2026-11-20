@@ -34,7 +34,7 @@ export default async function Launch() {
     { ok: s.video_classes > 0 || null, title: 'Filmed classes uploaded', detail: `${s.video_classes ?? 0} published. Until then members see “available soon” in Train and Reformer at home.`, who: 'You', href: '/admin/on-demand' },
     { ok: true, title: 'Terms and privacy details', detail: 'Company number, registered office and dates filled in (19 November 2026).', who: 'Claude', href: '/terms' },
     { ok: null, title: 'Support mailbox', detail: 'The terms and privacy policy tell members to email support@thebayseclub.com. Make sure that mailbox exists (or forwards to you) and is read.', who: 'You' },
-    { ok: null, title: 'Search engines', detail: 'The site is hidden from Google until launch. Say the word and Claude switches it on.', who: 'Claude' },
+    { ok: true, title: 'Search engines', detail: 'Google can list the public website (switched on 20 November 2026). Member, staff and payment pages stay hidden. Submit https://www.thebayseclub.com/sitemap.xml in Google Search Console to speed it up.', who: 'You' },
   ];
   const done = items.filter((i) => i.ok === true).length;
   return (

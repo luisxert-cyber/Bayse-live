@@ -247,3 +247,18 @@ test('installable: manifest and icons are served', async ({ request }) => {
   for (const icon of m.icons) expect((await request.get(icon.src)).status(), icon.src).toBe(200);
   expect((await request.get('/icons/apple-touch-icon.png')).status()).toBe(200);
 });
+
+test('search engines: public pages are listed, private areas are not', async ({ request, page }) => {
+  const robots = await (await request.get('/robots.txt')).text();
+  expect(robots).toContain('Sitemap: https://www.thebayseclub.com/sitemap.xml');
+  expect(robots).toMatch(/Disallow: \/admin/);
+  const map = await (await request.get('/sitemap.xml')).text();
+  for (const path of ['/pricing', '/live-classes', '/free-trial']) expect(map).toContain(`https://www.thebayseclub.com${path}`);
+  expect(map).not.toContain('/admin');
+  await page.goto('/pricing');
+  expect(await page.locator('meta[name="robots"]').getAttribute('content')).toContain('index');
+  expect(await page.locator('link[rel="canonical"]').getAttribute('href')).toBe('https://www.thebayseclub.com/pricing');
+  expect(await page.locator('meta[property="og:image"]').getAttribute('content')).toContain('/og.jpg');
+  expect(await page.locator('script[type="application/ld+json"]').count()).toBeGreaterThan(0);
+  expect((await request.get('/sign-in')).headers()['x-robots-tag']).toContain('noindex');
+});
