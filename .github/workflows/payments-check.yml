@@ -1,0 +1,20 @@
+name: Payments check
+# Confirms the Stripe keys are in place and the payment form opens for each plan on the live site.
+# Never enters card details and never pays. Run on demand.
+on:
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - name: Check payments on the live site
+        env:
+          E2E_BASE_URL: https://www.thebayseclub.com
+        run: npx playwright test tests/checks/payments-check.spec.ts --config=tests/checks/playwright.config.ts --reporter=list
