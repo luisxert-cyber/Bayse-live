@@ -18,7 +18,7 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - name: Capture pages and build the PDF
         env:
-          SITE_URL: https://thebayseclub.netlify.app
+          SITE_URL: https://www.thebayseclub.com
         run: node scripts/design-pdf.mjs
       - name: Save the PDF on the design-pdf branch
         run: |

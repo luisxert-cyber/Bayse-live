@@ -115,3 +115,18 @@
 
 /* Sign-up running inside the free-trial window: no site header or back-to-site link. */
 html[data-framed] header, html[data-framed] [data-back-to-site] { display: none !important; }
+/* Inside the sign-up window on a phone: tighter spacing so the question, every answer and Continue fit on one screen,
+   and Continue sits at the very bottom of the window. */
+@media (max-width: 639px) {
+  html[data-framed] main { padding-top: 0; padding-bottom: 0; min-height: 100dvh; display: flex; flex-direction: column; }
+  html[data-framed] main > * { flex: 0 0 auto; }
+  html[data-framed] main > section[aria-labelledby="step-title"] { flex: 1 1 auto; display: flex; flex-direction: column; }
+  html[data-framed] [data-step-body] { flex: 1 1 auto; display: flex; flex-direction: column; margin-top: 1.25rem; }
+  html[data-framed] [data-step-body] > form { flex: 1 1 auto; display: flex; flex-direction: column; }
+  html[data-framed] [data-step-body] > form > [data-submit-bar] { margin-top: auto; }
+  html[data-framed] [data-step-head] { margin-bottom: 1rem; }
+}
+@media (max-width: 639px) and (max-height: 700px) {
+  html[data-framed] main h1 { font-size: 22px; line-height: 1.1; }
+  html[data-framed] [data-option] { padding-top: 0.6rem; padding-bottom: 0.6rem; }
+}

@@ -283,3 +283,9 @@ test('blog: guides and articles open, with search data', async ({ page, request 
   await expect(page.locator('[data-article]')).toHaveCount(0);
   expect(await page.locator('meta[name="robots"]').first().getAttribute('content')).toContain('noindex');
 });
+
+test('the Netlify address sends people to www.thebayseclub.com', async ({ request }) => {
+  const res = await request.get('https://thebayseclub.netlify.app/pricing?x=1', { maxRedirects: 0 });
+  expect(res.status()).toBe(308);
+  expect(res.headers()['location']).toBe('https://www.thebayseclub.com/pricing?x=1');
+});

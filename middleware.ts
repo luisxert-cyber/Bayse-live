@@ -24,7 +24,17 @@ function sharedDomain(host: string | null) {
   return h === 'thebayseclub.com' ? h : undefined;
 }
 
+// The site lives at www.thebayseclub.com. Netlify also serves it at its own addresses (thebayseclub.netlify.app,
+// main--thebayseclub.netlify.app); anyone who lands there is sent to the real address, where Apple Pay is
+// registered and sign-in is shared. Stripe's webhook is left alone.
+const CANONICAL_HOST = 'www.thebayseclub.com';
+
 export async function middleware(request: NextRequest) {
+  const host = (request.headers.get('x-forwarded-host') ?? request.headers.get('host') ?? '').split(':')[0].toLowerCase();
+  if ((host.endsWith('.netlify.app') || host === 'thebayseclub.com') && !request.nextUrl.pathname.startsWith('/api/')) {
+    const to = new URL(request.nextUrl.pathname + request.nextUrl.search, `https://${CANONICAL_HOST}`);
+    return NextResponse.redirect(to, request.method === 'GET' || request.method === 'HEAD' ? 308 : 307);
+  }
   const newDevice = request.cookies.get(DEVICE_COOKIE)?.value ? null : crypto.randomUUID();
   // A "secure" cookie is thrown away by the browser on a plain http address, so only mark it secure on https.
   const secure = (request.headers.get('x-forwarded-proto') ?? request.nextUrl.protocol).startsWith('https');

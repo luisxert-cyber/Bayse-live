@@ -44,14 +44,14 @@ export function TrialWindow() {
   if (!open) return null;
   return (
     <div role="dialog" aria-modal="true" aria-label="Start your 7-day free trial" data-trial-window
-      className="fixed inset-0 z-[60] flex items-end justify-center bg-black/75 backdrop-blur-sm sm:items-center sm:p-6"
+      className="fixed inset-0 z-[60] flex items-stretch justify-center bg-black sm:items-center sm:bg-black/75 sm:p-6 sm:backdrop-blur-sm"
       onClick={(e) => { if (e.target === e.currentTarget) setOpen(false); }}>
-      <div className="relative flex h-[94dvh] w-full max-w-xl flex-col border border-stone bg-bg sm:h-[88vh]">
-        <div className="flex items-center justify-between border-b border-stone px-4 py-2.5">
+      <div className="relative flex h-[100dvh] max-h-full w-full max-w-xl flex-col bg-bg pb-[env(safe-area-inset-bottom)] sm:h-[88vh] sm:border sm:border-stone sm:pb-0">
+        <div className="flex shrink-0 items-center justify-between border-b border-stone px-4 py-1.5 pt-[calc(6px+env(safe-area-inset-top))] sm:py-2.5">
           <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted">7-day free trial · 100% free</span>
           <button type="button" onClick={() => setOpen(false)} aria-label="Close" className="grid h-9 w-9 place-items-center text-2xl leading-none">×</button>
         </div>
-        <iframe src="/start/welcome" title="Start your free trial" className="w-full flex-1 bg-black" />
+        <iframe src="/start/welcome" title="Start your free trial" className="min-h-0 w-full flex-1 bg-black" />
       </div>
     </div>
   );

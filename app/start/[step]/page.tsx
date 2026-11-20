@@ -72,7 +72,7 @@ export default async function StepPage({ params, searchParams }: Props) {
       </div>
     </div>
   ) : (
-    <div className="mb-8 pt-2">
+    <div className="mb-8 pt-2" data-step-head>
       <div className="mb-4 flex items-center justify-between text-sm text-muted">
         {back ? <Link href={`/start/${back}`} className="-ml-2 rounded-pill px-2 py-1 hover:text-ink">← Back</Link> : <span />}
         <span>{idx} of {FLOW.length - 1}</span>

@@ -6,7 +6,7 @@ import { chromium, devices } from '@playwright/test';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-const BASE = process.env.SITE_URL ?? 'https://thebayseclub.netlify.app';
+const BASE = process.env.SITE_URL ?? 'https://www.thebayseclub.com';
 const OUT = resolve('design');
 const SHOTS = resolve(OUT, 'shots');
 mkdirSync(SHOTS, { recursive: true });

@@ -116,7 +116,7 @@ export default async function Join({ searchParams }: { searchParams: Promise<Rec
               // Asked before anyone pays: studio members enter the code their studio gave them and see their prices.
               <Card data-studio-question>
                 <h2 className="text-lg font-semibold">Are you a BAYSE studio member?</h2>
-                <p className="mt-1 text-sm text-muted">On a £99 or £148 membership at one of our reformer studios? Foundation is free for you, and Inner Circle and Black are half price.</p>
+                <p className="mt-1 text-sm text-muted">On a £99 or £148 membership at one of our reformer studios? BAYSE Foundation (usually £19.99) is <strong className="text-ink">free for you</strong>, and Inner Circle and Black are half price. Enter your studio code and your prices change straight away.</p>
                 <details className="group mt-3" open={Boolean(sp.code && sp.code !== 'ok')}>
                   <summary className={`${buttonClass('secondary', true)} cursor-pointer list-none group-open:hidden`}>Yes, I have a studio code</summary>
                   <form action={redeemStudioCode} className="mt-1 flex flex-wrap items-end gap-2">

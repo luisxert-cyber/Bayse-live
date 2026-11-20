@@ -7,6 +7,7 @@ export function Choice({ name, value, label, hint, type, defaultChecked }: { nam
     <label htmlFor={id} className="group block cursor-pointer">
       <input id={id} type={type} name={name} value={value} defaultChecked={defaultChecked} className="peer sr-only" />
       <span
+        data-option
         className={cx(
           'flex min-h-[56px] items-center justify-between gap-3 rounded-2xl border border-stone bg-surface px-4 py-3 transition-colors',
           'peer-checked:border-ink peer-checked:bg-ink peer-checked:text-bg',
