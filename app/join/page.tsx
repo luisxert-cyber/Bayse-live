@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/server';
 import { loadBilling } from '@/lib/billing/trial';
 import { firstPaymentAt, trialDaysFor } from '@/lib/billing/trial-math';
 import { isUuid } from '@/lib/billing/stripe-map';
-import { publicEnv } from '@/lib/env';
+import { stripePublishableKey } from '@/lib/env';
 import { TIERS } from '@/lib/site/offer';
 import { Card, Notice, buttonClass } from '@/components/ui';
 import { EmbeddedCheckout } from '@/components/billing/EmbeddedCheckout';
@@ -48,7 +48,8 @@ export default async function Join({ searchParams }: { searchParams: Promise<Rec
   // Studio members see their member prices and are never offered Foundation to buy (it is included).
   const prices = pricesFor(allPrices, studioMember).filter((p) => !(studioMember && p.plan_id === includedPlanId));
   const standardFor = (planId: string) => allPrices.find((p) => p.plan_id === planId && p.audience !== 'studio') ?? null;
-  const ready = Boolean(publicEnv.stripePublishableKey);
+  const publishableKey = stripePublishableKey();
+  const ready = Boolean(publishableKey);
   const chosen = isUuid(sp.price) ? prices.find((p) => p.id === sp.price) ?? null : null;
   const chosenPlan = chosen ? plans.find((p) => p.id === chosen.plan_id) ?? null : null;
   const freeTrial = !billing.hadMembership;
@@ -78,7 +79,7 @@ export default async function Join({ searchParams }: { searchParams: Promise<Rec
             </Card>
             {ready && chosen.stripe_price_id ? (
               <>
-                <EmbeddedCheckout priceId={chosen.id} publishableKey={publicEnv.stripePublishableKey} />
+                <EmbeddedCheckout priceId={chosen.id} publishableKey={publishableKey} />
                 <p className="text-xs text-muted">Pay with Apple Pay, Google Pay or a card. Payments are handled securely by Stripe; BAYSE never sees your card number.{chosen.audience === 'studio' ? '' : <> Have a BAYSE code? Tap <strong>Add promotion code</strong> in the form.</>}</p>
               </>
             ) : (

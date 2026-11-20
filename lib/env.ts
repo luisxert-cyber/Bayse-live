@@ -14,6 +14,21 @@ export const publicEnv = {
   stripePublishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? '',
 };
 
+/**
+ * The Stripe publishable key, read when the page is requested (server only). The value built into the
+ * site at build time is the fallback, so a key added in Netlify works without waiting for a rebuild.
+ * Publishable keys are meant to be public; only values that look like one (pk_…) are accepted.
+ */
+export function stripePublishableKey(): string {
+  const names = ['NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY', 'STRIPE_PUBLISHABLE_KEY'];
+  for (const n of names) {
+    const v = (process.env[n] ?? '').trim();
+    if (v.startsWith('pk_')) return v;
+  }
+  const built = publicEnv.stripePublishableKey.trim();
+  return built.startsWith('pk_') ? built : '';
+}
+
 export function serverEnv() {
   return {
     supabaseServiceRoleKey: required('SUPABASE_SERVICE_ROLE_KEY', process.env.SUPABASE_SERVICE_ROLE_KEY),

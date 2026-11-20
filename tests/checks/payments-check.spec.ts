@@ -42,6 +42,7 @@ test('checkout: Stripe payment form opens for each plan', async ({ page }) => {
   await page.waitForURL(/\/join/, { timeout: 20000 });
 
   const links = await page.$$eval('a[href*="/join?price="]', (as) => as.map((a) => ({ href: a.getAttribute('href')!, text: (a.textContent ?? '').trim() })));
+  if (!links.length) console.log(`RESULT join page says: ${(await page.locator('main').innerText()).replace(/\s+/g, ' ').slice(0, 500)}`);
   console.log(`RESULT plans offered=${links.length} ${links.map((l) => l.text).join(' | ')}`);
   expect(links.length, 'three plans can be chosen').toBeGreaterThanOrEqual(3);
 
