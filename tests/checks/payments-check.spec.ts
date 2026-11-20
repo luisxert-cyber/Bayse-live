@@ -41,6 +41,7 @@ test('checkout: Stripe payment form opens for each plan', async ({ page }) => {
   await page.getByRole('button', { name: 'Create my account' }).click();
   await page.waitForURL(/\/join/, { timeout: 20000 });
 
+  await page.locator('a[href*="/join?price="]').first().waitFor({ timeout: 20000 }).catch(() => {});
   const links = await page.$$eval('a[href*="/join?price="]', (as) => as.map((a) => ({ href: a.getAttribute('href')!, text: (a.textContent ?? '').trim() })));
   await page.waitForLoadState('networkidle').catch(() => {});
   console.log(`RESULT buttons: ${(await page.$$eval('main a, main button, main [aria-disabled]', (els) => els.map((e) => `${e.tagName}:${(e.textContent ?? '').trim().slice(0, 40)}:${e.getAttribute('href') ?? ''}`))).join(' || ').slice(0, 900)}`);
