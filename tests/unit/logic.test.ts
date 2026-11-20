@@ -445,7 +445,7 @@ test('blog: articles are complete, unique and only link to pages that exist when
     assert.match(a.slug, /^[a-z0-9-]+$/);
     assert.ok(a.title.length >= 20 && a.title.length <= 70, `${a.slug}: title length ${a.title.length}`);
     assert.ok(a.description.length >= 90 && a.description.length <= 165, `${a.slug}: description length ${a.description.length}`);
-    assert.ok(a.body.split(/\s+/).length >= 350, `${a.slug}: too short`);
+    assert.ok(a.body.split(/\s+/).length >= (a.kind === 'guide' ? 550 : 300), `${a.slug}: too short`);
     assert.ok(!/[\u2014\u2013]/.test(a.title + a.description + a.body), `${a.slug}: no dashes`);
     assert.ok(pages.has(a.cta.href), `${a.slug}: cta ${a.cta.href}`);
     for (const m of a.body.matchAll(/\]\((\/[^)\s]*)\)/g)) {

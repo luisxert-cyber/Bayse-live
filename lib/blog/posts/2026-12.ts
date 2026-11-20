@@ -81,6 +81,10 @@ Choose yoga if you mostly want to stretch, slow down and build a mindful practic
 
 If you like both, do both. They work well together: Pilates gives you the strength to hold yoga poses well, and yoga gives you the range to move freely in Pilates.
 
+## Common worries
+
+You do not need to be flexible to start either one. Flexibility is something you gain from practising, not something you need beforehand. Both can be done at home with a mat, and both have beginner classes that explain every move.
+
 ## Trying Pilates
 
 The easiest way to find out is to try a few short classes. Our guide to [Pilates for beginners at home](/blog/pilates-for-beginners-at-home) explains the first moves, and you can read how [mat and reformer Pilates compare](/blog/mat-pilates-vs-reformer-pilates) if you are deciding between a studio and home.`,
@@ -177,6 +181,10 @@ A sensible approach:
 - Do Pilates three or four times a week for strength.
 - Sleep as well as you can.
 - Aim for slow, steady change. The NHS suggests one to two pounds a week at most.
+
+## Which Pilates classes work hardest
+
+If you want your sessions to count for more, choose classes that keep you moving and use your biggest muscles. Sculpt classes with light weights, standing leg and glute work, and faster cardio-style Pilates all raise your heart rate more than a slow stretch class. Keep one gentle session in the week as well, so your body can recover.
 
 ## A better goal
 
