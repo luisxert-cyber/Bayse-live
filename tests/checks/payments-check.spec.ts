@@ -58,7 +58,7 @@ test('checkout: Stripe payment form opens for each plan', async ({ page }) => {
     const heading = (await page.locator('h1').first().textContent()) ?? '';
     const card = (await page.locator('main').innerText()).split('\n').slice(0, 8).join(' / ');
     const frame = page.locator('iframe[name^="embedded-checkout"], iframe[src*="checkout.stripe.com"], iframe[src*="js.stripe.com"]');
-    const alert = page.locator('[role="alert"]');
+    const alert = page.locator('main [role="alert"]'); // the payment form's own error box, not the browser's page announcer
     const off = page.getByText('Payments are being switched on');
     await Promise.race([frame.first().waitFor({ state: 'attached', timeout: 30000 }), alert.first().waitFor({ timeout: 30000 }), off.first().waitFor({ timeout: 30000 })]).catch(() => {});
     await page.waitForTimeout(4000);
@@ -66,6 +66,8 @@ test('checkout: Stripe payment form opens for each plan', async ({ page }) => {
     const state = (await off.count()) ? 'NOT CONNECTED (publishable key or price missing)'
       : (await alert.count()) ? `ERROR: ${(await alert.first().innerText()).split('\n')[0]}`
       : (await frame.count()) ? 'PAYMENT FORM OPENED' : 'NOTHING SHOWN';
+    const session = stripeCalls.some((u) => /cs_(live|test)_/.test(u));
+    console.log(`RESULT   frames=${await page.locator('main iframe').count()} checkoutSessionCreated=${session} stripeRequests=${stripeCalls.length}`);
     if (state === 'PAYMENT FORM OPENED') opened++;
     console.log(`RESULT ${heading} :: ${card.slice(0, 140)} :: ${state} :: mode=${live ? 'LIVE' : testMode ? 'TEST' : 'unknown'}`);
     page.off('request', onReq);
