@@ -46,11 +46,14 @@ export async function requestStudioLink(form: FormData) {
 export async function redeemStudioCode(form: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user || !hasAccount(user)) redirect('/sign-in?next=/you/membership');
+  // The same form sits on the join page, so the answer goes back to wherever it was entered.
+  const back = form.get('back') === 'join' ? '/join' : '/you/membership';
+  if (!user || !hasAccount(user)) redirect(`/sign-in?next=${back}`);
   const code = String(form.get('code') ?? '').trim().slice(0, 40);
-  if (!code) redirect('/you/membership?code=invalid');
+  if (!code) redirect(`${back}?code=invalid`);
   const { data, error } = await supabase.rpc('redeem_studio_code', { p_code: code });
   const result = error ? 'failed' : String(data);
   revalidatePath('/you/membership');
-  redirect(`/you/membership?code=${encodeURIComponent(result)}`);
+  revalidatePath('/join');
+  redirect(`${back}?code=${encodeURIComponent(result)}`);
 }

@@ -195,6 +195,13 @@ test('full journey: build my plan → account → Today → Personalise', async 
   await expect(page, 'account creation should move on to starting the trial').toHaveURL(/\/join/, { timeout: 15000 });
   await expect(page.getByRole('heading', { name: 'Start your 7-day free trial' })).toBeVisible();
   await expect(page.getByText('BAYSE Inner Circle').first()).toBeVisible();
+  // Studio members are asked before they pay, and a wrong code is turned away.
+  const studio = page.locator('[data-studio-question]');
+  await expect(studio.getByRole('heading', { name: 'Are you a BAYSE studio member?' })).toBeVisible();
+  await studio.getByText('Yes, I have a studio code').click();
+  await studio.locator('input[name="code"]').fill('TEST-NOTAREAL1');
+  await studio.getByRole('button', { name: 'Use code' }).click();
+  await expect(page.getByText('That code was not recognised')).toBeVisible({ timeout: 15000 });
 
   await page.goto('/today');
   await expect(page).toHaveURL(/\/today/, { timeout: 15000 });

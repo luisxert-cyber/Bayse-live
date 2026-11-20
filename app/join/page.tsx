@@ -13,6 +13,7 @@ import { EmbeddedCheckout } from '@/components/billing/EmbeddedCheckout';
 import { formatPence, type Plan, type Price } from '@/lib/types';
 import { TEST_MODE_FLAG, TEST_MODE_DAYS } from '@/lib/billing/test-mode';
 import { enterTestMode } from './actions';
+import { redeemStudioCode } from '@/app/(member)/you/membership/actions';
 import { pricesFor, INCLUDED_PLAN_KEY } from '@/lib/billing/studio-pricing';
 
 export const metadata = { title: 'Choose your membership' };
@@ -24,6 +25,15 @@ export const dynamic = 'force-dynamic';
 
 const day = (ms: number) => new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/London' }).format(new Date(ms));
 const per = (p: Price) => (p.billing_interval === 'year' ? 'a year' : p.billing_interval === '28_days' ? 'every 28 days' : 'a month');
+
+const CODE_MSG: Record<string, string> = {
+  invalid: 'That code was not recognised. Check it and try again: codes look like BOLT-AB12CD34.',
+  used: 'That code has already been used. Ask your studio team for a new one.',
+  expired: 'That code has expired. Ask your studio team for a new one.',
+  already: 'Your studio membership is already linked to this account.',
+  slow_down: 'Too many tries. Please wait an hour and try again, or ask your studio team.',
+  failed: 'We could not check that code just now. Please try again.',
+};
 
 export default async function Join({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const sp = await searchParams;
@@ -100,6 +110,27 @@ export default async function Join({ searchParams }: { searchParams: Promise<Rec
             </div>
             {sp.welcome && <Notice tone="success" title="Account created">Your plan is saved. One last step to start your free trial.</Notice>}
             {sp.checkout === 'open' && <Notice title="Payment not finished">Nothing was charged. Choose a membership to try again.</Notice>}
+            {sp.code === 'ok' && <Notice tone="success" title="Code accepted">Your studio membership is linked. BAYSE Foundation is free, and Inner Circle and Black are at your studio member price below.</Notice>}
+            {sp.code && sp.code !== 'ok' && <Notice tone="error">{CODE_MSG[sp.code] ?? CODE_MSG.failed}</Notice>}
+            {!studioMember && (
+              // Asked before anyone pays: studio members enter the code their studio gave them and see their prices.
+              <Card data-studio-question>
+                <h2 className="text-lg font-semibold">Are you a BAYSE studio member?</h2>
+                <p className="mt-1 text-sm text-muted">On a £99 or £148 membership at one of our reformer studios? Foundation is free for you, and Inner Circle and Black are half price.</p>
+                <details className="group mt-3" open={Boolean(sp.code && sp.code !== 'ok')}>
+                  <summary className={`${buttonClass('secondary', true)} cursor-pointer list-none group-open:hidden`}>Yes, I have a studio code</summary>
+                  <form action={redeemStudioCode} className="mt-1 flex flex-wrap items-end gap-2">
+                    <input type="hidden" name="back" value="join" />
+                    <label className="block min-w-0 flex-1 text-sm">Your studio member code
+                      <input name="code" required maxLength={40} autoComplete="off" autoCapitalize="characters" placeholder="e.g. BOLT-AB12CD34" className="mt-1 block min-h-tap w-full rounded-2xl border border-stone bg-surface px-3 text-sm uppercase" />
+                    </label>
+                    <button className={buttonClass('primary')}>Use code</button>
+                  </form>
+                  <p className="mt-2 text-xs text-muted">No code yet? Ask at your studio. You can also add it later under You → Membership.</p>
+                </details>
+                <p className="mt-3 text-xs text-muted">Not a studio member? Choose your membership below.</p>
+              </Card>
+            )}
             {studioMember && (
               <Card>
                 <p className="eyebrow">Included with your studio membership</p>
@@ -136,7 +167,7 @@ export default async function Join({ searchParams }: { searchParams: Promise<Rec
                 </Card>
               );
             })}
-            <p className="text-xs text-muted">Pay in the app with Apple Pay, Google Pay or a card. {studioMember ? 'Your member price applies while your studio membership is active. If it ends we tell you at least 28 days ahead and never raise your payment without your agreement.' : <>Have a BAYSE code? Choose a membership, then tap <strong>Add promotion code</strong> on the payment step. BAYSE studio member with a studio code? Enter it under <a href="/you/membership" className="underline">You → Membership</a> for free Foundation.</>} Manage or cancel from your account.</p>
+            <p className="text-xs text-muted">Pay in the app with Apple Pay, Google Pay or a card. {studioMember ? 'Your member price applies while your studio membership is active. If it ends we tell you at least 28 days ahead and never raise your payment without your agreement.' : <>Have a BAYSE code? Choose a membership, then tap <strong>Add promotion code</strong> on the payment step. </>} Manage or cancel from your account.</p>
             {testFlag?.enabled === true && (
               // TEMPORARY: skip payment while the platform is being tested. Switch off the test_mode flag in Admin → Feature flags.
               <form action={enterTestMode} className="space-y-2 border-t border-stone pt-5">
