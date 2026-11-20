@@ -271,5 +271,8 @@ test('blog: guides and articles open, with search data', async ({ page, request 
   await expect(page.locator('[data-article] h1')).toBeVisible();
   expect(await page.locator('script[type="application/ld+json"]').first().textContent()).toContain('"Article"');
   expect(await (await request.get('/sitemap.xml')).text()).toContain('/blog/pilates-for-menopause');
-  expect((await request.get('/blog/not-a-real-article')).status()).toBe(404);
+  // An unknown or not-yet-published article shows the not-found page and is kept out of search.
+  await page.goto('/blog/not-a-real-article');
+  await expect(page.locator('[data-article]')).toHaveCount(0);
+  expect(await page.locator('meta[name="robots"]').first().getAttribute('content')).toContain('noindex');
 });
