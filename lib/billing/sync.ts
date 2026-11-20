@@ -55,6 +55,7 @@ export async function upsertSubscription(admin: Admin, sub: StripeSubscriptionLi
 type InvoiceLike = {
   id?: string | null;
   amount_paid?: number | null;
+  lines?: { data?: { period?: { end?: number | null } | null; price?: { id?: string } | string | null; pricing?: { price_details?: { price?: string | { id?: string } | null } | null } | null }[] | null } | null;
   customer?: string | { id: string } | null;
   subscription?: string | { id: string } | null;
   parent?: { subscription_details?: { subscription?: string | { id: string } | null } | null } | null;
@@ -97,4 +98,53 @@ export async function grantCreditForInvoice(admin: Admin, inv: InvoiceLike, sub:
   }, { onConflict: 'source_ref', ignoreDuplicates: true });
   if (error) throw error;
   return true;
+}
+
+/**
+ * The same credit, worked out from what BAYSE already holds about the membership, without asking Stripe.
+ * Used first, so a paid BAYSE Black period gives its session even if the Stripe key cannot read subscriptions.
+ * Returns 'unknown' when the membership has not been recorded yet (events can arrive out of order): the caller
+ * then asks Stripe, or lets Stripe retry the event.
+ */
+export async function grantCreditFromRecord(admin: Admin, inv: InvoiceLike, stripeSubscriptionId: string): Promise<'granted' | 'none' | 'unknown'> {
+  if (!inv.id) return 'none';
+  const { data: sub } = await admin.from('subscriptions').select('user_id, plan_id, status, current_period_end').eq('stripe_subscription_id', stripeSubscriptionId).maybeSingle();
+  if (!sub?.user_id || !sub.plan_id) return 'unknown';
+  const { data: coaching } = await admin.from('plan_entitlements').select('plan_id').eq('plan_id', sub.plan_id).eq('entitlement_key', 'individual_coaching').maybeSingle();
+  if (!coaching) return 'none';
+  // A free-trial invoice (nothing paid) gives no session: it starts with the first payment.
+  if (!((inv.amount_paid ?? 0) > 0)) return 'none';
+
+  const now = new Date();
+  // The paid period ends where the invoice line says. The saved membership can still show the old period
+  // for a moment at renewal, so it is only trusted when it is in the future.
+  const lineEnd = Math.max(0, ...(inv.lines?.data ?? []).map((l) => l.period?.end ?? 0));
+  const saved = sub.current_period_end ? new Date(sub.current_period_end as string) : null;
+  const expires = lineEnd * 1000 > now.getTime() + 864e5 ? new Date(lineEnd * 1000)
+    : saved && saved.getTime() > now.getTime() + 864e5 ? saved
+    : new Date(now.getTime() + 28 * 864e5);
+  const { error } = await admin.from('coaching_credits').upsert({
+    user_id: sub.user_id,
+    period_start: now.toISOString().slice(0, 10),
+    expires_at: expires.toISOString(),
+    source: 'subscription',
+    source_ref: inv.id,
+    note: 'Included with BAYSE Black',
+  }, { onConflict: 'source_ref', ignoreDuplicates: true });
+  if (error) throw error;
+  return 'granted';
+}
+
+/**
+ * True when an invoice is for a BAYSE Club price, false when it is clearly for something else sold from the
+ * same Stripe account (courses and their payment plans), and null when the invoice does not say.
+ */
+export async function invoiceIsBayseClub(admin: Admin, inv: InvoiceLike): Promise<boolean | null> {
+  const ids = (inv.lines?.data ?? []).map((l) => {
+    const a = l.pricing?.price_details?.price, b = l.price;
+    return (typeof a === 'string' ? a : a?.id) ?? (typeof b === 'string' ? b : b?.id) ?? null;
+  }).filter((x): x is string => Boolean(x));
+  if (!ids.length) return null;
+  const { data } = await admin.from('prices').select('id').in('stripe_price_id', ids).limit(1);
+  return (data ?? []).length > 0;
 }

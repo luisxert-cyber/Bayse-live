@@ -4,7 +4,7 @@ import { getStripe } from '@/lib/billing/stripe';
 import { stripeEnv } from '@/lib/env';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { HANDLED_EVENTS, isUuid, type StripeSubscriptionLike } from '@/lib/billing/stripe-map';
-import { upsertSubscription, grantCreditForInvoice, invoiceSubscriptionId } from '@/lib/billing/sync';
+import { upsertSubscription, grantCreditForInvoice, grantCreditFromRecord, invoiceIsBayseClub, invoiceSubscriptionId } from '@/lib/billing/sync';
 
 // Stripe -> BAYSE. Every event is verified with the webhook signing secret, recorded once
 // (idempotent on event id), then turned into subscription rows. Entitlements follow
@@ -69,8 +69,16 @@ export async function POST(req: NextRequest) {
         }
         const subId = typeof session.subscription === 'string' ? session.subscription : session.subscription?.id;
         if (subId) {
-          const sub = await stripe.subscriptions.retrieve(subId);
-          await upsertSubscription(admin, sub as unknown as StripeSubscriptionLike);
+          // The membership itself arrives in customer.subscription.created. Asking Stripe for it here is a
+          // second route to the same record, so if that is refused and the record exists, this event is done.
+          try {
+            const sub = await stripe.subscriptions.retrieve(subId);
+            await upsertSubscription(admin, sub as unknown as StripeSubscriptionLike);
+          } catch (e) {
+            const { data: have } = await admin.from('subscriptions').select('id').eq('stripe_subscription_id', subId).maybeSingle();
+            if (!have) throw e;
+            console.warn('[stripe] could not read the subscription for a finished checkout; it was already recorded:', e instanceof Error ? e.message.slice(0, 120) : e);
+          }
         }
         break;
       }
@@ -92,9 +100,14 @@ export async function POST(req: NextRequest) {
         // BAYSE Black: one private-session credit for each paid billing month.
         const invoice = event.data.object as unknown as Parameters<typeof grantCreditForInvoice>[1];
         const subId = invoiceSubscriptionId(invoice);
-        if (subId) {
-          const sub = await stripe.subscriptions.retrieve(subId);
-          await grantCreditForInvoice(admin, invoice, sub as unknown as StripeSubscriptionLike);
+        // Invoices for other products on the same Stripe account are acknowledged and left alone.
+        if (subId && (await invoiceIsBayseClub(admin, invoice)) !== false) {
+          // First from BAYSE's own record of the membership; Stripe is only asked when that is not there yet.
+          const fromRecord = await grantCreditFromRecord(admin, invoice, subId);
+          if (fromRecord === 'unknown') {
+            const sub = await stripe.subscriptions.retrieve(subId);
+            await grantCreditForInvoice(admin, invoice, sub as unknown as StripeSubscriptionLike);
+          }
         }
         break;
       }

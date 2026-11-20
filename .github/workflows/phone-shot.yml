@@ -1,0 +1,24 @@
+name: Phone preview pictures
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  shots:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - env:
+          E2E_BASE_URL: https://www.thebayseclub.com
+        run: npx playwright test tests/checks/phone-shot.spec.ts --config=tests/checks/playwright.config.ts --reporter=list
+      - run: |
+          cd shots && printf '[build]\n  ignore = "exit 0"\n' > netlify.toml
+          git init -q -b shots && git config user.name "BAYSE bot" && git config user.email "actions@users.noreply.github.com"
+          git add . && git commit -qm "Phone preview pictures"
+          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" shots
