@@ -26,7 +26,7 @@ test('sign-up window pictures', async ({ page }) => {
   await page.waitForTimeout(500);
   await page.screenshot({ path: 'shots/signup-4-experience.png' });
   await frame.getByRole('button', { name: 'Continue' }).click();
-  await frame.getByText('sessions a week').waitFor();
+  await frame.getByText('sessions a week').first().waitFor();
   await page.waitForTimeout(500);
   await page.screenshot({ path: 'shots/signup-5-sessions.png' });
 });
