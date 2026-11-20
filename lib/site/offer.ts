@@ -98,7 +98,7 @@ export const TIERS = [
     key: 'essential', name: 'BAYSE Foundation', price: '£19.99', studioPrice: 'Free', tagline: 'Builder and community',
     bestFor: 'For you if you want to build your own Pilates sessions, and people to do it with.',
     items: [`Workout builder: a class made for your time and kit in seconds, from ${BUILDER_MOVES} moves`, 'The BAYSE Club community: the feed, General Chat, Circles and Clubs'],
-    not: [`${ON_DEMAND_CLASSES} on-demand Pilates classes`, 'Reformer at home classes', 'Live classes', 'Your personal plan and programmes', 'Nutrition, food plan and diary', 'Progress scores and the weekly league'],
+    not: [],
     highlight: '', studioHighlight: 'Included with your studio membership',
   },
   {
