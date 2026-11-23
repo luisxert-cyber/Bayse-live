@@ -464,3 +464,24 @@ test('blog: articles are complete, unique and only link to pages that exist when
   assert.equal(publishedArticles(new Date('2026-11-20T12:00:00Z')).length, 6);
   assert.equal(publishedArticles(new Date('2026-12-12T12:00:00Z')).length, ALL_ARTICLES.length);
 });
+
+// ---------- Cancelling ----------
+import { cancelPlan } from '../../lib/billing/cancel';
+
+test('cancelling: trial ends free; paid follows 28 days notice with at most one final payment', () => {
+  const now = new Date('2026-09-10T12:00:00Z');
+  const trial = cancelPlan('trialing', '2026-09-15T12:00:00Z', '2026-09-15T12:00:00Z', now);
+  assert.deepEqual([trial.trial, trial.finalPayment, trial.endsAt], [true, false, '2026-09-15T12:00:00Z']);
+  // The example in the terms: notice on 10 Sept, next payment 20 Sept is the last, access to 18 Oct.
+  const paid = cancelPlan('active', '2026-09-20T12:00:00Z', null, now);
+  assert.equal(paid.finalPayment, true);
+  assert.equal(paid.finalPaymentOn, '2026-09-20T12:00:00.000Z');
+  assert.equal(paid.endsAt, '2026-10-18T12:00:00.000Z');
+  // Cancelled the moment a payment is taken: the paid period covers the notice, so nothing more is taken.
+  const covered = cancelPlan('active', '2026-10-08T12:00:00Z', null, now);
+  assert.deepEqual([covered.finalPayment, covered.endsAt], [false, '2026-10-08T12:00:00.000Z']);
+  // The saved record keeps the end date either way.
+  assert.equal(mapSubscription({ id: 's', status: 'active', customer: 'c', cancel_at: 1795799320 }).cancel_at, new Date(1795799320 * 1000).toISOString());
+  assert.equal(mapSubscription({ id: 's', status: 'active', customer: 'c', cancel_at_period_end: true, current_period_end: 1795799320 }).cancel_at, new Date(1795799320 * 1000).toISOString());
+  assert.equal(mapSubscription({ id: 's', status: 'active', customer: 'c' }).cancel_at, null);
+});

@@ -48,6 +48,7 @@ export async function upsertSubscription(admin: Admin, sub: StripeSubscriptionLi
     trial_end: row.trial_end,
     current_period_end: row.current_period_end,
     cancel_at_period_end: row.cancel_at_period_end,
+    cancel_at: row.cancel_at,
   }, { onConflict: 'stripe_subscription_id' });
   if (error) throw error;
 }

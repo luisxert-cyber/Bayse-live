@@ -48,11 +48,17 @@ export default async function Membership({ searchParams }: { searchParams: Promi
   const returning = Boolean(m.subscription);
   // A finished membership (cancelled, expired) is shown like no membership, with a way back in.
   const s = m.subscription && !['canceled', 'incomplete', 'incomplete_expired'].includes(m.subscription.status) ? m.subscription : null;
+  const ending = s ? (s.cancel_at ?? (s.cancel_at_period_end ? s.current_period_end : null)) : null;
+  const { data: openRequest } = await supabase.from('cancellation_requests').select('id').eq('user_id', user.id).eq('status', 'pending').limit(1).maybeSingle();
+  const cancelRequested = Boolean(openRequest);
   return (
     <main className="page space-y-5">
       <Link href="/you" className="text-sm text-muted hover:text-ink">← You</Link>
       <h1 className="text-xl font-semibold">Membership and billing</h1>
-      {sp.error === 'portal' && <Notice tone="error">We could not open billing right now. Please try again.</Notice>}
+      {sp.cancel === 'done' && <Notice tone="success" title="Membership cancelled">It is confirmed below, with the date it ends.</Notice>}
+      {sp.cancel === 'received' && <Notice tone="success" title="Cancellation received">We have your cancellation and will confirm it shortly. You do not need to do anything else.</Notice>}
+      {sp.cancel === 'already' && <Notice>Your membership is already cancelled.</Notice>}
+      {sp.error === 'portal' && <Notice tone="error">We could not open billing right now. Please try again. To cancel, use “Cancel membership” below: it does not need this.</Notice>}
       {sp.error === 'no_customer' && <Notice>You do not have a paid membership yet.</Notice>}
       {sp.already && <Notice>You already have an active membership.</Notice>}
       {sp.studio === 'requested' && <Notice tone="success" title="Request sent">Your studio will confirm your membership. Your included access and member prices switch on as soon as they do.</Notice>}
@@ -93,8 +99,12 @@ export default async function Membership({ searchParams }: { searchParams: Promi
           <div className="mt-2 space-y-1">
             <p className="font-medium">{s.plans?.name ?? 'BAYSE membership'} · {STATUS[s.status] ?? s.status}</p>
             {s.trial_end && s.status === 'trialing' && <p className="text-sm text-muted">Free trial until {fmtDate(s.trial_end)}. Your first payment is taken then. You can cancel before then and you will not be charged.</p>}
-            {s.cancel_at_period_end && s.current_period_end && <p className="text-sm text-muted">Set to end on {fmtDate(s.current_period_end)}.</p>}
-            <form action={openBillingPortal} className="pt-3"><button className={buttonClass('secondary')}>Manage billing, card or cancel</button></form>
+            {ending && <p className="text-sm" data-ending>Cancelled. {s.status === 'trialing' ? 'Your trial ends' : 'Your membership ends'} on <strong>{fmtDate(ending)}</strong>{s.status === 'trialing' ? ' and you will not be charged.' : '.'}</p>}
+            {!ending && cancelRequested && <p className="text-sm" data-ending>Your cancellation has been received and is being confirmed. You do not need to do anything else.</p>}
+            <div className="flex flex-wrap gap-2 pt-3">
+              <form action={openBillingPortal}><button className={buttonClass('secondary')}>Billing and card</button></form>
+              {!ending && !cancelRequested && <Link href="/you/membership/cancel" className={buttonClass('quiet')} data-cancel-link>Cancel membership</Link>}
+            </div>
           </div>
         ) : (
           <div className="mt-2">

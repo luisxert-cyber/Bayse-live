@@ -12,3 +12,15 @@ export async function saveMaxDevices(f: FormData) {
   revalidatePath('/admin');
   redirect('/admin?devices=saved#sharing');
 }
+
+/** A cancellation the payment system could not apply: an admin has now cancelled it in Stripe and ticks it off. */
+export async function markCancellationDone(form: FormData) {
+  await requireStaff('members');
+  const id = String(form.get('id') ?? '');
+  if (!/^[0-9a-f-]{36}$/.test(id)) redirect('/admin?error=invalid');
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  await supabase.from('cancellation_requests').update({ status: 'done', done_by: user?.id ?? null, done_at: new Date().toISOString() }).eq('id', id);
+  revalidatePath('/admin');
+  redirect('/admin?cancelled=1#cancellations');
+}

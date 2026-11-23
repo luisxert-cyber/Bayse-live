@@ -20,7 +20,7 @@ export default function Terms() {
 
       <h2>3. Billing and renewal</h2>
       <p>Your first payment covers the first 28 days. Paid plans renew automatically every 28 days until cancelled. A full year normally includes 13 payments, and some calendar months may contain two payments. Your checkout and confirmation show the total payable per period, including applicable taxes, and your next billing date.</p>
-      <p>By completing checkout, you authorise recurring charges to your chosen payment method. Our payment provider may retry a failed payment. We may suspend access after notifying you if a payment remains overdue and will explain how to restore access. If you think a charge is incorrect or duplicated, contact us so we can investigate and correct any error.</p>
+      <p>By completing checkout, you authorise recurring charges to your chosen payment method. Our payment provider may retry a failed payment. Payments are taken through Stripe by BP Harrogate Ltd, a BAYSE company, and appear on your bank statement as BAYSEREFORMERPILATES. We may suspend access after notifying you if a payment remains overdue and will explain how to restore access. If you think a charge is incorrect or duplicated, contact us so we can investigate and correct any error.</p>
       <p>Any trial or introductory offer will show its length, expiry, and any later charge and renewal date before you accept it. Browsing free material or activating studio-included access does not authorise a paid subscription.</p>
 
       <h2>4. Cancelling a paid membership</h2>

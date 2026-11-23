@@ -14,6 +14,7 @@ export type StripeSubscriptionLike = {
   status: string;
   customer: string | { id: string };
   cancel_at_period_end?: boolean | null;
+  cancel_at?: number | null;
   trial_end?: number | null;
   current_period_end?: number | null;
   metadata?: Record<string, string> | null;
@@ -29,6 +30,8 @@ export type SubscriptionRow = {
   trial_end: string | null;
   current_period_end: string | null;
   cancel_at_period_end: boolean;
+  /** When the membership will end, if the member (or BAYSE) has cancelled it. */
+  cancel_at: string | null;
 };
 
 const toIso = (s?: number | null) => (typeof s === 'number' ? new Date(s * 1000).toISOString() : null);
@@ -50,6 +53,7 @@ export function mapSubscription(sub: StripeSubscriptionLike): SubscriptionRow {
     trial_end: toIso(sub.trial_end),
     current_period_end: toIso(periodEnd),
     cancel_at_period_end: Boolean(sub.cancel_at_period_end),
+    cancel_at: toIso(sub.cancel_at) ?? (sub.cancel_at_period_end ? toIso(periodEnd) : null),
   };
 }
 

@@ -3,7 +3,7 @@ import { requireStaff } from '@/lib/auth/session';
 import { createClient } from '@/lib/supabase/server';
 import { Notice } from '@/components/ui';
 import { money } from '@/lib/teach/format';
-import { saveMaxDevices } from './settings-actions';
+import { saveMaxDevices, markCancellationDone } from './settings-actions';
 
 export const metadata = { title: 'Dashboard' };
 export const dynamic = 'force-dynamic';
@@ -32,12 +32,14 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
   await requireStaff('overview');
   const sp = await searchParams;
   const supabase = await createClient();
-  const [{ data }, { data: period }, { data: sharing }, { data: site }] = await Promise.all([
+  const [{ data }, { data: period }, { data: sharing }, { data: site }, { data: cancels }] = await Promise.all([
     supabase.rpc('admin_metrics'),
     supabase.rpc('pay_period', { p_offset: 0 }).single(),
     supabase.rpc('device_sharing_signals'),
     supabase.from('site_settings').select('max_devices').single(),
+    supabase.from('cancellation_requests').select('id, user_id, stripe_subscription_id, requested_at, ends_at, final_payment, profiles!cancellation_requests_user_id_fkey(email, first_name)').eq('status', 'pending').order('requested_at'),
   ]);
+  const pendingCancels = (cancels ?? []) as unknown as { id: string; user_id: string; stripe_subscription_id: string; requested_at: string; ends_at: string | null; final_payment: boolean; profiles: { email: string | null; first_name: string | null } | null }[];
   const shared = (sharing ?? []) as { user_id: string; email: string | null; name: string | null; devices: number; blocked_30d: number; last_blocked: string }[];
   const m = (data ?? {}) as M;
   const p = period as { period_start: string; period_end: string } | null;
@@ -47,6 +49,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
   const peak = Math.max(1, ...weeks.map((w) => w.n));
   const conversion = m.accounts ? Math.round(((m.paying ?? 0) / m.accounts) * 100) : 0;
   const todo = [
+    pendingCancels.length ? [`${pendingCancels.length} cancellation${pendingCancels.length > 1 ? 's' : ''} to finish in Stripe`, '/admin#cancellations'] : null,
     m.sessions_requests ? [`${m.sessions_requests} 1-to-1 request${m.sessions_requests > 1 ? 's' : ''} waiting`, '/admin/sessions'] : null,
     m.refunds_due ? [`${m.refunds_due} refund${m.refunds_due > 1 ? 's' : ''} to make in Stripe`, '/admin/sessions'] : null,
     m.instructors_pending ? [`${m.instructors_pending} instructor profile${m.instructors_pending > 1 ? 's' : ''} to approve`, '/admin/staff'] : null,
@@ -67,6 +70,21 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
         <section className="border border-white p-4">
           <p className="font-bold">Needs you</p>
           <ul className="mt-2 space-y-1 text-sm">{todo.map(([t, href]) => <li key={t}><Link href={href} className="underline">{t}</Link></li>)}</ul>
+        </section>
+      )}
+
+      {pendingCancels.length > 0 && (
+        <section id="cancellations" className="border border-white p-4">
+          <p className="font-bold">Cancellations to finish in Stripe</p>
+          <p className="mt-1 text-sm text-muted">These members cancelled in the app, but the site could not tell Stripe (the Stripe key needs “Subscriptions: Write”). Cancel each one in Stripe so they are not charged, then tick it off.</p>
+          <ul className="mt-3 divide-y divide-stone text-sm">
+            {pendingCancels.map((c) => (
+              <li key={c.id} className="flex flex-wrap items-center justify-between gap-2 py-2">
+                <span className="min-w-0"><Link href={`/admin/members/${c.user_id}`} className="underline">{c.profiles?.first_name ?? c.profiles?.email ?? 'Member'}</Link> <span className="text-muted">· {c.profiles?.email} · asked {new Date(c.requested_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} · should end {c.ends_at ? new Date(c.ends_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'now'}{c.final_payment ? ' (one final payment first)' : ' (no more payments)'} · <span className="font-mono text-xs">{c.stripe_subscription_id}</span></span></span>
+                <form action={markCancellationDone}><input type="hidden" name="id" value={c.id} /><button className="inline-flex min-h-[36px] items-center border border-white px-3 text-xs font-bold uppercase">Done in Stripe</button></form>
+              </li>
+            ))}
+          </ul>
         </section>
       )}
 

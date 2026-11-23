@@ -67,6 +67,8 @@ export async function createMembershipCheckout(priceId: string): Promise<Checkou
     const session = await stripe.checkout.sessions.create({
       ui_mode: 'embedded',
       mode: 'subscription',
+      // Card only, which includes Apple Pay and Google Pay. Pay-later and wallet apps are left out of memberships.
+      payment_method_types: ['card'],
       line_items: [{ price: price.stripe_price_id, quantity: 1 }],
       client_reference_id: user.id,
       ...(customer ? { customer: customer.stripe_customer_id as string } : { customer_email: email }),
