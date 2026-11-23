@@ -83,7 +83,7 @@ export default async function MyCoach({ searchParams }: { searchParams: Promise<
         </form>
       )}
 
-      <section id="ask" className="scroll-mt-4 space-y-3">
+      <section id="ask" className="scroll-mt-16 space-y-3">
         <h2 className="text-sm font-bold uppercase tracking-[0.1em]">Messages</h2>
         <ul className="space-y-2">
           {thread.map((m) => {
