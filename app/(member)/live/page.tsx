@@ -81,7 +81,7 @@ export default async function Live({ searchParams }: { searchParams: Promise<{ e
         </div>
       )}
 
-      <section id="bookings" className="scroll-mt-4">
+      <section id="bookings" className="scroll-mt-16">
         <h2 className="mb-2 text-sm font-bold uppercase tracking-[0.1em]">My bookings</h2>
         {mine.length ? (
           <ul className="divide-y divide-stone border border-stone">
@@ -117,7 +117,7 @@ export default async function Live({ searchParams }: { searchParams: Promise<{ e
         </section>
       ))}
       {soon.length > 0 && (
-        <section id="coming-soon" className="scroll-mt-4">
+        <section id="coming-soon" className="scroll-mt-16">
           <h2 className="text-sm font-bold uppercase tracking-[0.1em]">Coming soon · {soon.length} more classes a week</h2>
           <p className="mb-2 text-sm text-muted">We’re growing to {all.length} live classes a week. These aren’t bookable yet. Tap Notify me and we’ll tell you in the app when one launches.</p>
           <div className="space-y-2">

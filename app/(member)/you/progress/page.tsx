@@ -141,7 +141,7 @@ export default async function Progress({ searchParams }: { searchParams: Promise
         <p className="mt-2 text-xs text-muted">{POINTS.session} points for every session, {POINTS.live} for every live class you join, and {POINTS.goalWeek} bonus when you hit your weekly goal.</p>
       </section>
 
-      <section id="league" className="scroll-mt-6 border border-stone p-4">
+      <section id="league" className="scroll-mt-16 border border-stone p-4">
         <div className="flex items-center justify-between"><p className="eyebrow">This week’s league</p><p className="text-xs text-muted">Resets every Monday</p></div>
         <p className="mt-2 text-sm text-muted">{myPlace >= 0 ? `You are ${ordinal(myPlace + 1)} of ${league.filter((r) => r.week_points > 0).length} this week.` : 'Finish a session or join a live class this week to get on the board.'} Points for showing up, never for weight or looks.</p>
         {league.filter((r) => r.week_points > 0).length ? (

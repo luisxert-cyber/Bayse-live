@@ -56,7 +56,7 @@ export default async function You({ searchParams }: { searchParams: Promise<Reco
       {sp.cancelled && sp.cancelled !== 'class' && <Notice tone="success">{sp.cancelled === 'late_cancelled' ? `1-to-1 cancelled. As it was under ${cutoff} hours before, the session can’t be refunded.` : '1-to-1 cancelled. Your credit or payment comes back to you.'}</Notice>}
       {sp.error && <Notice tone="error">{sp.error}</Notice>}
 
-      <section id="bookings" className="scroll-mt-4">
+      <section id="bookings" className="scroll-mt-16">
         <div className="mb-2 flex items-center justify-between"><h2 className="text-sm font-bold uppercase tracking-[0.1em]">My bookings</h2><Link href="/live" className="text-sm underline">Book a class</Link></div>
         {items.length ? (
           <ul className="divide-y divide-stone border border-stone">
