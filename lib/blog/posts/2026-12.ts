@@ -290,4 +290,205 @@ If a move hurts your back or neck, go back a step. If you have a sore lower back
       { q: 'Is Pilates better than sit-ups for your core?', a: 'Pilates trains the deep muscles that wrap around your middle and support your spine, as well as the abs you can see. Sit-ups mainly work the front and can strain the neck and lower back.' },
     ],
   },
+  {
+    slug: 'pilates-for-glutes', kind: 'post', category: 'Strength and posture',
+    title: 'Pilates for glutes: 7 exercises to do at home',
+    description: 'Seven Pilates glute exercises you can do on a mat at home, how to feel them in the right place, and a simple ten-minute routine.',
+    keyword: 'pilates for glutes', publishAt: '2026-12-14T07:00:00Z', minutes: 4,
+    image: '/images/studio-bird-dog.webp', imageAlt: 'Reaching one leg back in a bird dog on the mat', cta: { label: 'Build a glute workout', href: '/try' },
+    body: `Your glutes are the biggest muscle group in your body, and most of us spend the day sitting on them. Strong glutes do far more than shape your bottom. They power walking, stairs and getting up from a chair, and they keep your pelvis steady so your lower back and knees do not have to pick up the work.
+
+Pilates is good at glutes because it is slow and precise. You cannot swing your way through the movement, so the right muscles have to do it.
+
+## The three muscles you are training
+
+- **Gluteus maximus.** The large one that straightens your hip. Bridges and leg lifts behind you train it.
+- **Gluteus medius and minimus.** Smaller muscles on the side of your hip that keep your pelvis level when you stand on one leg. Side-lying work trains them.
+
+A good routine includes both: something that lifts the hips or the leg behind you, and something that works the side of the hip.
+
+## 7 Pilates glute exercises
+
+**1. Glute bridge.** On your back with your knees bent and feet hip-width apart, press through your heels and lift your hips, then lower slowly. If you feel it mostly in the backs of your thighs, bring your feet a little closer to you.
+
+**2. Single-leg bridge.** Set up as before, lift one foot off the floor and bridge on the other leg. Keep your hips level. Start with five each side.
+
+**3. Clam.** Lie on your side with your knees bent and feet together. Open the top knee without letting your hips roll back. The movement is smaller than you expect.
+
+**4. Side-lying leg lift.** On your side with your top leg long and slightly behind you, lift it to hip height and lower with control. Turn your toes slightly down to keep the work in the side of your hip.
+
+**5. Donkey kick.** On hands and knees, keep one knee bent and press that foot towards the ceiling. Stop before your lower back arches.
+
+**6. Fire hydrant.** From hands and knees, lift one bent knee out to the side, keeping your weight even through both hands.
+
+**7. Standing leg press back.** Hold a chair or worktop, tip forward a little from your hips and press one straight leg behind you. This one trains the standing leg too.
+
+## A ten-minute routine
+
+Pick five of the seven. Do each for 45 seconds, rest for 15, and go round twice. On one-sided moves, do the first round on one side and the second on the other.
+
+Two or three times a week is enough, with a day between sessions. If you are not sure how to fit it in, read [how often you should do Pilates](/blog/how-often-should-you-do-pilates).
+
+## How to feel it in your glutes
+
+- **Slow down.** Take three seconds to lift and three to lower.
+- **Make it smaller.** A big range usually means your lower back has joined in.
+- **Keep your ribs down** and your tummy gently drawn in so your pelvis stays still.
+- **Pause at the top** for a breath before you lower.
+
+A deep, warm ache in the muscle is what you are looking for. Sharp pain, pinching in the hip or pain in your lower back is a sign to stop, make the move smaller or choose a different one. If it keeps happening, speak to your GP or a physiotherapist.
+
+## Making it harder
+
+Bodyweight work builds strength and tone, especially when you are starting out. To keep progressing, the muscle needs more to do over time. Add a resistance band above your knees for bridges and clams, hold a light weight on your hips in a bridge, or slow the lowering phase to five seconds.
+
+If you want a routine made for you, the BAYSE [workout builder](/try) puts together a class for the time and focus you choose, and glute work runs through the [live classes](/live-classes) and [programmes](/programmes).`,
+    faq: [
+      { q: 'Can Pilates build your glutes?', a: 'Yes. Pilates strengthens and tones all three glute muscles. To keep building once bodyweight feels easy, add resistance such as a band or light weights and progress it gradually.' },
+      { q: 'How often should I do Pilates glute exercises?', a: 'Two or three sessions a week with a rest day in between suits most people. Muscles get stronger in the recovery between sessions, so daily hard glute work is not needed.' },
+      { q: 'Why do I feel bridges in my hamstrings and not my glutes?', a: 'Your feet are probably too far from your body, or you are lifting too high. Bring your heels closer, press through them and stop when your body makes a straight line from shoulders to knees.' },
+    ],
+  },
+  {
+    slug: 'high-protein-breakfast-ideas', kind: 'post', category: 'Nutrition',
+    title: 'High protein breakfast ideas: 10 quick options',
+    description: 'Ten high protein breakfast ideas for busy mornings, with and without eggs, plus roughly how much protein is in everyday breakfast foods.',
+    keyword: 'high protein breakfast ideas', publishAt: '2026-12-16T07:00:00Z', minutes: 4,
+    image: '/images/community-friends.webp', imageAlt: 'BAYSE members chatting together after a class',
+    healthNote: 'This article is general information, not medical or dietary advice. If you have kidney disease, diabetes, a food allergy or any health condition, or you are pregnant, check with your GP or a registered dietitian before changing how you eat.',
+    cta: { label: 'See what is in each plan', href: '/pricing' },
+    body: `Toast and jam or a bowl of cereal is quick, but it is mostly carbohydrate, and many people are hungry again by mid-morning. Adding protein makes breakfast more filling and gives your muscles something to work with, which matters if you are doing Pilates or any strength training.
+
+You do not need powders or special products. Ordinary food from any supermarket does the job.
+
+## How much protein do you need?
+
+The UK guideline for adults is 0.75g of protein per kilogram of body weight a day. For many women that works out at around 45g a day, and most people in the UK already eat that much or more. The useful change for most of us is spreading it through the day, because breakfast tends to be the meal with the least.
+
+There is no official target for breakfast. A simple rule is to include one good source of protein every morning, and two if you are training or find you get hungry early.
+
+## Roughly what is in everyday foods
+
+These are approximate. Brands vary, so check the label.
+
+- One egg: 6 to 7g
+- Greek yoghurt or skyr, 150g: 10 to 15g
+- Cottage cheese, 100g: about 10g
+- Milk or soya drink, 200ml: about 7g
+- Baked beans, half a tin: about 10g
+- Smoked salmon, two slices: about 12g
+- Peanut butter, one tablespoon: about 4g
+- Porridge oats, 40g: about 4g
+
+## 10 high protein breakfast ideas
+
+**1. Greek yoghurt bowl.** Thick yoghurt or skyr with berries, a spoon of seeds and a handful of oats or nuts. Two minutes.
+
+**2. Scrambled eggs on wholemeal toast.** Two or three eggs. Add spinach or tomatoes if you have them.
+
+**3. Overnight oats.** Oats soaked in milk with a big spoon of yoghurt and chia seeds. Make three jars on Sunday night.
+
+**4. Cottage cheese on toast.** With sliced tomato and black pepper, or with banana and a little honey.
+
+**5. Beans on toast.** Wholemeal toast, half a tin of beans and an egg on top if you want more.
+
+**6. Smoked salmon and soft cheese on rye or a bagel.** No cooking at all.
+
+**7. Peanut butter and banana porridge.** Make the porridge with milk instead of water and stir the peanut butter through.
+
+**8. Veggie omelette.** Two eggs, whatever vegetables are in the fridge and a little cheese. Five minutes in one pan.
+
+**9. Tofu scramble.** Crumble firm tofu into a pan with a pinch of turmeric, salt and pepper. A good choice if you do not eat eggs or dairy.
+
+**10. Smoothie.** Milk or soya drink, yoghurt, a banana, frozen berries and a spoon of nut butter or oats. Drink it on the way out.
+
+## If you do not have time
+
+- **Prep once.** Overnight oats and hard-boiled eggs keep for three days in the fridge.
+- **Keep a no-cook option in.** Yoghurt, cottage cheese and nut butter need nothing but a spoon.
+- **Upgrade what you already eat.** Make porridge with milk, add yoghurt to cereal or put an egg on your toast.
+
+## Protein is one part of breakfast
+
+A breakfast that keeps you going also has fibre and some colour: wholegrain bread or oats, and fruit or vegetables. Protein on its own will not change your body. It supports the strength work you do, so pair it with regular movement such as a [live class](/live-classes) or one of the BAYSE [programmes](/programmes).
+
+If you train first thing, read [what to eat before and after Pilates](/blog/what-to-eat-before-and-after-pilates) for timing.
+
+BAYSE Nourish has recipes and a weekly food plan if you would rather not think about it. It is included in some memberships, which you can compare on the [pricing page](/pricing).`,
+    faq: [
+      { q: 'What is a good high protein breakfast without eggs?', a: 'Greek yoghurt or skyr with fruit and seeds, cottage cheese on toast, overnight oats made with milk and yoghurt, beans on toast, tofu scramble, or smoked salmon on rye.' },
+      { q: 'How much protein should I have at breakfast?', a: 'There is no official UK target for a single meal. The adult guideline is 0.75g per kilogram of body weight across the whole day. Including one or two protein foods at breakfast is a practical way to spread it out.' },
+      { q: 'Do I need protein powder at breakfast?', a: 'No. Eggs, yoghurt, milk, beans, cottage cheese, tofu, fish and nut butter provide plenty. Powder is a convenience, not a requirement.' },
+    ],
+  },
+  {
+    slug: 'how-to-get-back-into-exercise-after-a-break', kind: 'post', category: 'Motivation',
+    title: 'How to get back into exercise after a long break',
+    description: 'A realistic plan for getting back into exercise after months or years off: where to start, how fast to build up and how to make it stick.',
+    keyword: 'how to get back into exercise', publishAt: '2026-12-18T07:00:00Z', minutes: 4,
+    image: '/images/studio-movement.webp', imageAlt: 'Women moving together in a BAYSE studio class',
+    healthNote: GENERAL_NOTE, cta: { label: 'See the BAYSE Begin programme', href: '/programmes' },
+    body: `Life gets in the way. A new job, a baby, an illness, a house move or a few hard months, and suddenly it has been a year since you last exercised. That is normal, and it is fixable. Your body remembers more than you think.
+
+The mistake most people make is trying to restart where they left off. This plan starts where you are now.
+
+## Start with less than you think
+
+Begin with about half of what you believe you can do. If you used to do 40-minute classes, do 10 to 15 minutes. If you have never exercised regularly, start with 5 to 10.
+
+You should finish the first few sessions feeling you could have done more. That feeling is what brings you back two days later. Being too sore to sit down is what makes people stop again.
+
+## A four-week restart
+
+- **Week 1:** two short sessions of 10 minutes, plus a daily walk.
+- **Week 2:** three sessions of 10 to 15 minutes.
+- **Week 3:** three sessions of 15 to 20 minutes.
+- **Week 4:** three sessions, with one of them a longer class if you feel ready.
+
+Leave a day between sessions at first. If a week feels hard, repeat it before moving on. There is no deadline.
+
+NHS guidance for adults is to build towards 150 minutes of moderate activity a week, with strengthening activity on two days. That is where you are heading, not where you start. Any movement is better than none.
+
+## Choose something low impact
+
+Low-impact exercise lets your joints, tendons and muscles catch up with your enthusiasm. Walking, swimming and Pilates are all good choices. Pilates is particularly useful for a restart because it rebuilds core and hip strength, which makes everything else you do later feel easier.
+
+A structured plan takes away the guesswork. [BAYSE Begin](/programmes) is a week-by-week programme for people starting from the beginning or starting again, with short classes that build gradually.
+
+## What to expect in your body
+
+Some muscle soreness a day or two after a session is normal when you return, and it usually eases within a few days. Gentle movement, such as a walk, helps more than sitting still.
+
+You may also find you are less flexible, more breathless and weaker than you remember. That is expected, and strength and stamina come back faster the second time than they took to build the first.
+
+## When to stop and get advice
+
+Stop exercising and seek medical help if you have chest pain or tightness, feel dizzy or faint, or become very short of breath. Call 999 if chest pain does not go away.
+
+See your GP or a physiotherapist before you carry on if you have:
+
+- sharp or sudden pain in a joint or muscle
+- pain that is still there after a few days of rest
+- swelling, or pain that wakes you at night
+
+If your break was because of illness, injury, surgery or having a baby, ask your GP, midwife or physiotherapist what is right for you before you start, and follow their advice on timing.
+
+## Make it stick this time
+
+- **Put sessions in your diary** on set days, as you would an appointment.
+- **Have a five-minute version** for days when the full session is not going to happen.
+- **Book something with other people.** A [live class](/live-classes) at a set time is harder to skip than a video you can watch whenever.
+- **Track sessions, not results.** Count the weeks you turned up.
+
+There is more on this in [how to stay motivated to exercise at home](/blog/how-to-stay-motivated-to-exercise-at-home).
+
+## If you miss a week
+
+You will. Everyone does. Missing a week does not undo your progress, and it does not mean starting from scratch. Go back to the last week that felt comfortable and carry on from there.`,
+    faq: [
+      { q: 'How long does it take to get fit again after a long break?', a: 'It varies with how long you were away and what you did before. Most people feel noticeably stronger and less breathless after four to six weeks of regular sessions, and progress is usually quicker than the first time round.' },
+      { q: 'Is Pilates a good way to start exercising again?', a: 'Yes. It is low impact, easy to scale to your level and rebuilds core, hip and back strength, which supports walking, running or gym work if you want to add those later.' },
+      { q: 'Should I exercise when my muscles are still sore?', a: 'Mild soreness is fine to move through with a walk or a gentle session. If you are very sore, take another rest day. Sharp pain, swelling or pain that lasts more than a few days should be checked by a GP or physiotherapist.' },
+    ],
+  },
 ];

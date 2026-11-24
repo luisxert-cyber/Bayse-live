@@ -462,7 +462,7 @@ test('blog: articles are complete, unique and only link to pages that exist when
   // Three a week: scheduled posts fall on Monday, Wednesday and Friday.
   for (const a of ALL_ARTICLES.filter((x) => x.kind === 'post')) assert.ok([1, 3, 5].includes(new Date(a.publishAt).getUTCDay()), `${a.slug} is not on Mon/Wed/Fri`);
   assert.equal(publishedArticles(new Date('2026-11-20T12:00:00Z')).length, 6);
-  assert.equal(publishedArticles(new Date('2026-12-12T12:00:00Z')).length, ALL_ARTICLES.length);
+  assert.equal(publishedArticles(new Date('2026-12-19T12:00:00Z')).length, ALL_ARTICLES.length);
 });
 
 // ---------- Cancelling ----------
