@@ -8,7 +8,9 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import type Stripe from 'stripe';
 import { getStripe } from '@/lib/billing/stripe';
+import { getRoles, isAdminRole } from '@/lib/auth/session';
 
 const ROLE = z.enum(['instructor', 'moderator', 'studio_manager', 'virtual_assistant', 'admin', 'super_admin']);
 const uuid = z.string().uuid();
@@ -122,4 +124,90 @@ export async function setStripePrice(form: FormData) {
   const { error } = await supabase.from('prices').update({ stripe_price_id: stripeId.data || null }).eq('id', id.data);
   revalidatePath('/admin/plans');
   redirect(`/admin/plans?${error ? 'error=denied' : 'ok=1'}`);
+}
+
+const WHEN = z.enum(['period_end', 'now', 'now_refund']);
+
+type InvoicePaymentLike = { status?: string; payment?: { payment_intent?: string | { id: string } | null; charge?: string | { id: string } | null } | null };
+const refId = (v: string | { id: string } | null | undefined) => (typeof v === 'string' ? v : v?.id ?? null);
+
+/** Refunds what was paid on one invoice. Returns the pence refunded, or 0 when nothing had been paid. */
+async function refundInvoice(stripe: Stripe, invoiceId: string): Promise<number> {
+  const inv = await stripe.invoices.retrieve(invoiceId);
+  if (!((inv.amount_paid ?? 0) > 0)) return 0;
+  const lister = (stripe as unknown as { invoicePayments: { list(p: { invoice: string; limit: number }): Promise<{ data: InvoicePaymentLike[] }> } }).invoicePayments;
+  const { data: payments } = await lister.list({ invoice: invoiceId, limit: 10 });
+  const paid = payments.find((x) => x.status === 'paid' && (refId(x.payment?.payment_intent) || refId(x.payment?.charge)));
+  if (!paid) throw new Error('No card payment found on the invoice');
+  const pi = refId(paid.payment?.payment_intent);
+  const ch = refId(paid.payment?.charge);
+  const refund = await stripe.refunds.create({
+    ...(pi ? { payment_intent: pi } : { charge: ch as string }),
+    reason: 'requested_by_customer',
+    metadata: { bayse_reason: 'membership_cancelled_by_staff' },
+  });
+  return refund.amount;
+}
+
+/**
+ * An administrator cancels a member's membership from the member's page in the back office.
+ * - period_end: no more payments; the member keeps access until the time already paid for (or the trial) runs out.
+ * - now: ends straight away, nothing refunded.
+ * - now_refund: ends straight away and the most recent payment goes back to the member's card.
+ * Administrators only, because it stops revenue and can move money. Every use is written to the audit log.
+ */
+export async function staffCancelMembership(form: FormData) {
+  const userId = uuid.safeParse(form.get('user_id'));
+  if (!userId.success) redirect('/admin/members?error=invalid');
+  const back = `/admin/members/${userId.data}`;
+  const subId = uuid.safeParse(form.get('subscription_id'));
+  const when = WHEN.safeParse(form.get('when'));
+  if (!subId.success || !when.success || form.get('sure') !== 'on') redirect(`${back}?error=cancel_confirm`);
+  const supabase = await client();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user || !isAdminRole(await getRoles())) redirect(`${back}?error=denied`);
+
+  const admin = createAdminClient();
+  const { data: sub } = await admin.from('subscriptions')
+    .select('id, stripe_subscription_id, status, trial_end, current_period_end')
+    .eq('id', subId.data).eq('user_id', userId.data).maybeSingle();
+  if (!sub || !['trialing', 'active', 'past_due', 'unpaid', 'paused'].includes(sub.status as string)) redirect(`${back}?error=cancel_none`);
+  const stripeId = sub.stripe_subscription_id as string;
+
+  let outcome: 'cancel_end' | 'cancel_now' | 'cancel_refunded' | 'cancel_norefund' | 'cancel_nopayment' | null = null;
+  let refunded = 0;
+  let endsAt: string | null = null;
+  try {
+    const stripe = await getStripe();
+    if (when.data === 'period_end') {
+      await stripe.subscriptions.update(stripeId, { cancel_at_period_end: true, metadata: { bayse_end_reason: 'staff_cancelled' } });
+      endsAt = ((sub.status === 'trialing' ? sub.trial_end : null) ?? sub.current_period_end ?? null) as string | null;
+      // Shown straight away; Stripe's own confirmation follows through the webhook.
+      await admin.from('subscriptions').update({ cancel_at_period_end: true, cancel_at: endsAt }).eq('id', sub.id);
+      outcome = 'cancel_end';
+    } else {
+      const ended = await stripe.subscriptions.cancel(stripeId, { prorate: false, invoice_now: false, cancellation_details: { comment: 'Cancelled by BAYSE staff in the back office' } });
+      // Access stops straight away (entitlements follow the status through database triggers).
+      await admin.from('subscriptions').update({ status: 'canceled', cancel_at_period_end: false, cancel_at: null }).eq('id', sub.id);
+      outcome = 'cancel_now';
+      if (when.data === 'now_refund') {
+        outcome = 'cancel_norefund';
+        try {
+          const invoiceId = refId(ended.latest_invoice as string | { id: string } | null);
+          refunded = invoiceId ? await refundInvoice(stripe, invoiceId) : 0;
+          outcome = refunded > 0 ? 'cancel_refunded' : 'cancel_nopayment';
+        } catch (e) {
+          console.error('[staff-cancel] membership ended but the refund failed:', e instanceof Error ? e.message.slice(0, 200) : e);
+        }
+      }
+    }
+  } catch (e) {
+    console.error('[staff-cancel] could not cancel in Stripe:', e instanceof Error ? e.message.slice(0, 200) : e);
+  }
+  if (!outcome) redirect(`${back}?error=cancel_failed`);
+
+  await admin.from('cancellation_requests').update({ status: 'done', done_by: user.id, done_at: new Date().toISOString() }).eq('stripe_subscription_id', stripeId).eq('status', 'pending');
+  await admin.from('audit_log').insert({ actor_id: user.id, action: 'membership.cancelled_by_staff', entity: 'subscriptions', entity_id: sub.id, detail: { member_id: userId.data, when: when.data, outcome, ends_at: endsAt, refunded_pence: refunded } });
+  revalidatePath(back);
+  redirect(`${back}?ok=${outcome}${refunded ? `&amount=${refunded}` : ''}`);
 }
